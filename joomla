@@ -1,0 +1,103 @@
+server {
+    server_name joomtest.lemoncurry.nl;
+        server_name_in_redirect off;
+    root /home/albert/www/joomla/probeer;
+    #script_alias /home/albert/www/cgi-bin/joomla/;
+    error_log /var/log/nginx/joomtest.lemoncurry-error.log error;
+    access_log /var/log/nginx/joomtest.lemoncurry-access.log ;
+    index index.php index.html index.htm;
+    # Support Clean (aka Search Engine Friendly) URLs
+    location / {
+            try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+    # deny running scripts inside writable directories
+    location ~* /(images|cache|media|logs|tmp)/.*\.(php|pl|py|jsp|asp|sh|cgi)$ {
+            return 403;
+            error_page 403 /403_error.html;
+        }
+    # location ~ .*.php$ {
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    # caching of files
+    location ~* \.(ico|pdf|flv)$ {
+            expires 1y;
+        }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|swf|xml|txt)$ {
+            expires 14d;
+        }
+    }
+
+server {
+    server_name local.schooldeparadox.nl;
+        server_name_in_redirect off;
+    root /home/albert/www/schooldeparadox;
+    #script_alias /home/albert/www/cgi-bin/paradox;
+    error_log /var/log/nginx/local.paradox-error.log warn;
+    access_log /var/log/nginx/local.paradox-access.log ;
+    index index.php index.html index.htm;
+    # Support Clean (aka Search Engine Friendly) URLs
+    location / {
+            try_files $uri $uri/ /index.php?q=$uri&$args;
+        }
+    # deny running scripts inside writable directories
+    location ~* /(images|cache|media|logs|tmp)/.*\.(php|pl|py|jsp|asp|sh|cgi)$ {
+            return 403;
+            error_page 403 /403_error.html;
+        }
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    # caching of files
+    location ~* \.(ico|pdf|flv)$ {
+            expires 1y;
+        }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|swf|xml|txt)$ {
+            expires 14d;
+        }
+    }
+
+server {
+    server_name deparadox.pythoneer.nl;
+    root /home/albert/www/deparadox;
+    ## ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox/"
+    error_log /var/log/nginx/paradox-error.log;
+    access_log /var/log/nginx/paradox-access.log;
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    }
+server {
+    server_name joomtest.pythoneer.nl;
+    root /home/albert/www/joomla/probeer;
+    #script_alias /home/albert/www/cgi-bin/joomla/;
+    error_log /var/log/nginx/joomtest.pythoneer-error.log error;
+    access_log /var/log/nginx/joomtest.pythoneer-access.log;
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    }

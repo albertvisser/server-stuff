@@ -1,0 +1,62 @@
+server {
+    server_name trac.lemoncurry.nl;
+    # root /home/albert/lemontrac;
+    error_log /var/log/nginx/trac.lemoncurry-error.log warn;
+    access_log /var/log/nginx/trac.lemoncurry-access.log ;
+
+    location / {
+        proxy_pass      http://127.0.0.1:9000;
+        # proxy_redirect on;
+        # proxy_set_header Host $host;
+        }
+
+#        ssl                  on;
+#        ssl_certificate      /etc/ssl/trac.example.crt;
+#        ssl_certificate_key  /etc/ssl/trac.example.key;
+#
+#        ssl_session_timeout  5m;
+#
+#        ssl_protocols  SSLv2 SSLv3 TLSv1;
+#        ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+#        ssl_prefer_server_ciphers   on;
+
+    # (Or ``^/some/prefix/(.*)``.
+    if ($uri ~ ^/(.*)) {
+         set $path_info /$1;
+    }
+
+    # it makes sense to serve static resources through Nginx
+    location /chrome/ {
+         alias /home/albert/lemontrac/htdocs/;
+    }
+
+    # You can copy this whole location to ``location [/some/prefix]/login``
+    # and remove the auth entries below if you want Trac to enforce
+    # authorization where appropriate instead of needing to authenticate
+    # for accessing the whole site.
+    # (Or ``location /some/prefix``.)
+#    location / {
+#        auth_basic            "trac realm";
+#        auth_basic_user_file /home/albert/lemontrac/trac_users;
+#
+#        # socket address
+#        fastcgi_pass   unix:/var/run/lemontrac.sock;
+#
+##        # python - wsgi specific
+##         fastcgi_param HTTPS on;
+#
+#        ## WSGI REQUIRED VARIABLES
+#        # WSGI application name - trac instance prefix.
+#        # (Or ``fastcgi_param  SCRIPT_NAME  /some/prefix``.)
+#        fastcgi_param  SCRIPT_NAME        "";
+#        # (Or ``fastcgi_param PATH_INFO $fastcgi_script_name;``)
+#        fastcgi_param  PATH_INFO          $path_info;
+#
+#        include fastcgi_params;
+#
+#        # For Nginx authentication to work - do not forget to comment these
+#        # lines if not using Nginx for authentication
+#        fastcgi_param  AUTH_USER          $remote_user;
+#        fastcgi_param  REMOTE_USER        $remote_user;
+#        }
+    }

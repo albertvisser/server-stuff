@@ -1,0 +1,15 @@
+server {
+    server_name rst2html.lemoncurry.nl;
+    root /home/albert/www/pythoneer/rst2html;
+    error_log /var/log/nginx/rst2html.lemoncurry-error.log error;
+    access_log /var/log/nginx/rst2html.lemoncurry-access.log ;
+#    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+    }
+server {
+    server_name rst2html.pythoneer.nl;
+    root /home/albert/www/rst2html;
+    error_log /var/log/nginx/rst2html.pythoneer-error.log error;
+    access_log /var/log/nginx/rst2html.pythoneer-access.log;
+#    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+    }
+

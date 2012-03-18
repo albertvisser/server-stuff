@@ -1,0 +1,126 @@
+import os
+import shutil
+from fabric.api import local, sudo
+"""collection of shortcut functions concerning deployment
+of my local ngnix stuff
+"""
+
+HERE = os.path.dirname(__file__)
+AVAIL = '/etc/nginx/sites-available'
+ENABL = '/etc/nginx/sites-enabled'
+runpath = '/var/run'
+HGWEB = '/home/albert/www/hgweb'
+hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
+hgweb_sock = os.path.join(runpath, 'hgwebdir.sock')
+TRAC = '/home/albert/lemontrac'
+project = os.path.basename(TRAC)
+trac_pid = os.path.join(runpath, '{}.pid'.format(project))
+trac_sock = os.path.join(runpath, '{}.sock'.format(project))
+django_project_path = {
+    'pythoneer': '/home/albert/www/django/pythoneer',
+    'magiokis': '/home/albert/www/django/magiokis',
+    'actiereg': '/home/albert/www/django/actiereg',
+    'myprojects': '/home/albert/www/django/doctool',
+    'mydomains': '/home/albert/www/testdjango/domainchecker',
+    }
+
+def modconf(name):
+    "copy configuration after editing"
+    oldname = os.path.join(HERE, name)
+    ## newname = os.path.join(AVAIL, name)
+    ## shutil.copyfile(oldname, newname)
+    local('sudo cp {} {}'.format(oldname, AVAIL))
+
+def modconfs(*names):
+    "modconf for multiple names provided as a comma separated string"
+    for conf in names:
+        modconf(conf.strip())
+
+def addconf(name):
+    "enable new configuration by creating symlink"
+    oldname = os.path.join(AVAIL, name)
+    newname = os.path.join(ENABL, name)
+    ## os.symlink(oldname, newname)
+    local('sudo ln -s {} {}'.format(oldname, newname))
+
+def addconfs(*names):
+    "addconf for multiple names provided as a comma separated string"
+    for conf in names:
+        addconf(conf.strip())
+
+def rmconf(name):
+    "disable configuration by removing symlink"
+    newname = os.path.join(ENABL, name)
+    ## os.remove(name)
+    local(' sudo rm {}'.format(newname))
+
+def rmconfs(*names):
+    "rmconf for multiple names provided as a comma separated string"
+    for conf in names:
+        rmconf(conf.strip())
+
+def stop_hgweb():
+    local('sudo kill `cat {}`'.format(hgweb_pid))
+
+def start_hgweb():
+    start = os.path.join(HGWEB, 'hgweb.fcgi')
+    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, hgweb_sock,
+        hgweb_pid, 'www-data'))
+
+def restart_hgweb():
+    "restart hgweb after editing configuration or startup script"
+    stop_hgweb()
+    start_hgweb()
+
+def stop_trac():
+    local('sudo kill `cat {}`'.format(trac_pid))
+
+def start_trac():
+    start = os.path.join(TRAC, 'trac.fcgi')
+    auth = '{},{},{}'.format(project,os.path.join(TRAC,'trac_users'),project)
+    local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(trac_pid,
+        TRAC, auth))
+    ## local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, trac_sock,
+        ## trac_pid, 'www-data'))
+
+def restart_trac():
+    "restart trac after editing configuration or startup script"
+    stop_trac()
+    start_trac()
+
+def stop_nginx():
+    local('sudo /etc/init.d/nginx stop')
+
+def start_nginx():
+    local('sudo /etc/init.d/nginx start')
+
+def restart_nginx():
+    "restart nginx"
+    local('sudo killall -HUP nginx')
+
+def _get_django_args(project):
+    return (os.path.join(runpath, '{}.pid'.format(project)),
+        os.path.join(runpath, '{}.sock'.format(project)),
+        django_project_path[project])
+
+def stop_django(project):
+    django_pid, _, _ = _get_django_args(project)
+    if os.path.exists(django_pid):
+        local('sudo kill `cat {}`'.format(django_pid))
+        local('sudo rm -f {}'.format(django_pid))
+
+def start_django(*project):
+    def start(path, sock, pid):
+        local('sudo python {}/manage.py runfcgi socket={} pidfile={}'.format(path,
+            sock, pid))
+        local('sudo chown www-data {}'.format(sock))
+    if not project:
+        project = django_project_path.keys()
+    for proj in project:
+        pid, sock, path = _get_django_args(proj)
+        start(path, sock, pid)
+
+def restart_django(project):
+    "restart django site (arg:project)"
+    stop_django(project)
+    start_django(project)

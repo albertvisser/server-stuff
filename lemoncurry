@@ -1,0 +1,32 @@
+# index index.html index.htm;
+server {
+	server_name lemoncurry.nl www.lemoncurry.nl;
+    root /var/www;
+    #script_alias /usr/lib/cgi-bin/;
+    error_log /var/log/nginx/lemoncurry-error.log warn;
+    access_log /var/log/nginx/lemoncurry-access.log ;
+    # WSGIScriptAlias /viewlogs /home/albert/logviewer/wsgi_handler.py
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    }
+server {
+    server_name doctool.lemoncurry.nl;
+    root /home/albert/www/pythoneer/doctool;
+    #script_alias /home/albert/www/cgi-bin/doctool/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/www/cgi-bin/doctool/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/doctool$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/doctool.lemoncurry-error.log error;
+    access_log /var/log/nginx/doctool.lemoncurry-access.log ;
+    }
