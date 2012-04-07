@@ -3,7 +3,12 @@ server {
     root /home/albert/www/pythoneer/rst2html;
     error_log /var/log/nginx/rst2html.lemoncurry-error.log error;
     access_log /var/log/nginx/rst2html.lemoncurry-access.log ;
-#    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+    location / {
+        #include fastcgi_params;
+        #fastcgi_pass  unix:/var/run/rst2html.sock;
+        # fastcgi_pass  127.0.0.1:9001;
+        proxy_pass      http://127.0.0.1:9001;
+        }
     }
 server {
     server_name rst2html.pythoneer.nl;
@@ -11,5 +16,10 @@ server {
     error_log /var/log/nginx/rst2html.pythoneer-error.log error;
     access_log /var/log/nginx/rst2html.pythoneer-access.log;
 #    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+    location / {
+        #include fastcgi_params;
+        #fastcgi_pass  unix:/var/run/rst2html.sock;
+        # fastcgi_pass  127.0.0.1:9001;
+        proxy_pass      http://127.0.0.1:9001;
+        }
     }
-
