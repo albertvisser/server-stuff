@@ -1,0 +1,24 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+spawn-fcgi -u www-data -g www-data -f /home/albert/www/hgweb/hgweb.fcgi -s /var/run/hgwebdir.sock -P /var/run/hgwebdir.pid
+
+sudo tracd -d -p 9000 --pidfile /var/run/lemontrac.pid -s /home/albert/lemontrac --basic-auth='lemontrac,/home/albert/lemontrac/trac_users,lemontrac'
+#~ spawn-fcgi -u www-data -g www-data -f /home/albert/lemontrac/trac.wsgi -s /var/run/lemontrac.sock -P /var/run/lemontrac.pid
+
+cd /home/albert/nginx-config
+sudo cherryd -c /home/albert/nginx-config/rst2html.conf -d -p /var/run/rst2html.pid -i start_rst2html
+
+fab start_django
+
+exit 0
