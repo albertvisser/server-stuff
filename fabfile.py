@@ -31,10 +31,10 @@ django_project_path = {
     'mydomains': '/home/albert/www/testdjango/domainchecker',
     }
 extconf = {
-    'fcgiwrap': ('/etc/nginx', True),
-    'rst2html': ('/home/albert/rst2html-web', False),
-    'rc.local': ('/etc', True),
-    'hosts': ('/etc', True),
+    'fcgiwrap': ('/etc/nginx', True, '.conf'),
+    'rst2html': ('/home/albert/rst2html-web', False, '.conf'),
+    'rc.local': ('/etc', True, ''),
+    'hosts': ('/etc', True, ''),
     }
 
 def addconf(name):
@@ -55,8 +55,9 @@ def modconf(name):
     ## newname = os.path.join(AVAIL, name)
     ## shutil.copyfile(oldname, newname)
     if name in extconf:
-        dest, uses_sudo = extconf[name]
-        local('{} cp {}.conf {}'.format('sudo' if uses_sudo else '', name, dest))
+        dest, uses_sudo, ext = extconf[name]
+        fname = os.path.join(HERE, name + ext)
+        local('{} cp {} {}'.format('sudo' if uses_sudo else '', fname, dest))
     else:
         local('sudo cp {} {}'.format(oldname, AVAIL))
 
@@ -150,8 +151,14 @@ def _get_cherry_parms(project):
         conf = os.path.join(HERE, 'rst2html.conf')
         ## prog = 'rst2html'
         prog = 'start_rst2html'
-        pid = os.path.join(runpath, '{}.pid'.format('rst2html'))
-        sock = os.path.join(runpath, '{}.sock'.format('rst2html'))
+        pid = os.path.join(runpath, '{}.pid'.format(project))
+        sock = os.path.join(runpath, '{}.sock'.format(project))
+    elif project == 'bitbucket':
+        pad = '/home/albert/www/bitbucket'
+        conf = os.path.join(pad, 'rst2html.conf')
+        prog = 'start_bitbucket'
+        pid = os.path.join(runpath, '{}.pid'.format(project))
+        sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
 def stop_cherry(project='rst2html'):
@@ -161,7 +168,7 @@ def stop_cherry(project='rst2html'):
         local('sudo rm -f {}'.format(pid))
 
 def start_cherry(project='rst2html'):
-    conf, pad, prog, pid, _ = _get_rsh_parms(project)
+    conf, pad, prog, pid, _ = _get_cherry_parms(project)
     local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 def restart_cherry(project='rst2html'):

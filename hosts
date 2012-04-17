@@ -14,9 +14,6 @@ ff02::2 ip6-allrouters
 
 192.168.2.1     router
 192.168.1.1     huis
-192.168.1.19	  kleine-witje
-192.168.1.19     www.kleine-witje.nl
-192.168.1.19     eyeos.kleine-witje.nl
 
 127.0.0.1     lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
@@ -31,12 +28,15 @@ ff02::2 ip6-allrouters
 127.0.0.1     rst2html.lemoncurry.nl
 127.0.0.1     phpmyadmin.lemoncurry.nl
 127.0.0.1     droopy.lemoncurry.nl
+127.0.0.1     mydomains.lemoncurry.nl
+127.0.0.1     logviewer.lemoncurry.nl
+127.0.0.1     rstblog.lemoncurry.nl
 
 192.168.1.11     www.pythoneer.nl
 192.168.1.11     adr.pythoneer.nl
 192.168.1.11     films.pythoneer.nl
 192.168.1.11     muziek.pythoneer.nl
-192.168.1.11     school.pythoneer.nl
+192.168.1.11     absentie.pythoneer.nl
 192.168.1.11     doctool.pythoneer.nl
 192.168.1.11     woefdram.pythoneer.nl
 192.168.1.11     deparadox.pythoneer.nl

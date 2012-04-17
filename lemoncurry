@@ -30,3 +30,9 @@ server {
     error_log /var/log/nginx/doctool.lemoncurry-error.log error;
     access_log /var/log/nginx/doctool.lemoncurry-access.log ;
     }
+server {
+    server_name rstblog.lemoncurry.nl;
+    root /home/albert/rstblog/venv/avisser.bitbucket.org/_build;
+    error_log /var/log/nginx/rstblog.lemoncurry-error.log error;
+    access_log /var/log/nginx/rstblog.lemoncurry-access.log ;
+    }
