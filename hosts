@@ -29,6 +29,7 @@ ff02::2 ip6-allrouters
 127.0.0.1     phpmyadmin.lemoncurry.nl
 127.0.0.1     droopy.lemoncurry.nl
 127.0.0.1     mydomains.lemoncurry.nl
+127.0.0.1     myapps.lemoncurry.nl
 127.0.0.1     logviewer.lemoncurry.nl
 127.0.0.1     rstblog.lemoncurry.nl
 

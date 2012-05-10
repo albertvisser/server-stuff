@@ -209,3 +209,30 @@ server {
         fastcgi_param UID_GOT           $uid_got;
         }
     }
+server {
+    server_name myapps.lemoncurry.nl;
+    error_log /var/log/nginx/myapps.lemoncurry-error.log error;
+    access_log /var/log/nginx/myapps.lemoncurry-access.log ;
+    location /media {
+        root   /home/albert/www/testdjango/myapps;
+        }
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+        {
+        root /home/albert/www/testdjango/myapps;
+        expires 30d;
+        break;
+        }
+    location / {
+        fastcgi_pass unix:/var/run/myapps.sock;
+        fastcgi_param PATH_INFO $fastcgi_script_name;
+        fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param CONTENT_TYPE $content_type;
+        fastcgi_param CONTENT_LENGTH $content_length;
+        # include /etc/nginx/fastcgi_params;
+        fastcgi_pass_header Authorization;
+        fastcgi_intercept_errors off;
+        fastcgi_param REMOTE_USER       $remote_user;
+        fastcgi_param UID_SET           $uid_set;
+        fastcgi_param UID_GOT           $uid_got;
+        }
+    }

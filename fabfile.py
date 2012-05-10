@@ -29,6 +29,7 @@ django_project_path = {
     'actiereg': '/home/albert/www/django/actiereg',
     'myprojects': '/home/albert/www/django/doctool',
     'mydomains': '/home/albert/www/testdjango/domainchecker',
+    'myapps': '/home/albert/www/testdjango/myapps',
     }
 extconf = {
     'fcgiwrap': ('/etc/nginx', True, '.conf'),
