@@ -5,6 +5,7 @@ import os
 sys.stdout = sys.stderr
 
 os.chdir('/home/albert/rst2html-web')
+sys.path.insert(0, '/home/albert/rst2html-web')
 import cherrypy
 from rst2html import Rst2Html
 
