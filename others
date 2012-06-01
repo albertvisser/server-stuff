@@ -1,1 +1,18 @@
+server {
+    server_name logviewer.lemoncurry.nl;
+    root /home/albert/logviewer;
+    error_log /var/log/nginx/logviewer.lemoncurry-error.log warn;
+    access_log /var/log/nginx/logviewer.lemoncurry-access.log ;
 
+    location / {
+        proxy_pass      http://127.0.0.1:9002;
+        # proxy_redirect on;
+        # proxy_set_header Host $host;
+        }
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+        {
+        root /home/albert/logviewer;
+        expires 30d;
+        break;
+        }
+    }

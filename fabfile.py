@@ -1,6 +1,6 @@
 import os
 import shutil
-from fabric.api import local, sudo
+from fabric.api import local, sudo, lcd
 """collection of shortcut functions concerning deployment
 of my local ngnix stuff
 includes:
@@ -176,3 +176,20 @@ def restart_cherry(project='rst2html'):
     "restart cherrypy site (arg:project)"
     stop_cherry(project)
     start_cherry(project)
+
+def stop_logviewer():
+    local("ps ux | awk '/ python viewlogs.py/ && !/awk/' > /tmp viewlogs.pid")
+    data = ''
+    with open('/tmp/viewlogs.pid') as _in:
+        data = _in.read()
+    if data:
+        pid = data.split()[1]
+        local('sudo kill {}'.format(pid))
+
+def start_logviewer():
+    with lcd('/home/albert/logviewer'):
+        local('python viewlogs.py')
+
+def restart_logviewer():
+    stop_logviewer(project)
+    start_logviewer(project)

@@ -30,8 +30,10 @@ ff02::2 ip6-allrouters
 127.0.0.1     droopy.lemoncurry.nl
 127.0.0.1     mydomains.lemoncurry.nl
 127.0.0.1     myapps.lemoncurry.nl
+127.0.0.1     mywebapps.lemoncurry.nl
 127.0.0.1     logviewer.lemoncurry.nl
 127.0.0.1     rstblog.lemoncurry.nl
+127.0.0.1     bitbucket.lemoncurry.nl
 
 127.0.0.1     www.pythoneer.nl
 127.0.0.1     adr.pythoneer.nl
