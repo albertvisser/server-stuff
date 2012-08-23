@@ -15,9 +15,13 @@ server {
         fastcgi_pass unix:/var/run/pythoneer.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         fastcgi_pass_header Authorization;
         fastcgi_intercept_errors off;
         fastcgi_param REMOTE_USER       $remote_user;
@@ -44,7 +48,11 @@ server {
         fastcgi_param REQUEST_METHOD $request_method;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
+        fastcgi_param  QUERY_STRING       $query_string;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
@@ -65,9 +73,13 @@ server {
         fastcgi_pass unix:/var/run/magiokis.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 server {
@@ -87,9 +99,13 @@ server {
         fastcgi_pass unix:/var/run/magiokis.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
@@ -110,9 +126,13 @@ server {
         fastcgi_pass unix:/var/run/actiereg.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 server {
@@ -132,9 +152,13 @@ server {
         fastcgi_pass unix:/var/run/actiereg.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
@@ -155,9 +179,13 @@ server {
         fastcgi_pass unix:/var/run/myprojects.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 server {
@@ -177,9 +205,13 @@ server {
         fastcgi_pass unix:/var/run/myprojects.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 server {
@@ -199,6 +231,7 @@ server {
         fastcgi_pass unix:/var/run/mydomains.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
@@ -207,6 +240,9 @@ server {
         fastcgi_param REMOTE_USER       $remote_user;
         fastcgi_param UID_SET           $uid_set;
         fastcgi_param UID_GOT           $uid_got;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 server {
@@ -226,6 +262,7 @@ server {
         fastcgi_pass unix:/var/run/myapps.sock;
         fastcgi_param PATH_INFO $fastcgi_script_name;
         fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param  QUERY_STRING       $query_string;
         fastcgi_param CONTENT_TYPE $content_type;
         fastcgi_param CONTENT_LENGTH $content_length;
         # include /etc/nginx/fastcgi_params;
@@ -234,5 +271,8 @@ server {
         fastcgi_param REMOTE_USER       $remote_user;
         fastcgi_param UID_SET           $uid_set;
         fastcgi_param UID_GOT           $uid_got;
+        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        fastcgi_param	SERVER_PORT		$server_port;
+        fastcgi_param	SERVER_NAME		$server_name;
         }
     }

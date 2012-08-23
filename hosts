@@ -48,7 +48,6 @@ ff02::2 ip6-allrouters
 127.0.0.1     actiereg.pythoneer.nl
 127.0.0.1     mysite.pythoneer.nl
 127.0.0.1     myprojects.pythoneer.nl
-127.0.0.1     chello.pythoneer.nl
 127.0.0.1     testwsgi.pythoneer.nl
 127.0.0.1     hg.pythoneer.nl
 127.0.0.1     rst2html.pythoneer.nl
@@ -58,11 +57,11 @@ ff02::2 ip6-allrouters
 127.0.0.1     local.magiokis.nl
 127.0.0.1     php.magiokis.nl
 127.0.0.1     data.magiokis.nl
-127.0.0.1	  songs.magiokis.nl
-127.0.0.1	  denk.magiokis.nl
-127.0.0.1	  dicht.magiokis.nl
-127.0.0.1	  vertel.magiokis.nl
-127.0.0.1	  django.magiokis.nl
+127.0.0.1	    songs.magiokis.nl
+127.0.0.1	    denk.magiokis.nl
+127.0.0.1	    dicht.magiokis.nl
+127.0.0.1	    vertel.magiokis.nl
+127.0.0.1	    django.magiokis.nl
 
 127.0.0.1     local.schooldeparadox.nl
 
