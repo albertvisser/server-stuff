@@ -145,7 +145,6 @@ def restart_django(project):
     start_django(project)
 
 def _get_cherry_parms(project):
-    # voorlopig even alleen rst2html
     if project == 'rst2html':
         pad = '/home/albert/rst2html-web'
         ## conf = os.path.join(pad, 'rst2html.conf')
@@ -154,42 +153,31 @@ def _get_cherry_parms(project):
         prog = 'start_rst2html'
         pid = os.path.join(runpath, '{}.pid'.format(project))
         sock = os.path.join(runpath, '{}.sock'.format(project))
-    elif project == 'bitbucket':
-        pad = '/home/albert/www/bitbucket'
-        conf = os.path.join(pad, 'rst2html.conf')
-        prog = 'start_bitbucket'
+    elif project == 'logviewer':
+        pad = '/home/albert/logviewer'
+        conf = os.path.join(HERE, 'logviewer.conf')
+        prog = 'start_logviewer'
         pid = os.path.join(runpath, '{}.pid'.format(project))
         sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
-def stop_cherry(project='rst2html'):
+def stop_cherry(project):
     pid = _get_cherry_parms(project)[3]
     if os.path.exists(pid):
         local('sudo kill `cat {}`'.format(pid))
         local('sudo rm -f {}'.format(pid))
 
-def start_cherry(project='rst2html'):
-    conf, pad, prog, pid, _ = _get_cherry_parms(project)
-    local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
+def start_cherry(project=''):
+    if not project:
+        project = ('rst2html', 'logviewer')
+    else:
+        project = (project,)
+    for proj in project:
+        conf, pad, prog, pid, _ = _get_cherry_parms(proj)
+        local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
-def restart_cherry(project='rst2html'):
+def restart_cherry(project):
     "restart cherrypy site (arg:project)"
     stop_cherry(project)
     start_cherry(project)
 
-def stop_logviewer():
-    local("ps ux | awk '/ python viewlogs.py/ && !/awk/' > /tmp viewlogs.pid")
-    data = ''
-    with open('/tmp/viewlogs.pid') as _in:
-        data = _in.read()
-    if data:
-        pid = data.split()[1]
-        local('sudo kill {}'.format(pid))
-
-def start_logviewer():
-    with lcd('/home/albert/logviewer'):
-        local('python viewlogs.py')
-
-def restart_logviewer():
-    stop_logviewer(project)
-    start_logviewer(project)

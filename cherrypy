@@ -35,3 +35,15 @@ server {
 #         proxy_pass      http://127.0.0.1:9002;
 #         }
 #     }
+server {
+    server_name logviewer.lemoncurry.nl;
+    root /home/albert/logviewer;
+    error_log /var/log/nginx/logviewer.lemoncurry-error.log error;
+    access_log /var/log/nginx/logviewer.lemoncurry-access.log ;
+    location / {
+        #include fastcgi_params;
+        #fastcgi_pass  unix:/var/run/rst2html.sock;
+        # fastcgi_pass  127.0.0.1:9002;
+        proxy_pass      http://127.0.0.1:9002;
+        }
+    }
