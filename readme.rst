@@ -1,5 +1,5 @@
 Nginx-config
-------------
+============
 
 When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Apache for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - very satisfactory indeed.
 
@@ -56,3 +56,10 @@ Scripts:
 `start_logviewer.py`
 `start_rst2html.py`
     scripts imported by cherryd to start the application
+
+Requirements
+============
+
+- a Linux/Unix-based system
+- Nginx
+- Python
