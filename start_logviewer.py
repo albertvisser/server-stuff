@@ -2,15 +2,16 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-sys.stdout = sys.stderr
-
-os.chdir('/home/albert/logviewer')
-sys.path.insert(0, '/home/albert/logviewer')
-import cherrypy
-from viewlogs_cherry import Logviewer
-
+#sys.stdout = sys.stderr
 import cgitb
 cgitb.enable()
+import cherrypy
+
+ROOT = '/home/albert/logviewer'
+os.chdir(ROOT)
+sys.path.insert(0, ROOT)
+from viewlogs_cherry import Logviewer
+
 
 cherrypy.config.update({'environment': 'embedded'})
 
