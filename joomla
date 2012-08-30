@@ -103,12 +103,12 @@ server {
 #        }
 #    }
 server {
-    server_name joomtest.lemoncurry.nl;
+    server_name joomtest.pythoneer.nl;
         server_name_in_redirect off;
     root /home/albert/www/joomla/probeer;
     #script_alias /home/albert/www/cgi-bin/joomla/;
-    error_log /var/log/nginx/joomtest.lemoncurry-error.log error;
-    access_log /var/log/nginx/joomtest.lemoncurry-access.log ;
+    error_log /var/log/nginx/joomtest.pythoneer-error.log error;
+    access_log /var/log/nginx/joomtest.pythoneer-access.log ;
     index index.php index.html index.htm;
     # Support Clean (aka Search Engine Friendly) URLs
     location / {
