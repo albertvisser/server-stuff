@@ -56,6 +56,7 @@ ff02::2 ip6-allrouters
 127.0.0.1     preview.magiokis.nl
 127.0.0.1     local.magiokis.nl
 127.0.0.1     php.magiokis.nl
+127.0.0.1     cherrypy.magiokis.nl
 127.0.0.1     data.magiokis.nl
 127.0.0.1	    songs.magiokis.nl
 127.0.0.1	    denk.magiokis.nl

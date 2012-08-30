@@ -159,6 +159,12 @@ def _get_cherry_parms(project):
         prog = 'start_logviewer'
         pid = os.path.join(runpath, '{}.pid'.format(project))
         sock = os.path.join(runpath, '{}.sock'.format(project))
+    elif project == 'magiokis':
+        pad = '/home/albert/www/cherrypy/magiokis'
+        conf = os.path.join(pad, 'magiokis.conf')
+        prog = 'start_magiokis'
+        pid = os.path.join(runpath, '{}.pid'.format(project))
+        sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
 def stop_cherry(project):
@@ -169,7 +175,7 @@ def stop_cherry(project):
 
 def start_cherry(project=''):
     if not project:
-        project = ('rst2html', 'logviewer')
+        project = ('rst2html', 'logviewer', 'magiokis')
     else:
         project = (project,)
     for proj in project:

@@ -47,3 +47,15 @@ server {
         proxy_pass      http://127.0.0.1:9002;
         }
     }
+server {
+    server_name cherrypy.magiokis.nl;
+    root /home/albert/www/cherrypy/magiokis;
+    error_log /var/log/nginx/cherrypy.magiokis-error.log error;
+    access_log /var/log/nginx/cherrypy.magiokis-access.log ;
+    location / {
+        #include fastcgi_params;
+        #fastcgi_pass  unix:/var/run/rst2html.sock;
+        # fastcgi_pass  127.0.0.1:8081;
+        proxy_pass      http://127.0.0.1:8081;
+        }
+    }
