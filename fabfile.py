@@ -163,14 +163,14 @@ def _get_cherry_parms(project):
         pad = '/home/albert/www/cherrypy/magiokis'
         conf = os.path.join(pad, 'magiokis.conf')
         prog = 'start_magiokis'
-        pid = os.path.join(runpath, '{}.pid'.format(project))
+        pid = os.path.join(runpath, '{}c.pid'.format(project))
         sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
 def stop_cherry(project):
     pid = _get_cherry_parms(project)[3]
     if os.path.exists(pid):
-        local('sudo kill `cat {}`'.format(pid))
+        local('sudo kill -s SIGKILL `cat {}`'.format(pid))
         local('sudo rm -f {}'.format(pid))
 
 def start_cherry(project=''):
