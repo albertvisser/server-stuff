@@ -36,15 +36,13 @@ non-Nginx configs:
 
 `fcgiwrap.conf`
     config for a general FCGI wrapper
+`logviewer.conf`
 `rst2html.conf`
-    CherryPy configuration file
+    cherrypy server configuration parameters
 `hosts`
     my local DNS (all kinds of names, all mapped to the local machine)
 `rc.local`
     Not strictly a config but a standard Linux startup script, adapted to start my personal servers at bootup
-`logviewer.conf`
-`rst2html.conf`
-    cherrypy server configuration parameters
 
 Scripts:
 ........
@@ -55,7 +53,8 @@ Scripts:
     script containing the utility functions to manage the above, as in copy the files to the correct locations, (re)start the corresponding servers etc.
 `start_logviewer.py`
 `start_rst2html.py`
-    scripts imported by cherryd to start the application
+`start_magiokis.py`
+    scripts imported by cherryd to start specific applications
 
 Requirements
 ============
@@ -63,3 +62,11 @@ Requirements
 - a Linux/Unix-based system
 - Nginx
 - Python
+where applicable:
+- php
+- Django
+- CherryPy
+- Mercurial
+- Trac
+- Joomla
+- Drupal
