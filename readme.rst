@@ -36,8 +36,7 @@ non-Nginx configs:
 
 `fcgiwrap.conf`
     config for a general FCGI wrapper
-`logviewer.conf`
-`rst2html.conf`
+`logviewer.conf`, `rst2html.conf`
     cherrypy server configuration parameters
 `hosts`
     my local DNS (all kinds of names, all mapped to the local machine)
@@ -51,9 +50,7 @@ Scripts:
     a script I wrote to partly convert Apache config files to Nginx
 `fabfile.py`
     script containing the utility functions to manage the above, as in copy the files to the correct locations, (re)start the corresponding servers etc.
-`start_logviewer.py`
-`start_rst2html.py`
-`start_magiokis.py`
+`start_logviewer.py`, `start_rst2html.py`, `start_magiokis.py`
     scripts imported by cherryd to start specific applications
 
 Requirements
@@ -62,7 +59,9 @@ Requirements
 - a Linux/Unix-based system
 - Nginx
 - Python
+
 where applicable:
+
 - php
 - Django
 - CherryPy
