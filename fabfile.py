@@ -4,11 +4,11 @@ from fabric.api import local, sudo, lcd
 """collection of shortcut functions concerning deployment
 of my local ngnix stuff
 includes:
-- add/modify/remove configuration files
+- add/modify/remove configuration file(s)
 - start/stop/restart nginx server
 - start/stop/restart mercurial server (hgweb)
 - start/stop/restart trac server (tracd)
-- start/stop/restart django servers (manage.py runfcgi)
+- start/stop/restart django server(s) (manage.py runfcgi)
 - start/stop/restart cherrypy server(s) (cherryd)
 """
 
@@ -38,19 +38,20 @@ extconf = {
     'hosts': ('/etc', True, ''),
     }
 
-def addconf(name):
+def _addconf(name):
     "enable new configuration by creating symlink"
     oldname = os.path.join(AVAIL, name)
     newname = os.path.join(ENABL, name)
     ## os.symlink(oldname, newname)
     local('sudo ln -s {} {}'.format(oldname, newname))
 
-def addconfs(*names):
-    "addconf for multiple names provided as a comma separated string"
+def addconf(*names):
+    """enable Nginx configuration for one or more (file) names
+    provided as a comma separated string"""
     for conf in names:
-        addconf(conf.strip())
+        _addconf(conf.strip())
 
-def modconf(name):
+def _modconf(name):
     "copy configuration after editing"
     oldname = os.path.join(HERE, name)
     ## newname = os.path.join(AVAIL, name)
@@ -62,26 +63,28 @@ def modconf(name):
     else:
         local('sudo cp {} {}'.format(oldname, AVAIL))
 
-def modconfs(*names):
-    "modconf for multiple names provided as a comma separated string"
+def modconf(*names):
+    "deploy modifications for Nginx configuration file(s)"
     for conf in names:
-        modconf(conf.strip())
+        _modconf(conf.strip())
 
-def rmconf(name):
+def _rmconf(name):
     "disable configuration by removing symlink"
     newname = os.path.join(ENABL, name)
     ## os.remove(name)
     local(' sudo rm {}'.format(newname))
 
-def rmconfs(*names):
-    "rmconf for multiple names provided as a comma separated string"
+def rmconf(*names):
+    "disable Nginx configuration for one or more file names"
     for conf in names:
         rmconf(conf.strip())
 
 def stop_nginx():
+    "stop nginx"
     local('sudo /etc/init.d/nginx stop')
 
 def start_nginx():
+    "start nginx"
     local('sudo /etc/init.d/nginx start')
 
 def restart_nginx():
@@ -89,22 +92,26 @@ def restart_nginx():
     local('sudo killall -HUP nginx')
 
 def stop_hgweb():
+    "stop local Mercurial web server"
     local('sudo kill `cat {}`'.format(hgweb_pid))
 
 def start_hgweb():
+    "start local Mercurial web server using hgweb.fcgi"
     start = os.path.join(HGWEB, 'hgweb.fcgi')
     local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, hgweb_sock,
         hgweb_pid, 'www-data'))
 
 def restart_hgweb():
-    "restart hgweb after editing configuration or startup script"
+    "restart local Mercurial web server"
     stop_hgweb()
     start_hgweb()
 
 def stop_trac():
+    "stop local trac server"
     local('sudo kill `cat {}`'.format(trac_pid))
 
 def start_trac():
+    "start local trac server using tracd"
     start = os.path.join(TRAC, 'trac.fcgi')
     auth = '{},{},{}'.format(project,os.path.join(TRAC,'trac_users'),project)
     local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(
@@ -113,7 +120,7 @@ def start_trac():
         ## trac_pid, 'www-data'))
 
 def restart_trac():
-    "restart trac after editing configuration or startup script"
+    "restart local trac server"
     stop_trac()
     start_trac()
 
@@ -122,25 +129,32 @@ def _get_django_args(project):
         os.path.join(runpath, '{}.sock'.format(project)),
         django_project_path[project])
 
-def stop_django(project):
-    django_pid, _, _ = _get_django_args(project)
-    if os.path.exists(django_pid):
-        local('sudo kill `cat {}`'.format(django_pid))
-        local('sudo rm -f {}'.format(django_pid))
+def stop_django(*project):
+    "stop indicated Django server(s)"
+    def stop(project):
+        django_pid, _, _ = _get_django_args(project)
+        if os.path.exists(django_pid):
+            local('sudo kill `cat {}`'.format(django_pid))
+            local('sudo rm -f {}'.format(django_pid))
+    if not project:
+        project = django_project_path.keys()
+    for proj in project:
+        stop(proj)
 
 def start_django(*project):
-    def start(path, sock, pid):
+    "start indicated Django server(s) using manage.py over fastcgi"
+    def start(project):
+        pid, sock, path = _get_django_args(project)
         local('sudo python {}/manage.py runfcgi socket={} pidfile={}'.format(path,
             sock, pid))
         local('sudo chown www-data {}'.format(sock))
     if not project:
         project = django_project_path.keys()
     for proj in project:
-        pid, sock, path = _get_django_args(proj)
-        start(path, sock, pid)
+        start(proj)
 
 def restart_django(project):
-    "restart django site (arg:project)"
+    "restart django indicated server(s)"
     stop_django(project)
     start_django(project)
 
@@ -167,17 +181,20 @@ def _get_cherry_parms(project):
         sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
-def stop_cherry(project):
-    pid = _get_cherry_parms(project)[3]
-    if os.path.exists(pid):
-        local('sudo kill -s SIGKILL `cat {}`'.format(pid))
-        local('sudo rm -f {}'.format(pid))
-
-def start_cherry(project=''):
+def stop_cherry(*project):
+    "stop indicated cherrypy server(s)"
     if not project:
         project = ('rst2html', 'logviewer', 'magiokis')
-    else:
-        project = (project,)
+    for proj in project:
+        pid = _get_cherry_parms(proj)[3]
+        if os.path.exists(pid):
+            local('sudo kill -s SIGKILL `cat {}`'.format(pid))
+            local('sudo rm -f {}'.format(pid))
+
+def start_cherry(*project):
+    "start indicated cherrypy server(s) (through cherryd)"
+    if not project:
+        project = ('rst2html', 'logviewer', 'magiokis')
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
