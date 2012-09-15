@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+    DocumentRoot "/home/albert/www/testwsgi"
+    ServerName testwsgi.pythoneer.nl
+    ErrorLog logs/testwsgi-error.log
+    CustomLog logs/testwsgi-access.log common
+    <Directory "/home/albert/www/testwsgi">
+    Order allow,deny
+    Allow from all
+    </Directory>
+    WSGIScriptAlias /myapp /home/albert/www/wsgi-scripts/myapp.wsgi
+    <Directory "/home/albert/www/wsgi-scripts">
+    Order allow,deny
+    Allow from all
+    </Directory>
+</VirtualHost>

@@ -1,0 +1,78 @@
+<VirtualHost *:80>
+    ServerName local.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/www.magiokis-error.log
+    CustomLog /var/log/apache2/www.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName php.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis_php"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/php.magiokis-error.log
+    CustomLog /var/log/apache2/php.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName songs.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis/songs"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/songs.magiokis-error.log
+    CustomLog /var/log/apache2/songs.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName denk.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis/denk"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/denk.magiokis-error.log
+    CustomLog /var/log/apache2/denk.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName dicht.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis/dicht"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/dicht.magiokis-error.log
+    CustomLog /var/log/apache2/dicht.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName vertel.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis/vertel"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/vertel.magiokis-error.log
+    CustomLog /var/log/apache2/vertel.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName data.magiokis.nl
+    DocumentRoot "/home/albert/magiokis/data"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis/"
+    ErrorLog /var/log/apache2/data.magiokis-error.log
+    CustomLog /var/log/apache2/data.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName preview.magiokis.nl
+    DocumentRoot "/home/albert/www/magiokis_vv"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/magiokis-vv/"
+    ErrorLog /var/log/apache2/preview.magiokis-error.log
+    CustomLog /var/log/apache2/preview.magiokis-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName django.magiokis.nl
+	<Directory /home/albert/www/django/magiokis>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+    ErrorLog /var/log/apache2/django.magiokis-error.log
+    CustomLog /var/log/apache2/django.magiokis-access.log common
+#    <LocationMatch "^/favicon.ico">
+#    SetHandler default
+#    </LocationMatch>
+#    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/django/magiokis/wsgi_handler.py
+</VirtualHost>

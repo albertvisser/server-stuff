@@ -15,6 +15,8 @@ includes:
 HERE = os.path.dirname(__file__)
 AVAIL = '/etc/nginx/sites-available'
 ENABL = '/etc/nginx/sites-enabled'
+A_AVAIL = '/etc/apache2/sites-available'
+A_ENABL = '/etc/apache2/sites-enabled'
 runpath = '/var/run'
 HGWEB = '/home/albert/www/hgweb'
 hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
@@ -77,7 +79,7 @@ def _rmconf(name):
 def rmconf(*names):
     "disable Nginx configuration for one or more file names"
     for conf in names:
-        rmconf(conf.strip())
+        _rmconf(conf.strip())
 
 def stop_nginx():
     "stop nginx"
@@ -215,3 +217,31 @@ def stop_plone():
 def restart_plone():
     stop_plone()
     start_plone()
+
+def stop_apache():
+    "stop apache"
+    local('sudo /etc/init.d/apache stop')
+
+def start_apache():
+    "start apache"
+    local('sudo /etc/init.d/apache start')
+
+def restart_apache():
+    "restart apache"
+    local('sudo /etc/init.d/apache restart')
+
+def addconf_apache(*names):
+    for conf in names:
+        oldname = os.path.join(A_AVAIL, conf)
+        newname = os.path.join(A_ENABL, conf)
+        local('sudo ln -s {} {}'.format(oldname, newname))
+
+def modconf_apache(*names):
+    for conf in names:
+        oldname = os.path.join(HERE, 'apache2', name)
+        local('sudo cp {} {}'.format(oldname, A_AVAIL))
+
+def rmconf_apache(*names):
+    for conf in names:
+        newname = os.path.join(A_ENABL, name)
+        local(' sudo rm {}'.format(newname))

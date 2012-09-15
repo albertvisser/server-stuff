@@ -1,0 +1,151 @@
+<VirtualHost *:80>
+    ServerName www.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/pythoneer/"
+    ErrorLog /var/log/apache2/www.pythoneer-error.log
+    CustomLog /var/log/apache2/www.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName adr.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer/adressen"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/adressen/"
+    ErrorLog /var/log/apache2/adr.pythoneer-error.log
+    CustomLog /var/log/apache2/adr.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName films.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer/films"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/films/"
+    ErrorLog /var/log/apache2/films.pythoneer-error.log
+    CustomLog /var/log/apache2/films.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName muziek.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer/muziek"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/muziek/"
+    ErrorLog /var/log/apache2/muziek.pythoneer-error.log
+    CustomLog /var/log/apache2/muziek.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName school.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer/school"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/school/"
+    ErrorLog /var/log/apache2/school.pythoneer-error.log
+    CustomLog /var/log/apache2/school.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName doctool.pythoneer.nl
+    DocumentRoot "/home/albert/www/pythoneer/doctool"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/doctool/"
+    ErrorLog /var/log/apache2/doctool.pythoneer-error.log
+    CustomLog /var/log/apache2/doctool.pythoneer-access.log common
+</VirtualHost>
+## <VirtualHost *:80>
+    ## DocumentRoot "/home/albert/www/deparadox"
+    ## ServerName deparadox.pythoneer.nl
+    ## ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox/"
+    ## ErrorLog /var/log/apache2/paradox-error.log
+    ## CustomLog /var/log/apache2/paradox-access.log common
+## </VirtualHost>
+<VirtualHost *:80>
+    ServerName joomtest.pythoneer.nl
+    DocumentRoot "/home/albert/www/joomla/probeer"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/joomla/"
+    ErrorLog /var/log/apache2/joomtest.pythoneer-error.log
+    CustomLog /var/log/apache2/joomtest.pythoneer-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName django.pythoneer.nl
+	<Directory /home/albert/www/django/pythoneer>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+    ErrorLog /var/log/apache2/django.pythoneer-error.log
+    CustomLog /var/log/apache2/django.pythoneer-access.log common
+#    <LocationMatch "^/favicon.ico">
+#    SetHandler default
+#    </LocationMatch>
+#    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/django/pythoneer/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName actiereg.pythoneer.nl
+#    DocumentRoot "/home/albert/www/django"
+    ErrorLog /var/log/apache2/actiereg.pythoneer-error.log
+    CustomLog /var/log/apache2/actiereg.pythoneer-access.log common
+    <LocationMatch "^/favicon.ico">
+    SetHandler default
+    </LocationMatch>
+    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/actiereg/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName myprojects.pythoneer.nl
+#    DocumentRoot "/home/albert/www/django"
+    ErrorLog /var/log/apache2/myprojects.pythoneer-error.log
+    CustomLog /var/log/apache2/myprojects.pythoneer-access.log common
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <LocationMatch "^/favicon.ico">
+    SetHandler default
+    </LocationMatch>
+    alias /favicon.ico /home/albert/www/images/work.ico
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/doctool/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName rst2html.pythoneer.nl
+#    DocumentRoot "/home/albert/www/rst2html"
+    ErrorLog /var/log/apache2/rst2html.pythoneer-error.log
+    CustomLog /var/log/apache2/rst2html.pythoneer-access.log common
+    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName hg.pythoneer.nl
+    DocumentRoot "/home/albert/hg_repos"
+    ErrorLog /var/log/apache2/hg.pythoneer-error.log
+    CustomLog /var/log/apache2/hg.pythoneer-access.log common
+    WSGIScriptAliasMatch ^(.*)$ /home/albert/www/hgweb/hgwebdir.wsgi$1
+#    RewriteEngine on
+#    RewriteRule (.*) /home/albert/www/hgweb/hgwebdir.cgi/$1
+#    WSGIScriptAlias / /home/albert/www/hgweb/hgwebdir.cgi
+    <Directory "/home/albert/www/hgweb/">
+    Order allow,deny
+    Allow from all
+    </Directory>
+    <Directory /home/albert/hg_repos>
+        Options FollowSymlinks
+        DirectoryIndex index.html
+
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    <Directory /home/albert/www/hgweb>
+        Options ExecCGI FollowSymlinks
+
+        AddHandler wsgi-script .wsgi
+
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+</VirtualHost>

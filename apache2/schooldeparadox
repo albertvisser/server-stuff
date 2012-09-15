@@ -1,0 +1,7 @@
+<VirtualHost *:80>
+    ServerName local.schooldeparadox.nl
+    DocumentRoot "/home/albert/www/schooldeparadox"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox"
+    ErrorLog /var/log/apache2/local.paradox-error.log
+    CustomLog /var/log/apache2/local.paradox-access.log common
+</VirtualHost>

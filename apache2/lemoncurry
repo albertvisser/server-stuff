@@ -1,0 +1,183 @@
+<VirtualHost *:80>
+	ServerAdmin webmaster@localhost
+
+	DocumentRoot /var/www
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /var/www/>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+	<Directory "/usr/lib/cgi-bin">
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+	</Directory>
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+    WSGIScriptAlias /viewlogs /home/albert/logviewer/wsgi_handler.py
+
+</VirtualHost>
+
+
+<VirtualHost *:80>
+    ServerName doctool.lemoncurry.nl
+    DocumentRoot "/home/albert/www/pythoneer/doctool"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/doctool/"
+    ErrorLog /var/log/apache2/doctool.lemoncurry-error.log
+    CustomLog /var/log/apache2/doctool.lemoncurry-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName joomtest.lemoncurry.nl
+    DocumentRoot "/home/albert/www/joomla/probeer"
+    ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/joomla/"
+    ErrorLog /var/log/apache2/joomtest.lemoncurry-error.log
+    CustomLog /var/log/apache2/joomtest.lemoncurry-access.log common
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName pythoneer.lemoncurry.nl
+	<Directory /home/albert/www/django/pythoneer>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+    ErrorLog /var/log/apache2/pythoneer.lemoncurry-error.log
+    CustomLog /var/log/apache2/pythoneer.lemoncurry-access.log common
+#    <LocationMatch "^/favicon.ico">
+#    SetHandler default
+#    </LocationMatch>
+#    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/django/pythoneer/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName magiokis.lemoncurry.nl
+	<Directory /home/albert/www/django/magiokis>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+    ErrorLog /var/log/apache2/magiokis.lemoncurry-error.log
+    CustomLog /var/log/apache2/magiokis.lemoncurry-access.log common
+#    <LocationMatch "^/favicon.ico">
+#    SetHandler default
+#    </LocationMatch>
+#    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/django/magiokis/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName actiereg.lemoncurry.nl
+#    DocumentRoot "/home/albert/www/django"
+	<Directory /home/albert/www/doctool>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Order allow,deny
+		allow from all
+	</Directory>
+    ErrorLog /var/log/apache2/actiereg.lemoncurry-error.log
+    CustomLog /var/log/apache2/actiereg.lemoncurry-access.log common
+    <LocationMatch "^/favicon.ico">
+    SetHandler default
+    </LocationMatch>
+    alias /favicon.ico /home/albert/www/images/wiu.ico
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/actiereg/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName myprojects.lemoncurry.nl
+#    DocumentRoot "/home/albert/www/django"
+    ErrorLog /var/log/apache2/myprojects.lemoncurry-error.log
+    CustomLog /var/log/apache2/myprojects.lemoncurry-access.log common
+    Alias /media "/usr/share/pyshared/django/contrib/admin/media"
+#    Alias /admin_media /usr/lib/python2.6/site-packages/django/contrib/admin/media
+    <LocationMatch "^/favicon.ico">
+    SetHandler default
+    </LocationMatch>
+    alias /favicon.ico /home/albert/www/images/work.ico
+    <Location /admin_media>
+      Order allow,deny
+      Allow from all
+    </Location>
+    WSGIScriptAlias / /home/albert/www/doctool/wsgi_handler.py
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName rst2html.lemoncurry.nl
+#    DocumentRoot "/home/albert/www/pythoneer/rst2html"
+    ErrorLog /var/log/apache2/rst2html.lemoncurry-error.log
+    CustomLog /var/log/apache2/rst2html.lemoncurry-access.log common
+    WSGIScriptAlias / /home/albert/www/rst2html/wsgi_handler.py
+</VirtualHost>
+<VirtualHost *:80>
+    ServerName hg.lemoncurry.nl
+    DocumentRoot "/home/albert/hg_repos"
+    ErrorLog /var/log/apache2/hg.lemoncurry-error.log
+    CustomLog /var/log/apache2/hg.lemoncurry-access.log common
+    WSGIScriptAliasMatch ^(.*)$ /home/albert/www/hgweb/hgwebdir.wsgi$1
+#    RewriteEngine on
+#    RewriteRule (.*) /home/albert/www/hgweb/hgwebdir.cgi/$1
+#    WSGIScriptAlias / /home/albert/www/hgweb/hgwebdir.cgi
+    <Directory "/home/albert/www/hgweb/">
+    Order allow,deny
+    Allow from all
+    </Directory>
+    <Directory /home/albert/hg_repos>
+        Options FollowSymlinks
+        DirectoryIndex index.html
+
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    <Directory /home/albert/www/hgweb>
+        Options ExecCGI FollowSymlinks
+
+        AddHandler wsgi-script .wsgi
+
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+</VirtualHost>

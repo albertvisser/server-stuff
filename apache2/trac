@@ -1,0 +1,84 @@
+<Directory /home/albert/trac/multitrac/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<Directory /home/albert/trac/apropos/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<Directory /home/albert/trac/afrift/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<Directory /home/albert/trac/ashe/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<Directory /home/albert/trac/axe/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<VirtualHost *:80>
+    ServerName trac2.lemoncurry.nl
+    DocumentRoot "/home/albert/trac/htdocs"
+    ErrorLog /var/log/apache2/trac2.lemoncurry-error.log
+    CustomLog /var/log/apache2/trac2.lemoncurry-access.log common
+    WSGIScriptAlias /ashe /home/albert/trac/ashe/apache2/trac.wsgi
+    <Location '/ashe'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/trac/ashe/apache2/htpasswd
+        Require valid-user
+    </Location>
+    WSGIScriptAlias /axe /home/albert/trac/axe/apache2/trac.wsgi
+    <Location '/axe'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/trac/axe/apache2/htpasswd
+        Require valid-user
+    </Location>
+    WSGIScriptAlias /afrift /home/albert/trac/afrift/apache2/trac.wsgi
+    <Location '/afrift'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/trac/afrift/apache2/htpasswd
+        Require valid-user
+    </Location>
+    WSGIScriptAlias /apropos /home/albert/trac/apropos/apache2/trac.wsgi
+    <Location '/apropos'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/trac/apropos/apache2/htpasswd
+        Require valid-user
+    </Location>
+    WSGIScriptAlias /multitrac /home/albert/trac/multitrac/apache2/trac.wsgi
+    <Location '/multitrac'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/trac/multitrac/apache2/htpasswd
+        Require valid-user
+    </Location>
+</VirtualHost>
+
+<Directory /home/albert/lemontrac/apache2>
+    WSGIApplicationGroup %{GLOBAL}
+    Order deny,allow
+    Allow from all
+</Directory>
+<VirtualHost *:80>
+    ServerName trac.lemoncurry.nl
+    ErrorLog /var/log/apache2/trac.lemoncurry-error.log
+    CustomLog /var/log/apache2/trac.lemoncurry-access.log common
+    WSGIScriptAlias /lemontrac /home/albert/lemontrac/apache2/lemontrac.wsgi
+    <Location '/lemontrac'>
+        AuthType Basic
+        AuthName "Trac"
+        AuthUserFile /home/albert/lemontrac/apache2/htpasswd
+        Require valid-user
+    </Location>
+</VirtualHost>
