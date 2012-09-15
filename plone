@@ -1,34 +1,50 @@
-# This defines in which IP and port Plone is running.
-# The default is 127.0.0.1:8080
-upstream plone {
-    server 127.0.0.1:8090;
-}
-
-## Redirect all www-less traffic to www.site.com domain
-## (you could also do the opposite www -> non-www domain)
-#server {
-#    listen 80;
-#    server_name lemonplone.com;
-#    rewrite ^/(.*) http://www.lemonplone.com/$1 permanent;
-#}
+#--- doesn't seem to work
+# # This defines in which IP and port Plone is running.
+# # The default is 127.0.0.1:8080
+# upstream plone {
+#     server 127.0.0.1:8090;
+# }
 #
-#server {
-#    listen 80;
-#    server_name www.lemonplone.com;
-#    rewrite ^/(.*) http://www.lemoncurry.nl/$1 permanent;
-#}
+#--- don't want this
+# ## Redirect all www-less traffic to www.site.com domain
+# ## (you could also do the opposite www -> non-www domain)
+# #server {
+# #    listen 80;
+# #    server_name lemonplone.com;
+# #    rewrite ^/(.*) http://www.lemonplone.com/$1 permanent;
+# #}
+# #
+# #server {
+# #    listen 80;
+# #    server_name www.lemonplone.com;
+# #    rewrite ^/(.*) http://www.lemoncurry.nl/$1 permanent;
+# #}
+#
+#--- doesn't seem to work
+# server {
+#
+#     listen 80;
+#     server_name plone.lemoncurry.nl;
+#     access_log /var/log/nginx/plone-lemoncurry.access.log;
+#     error_log /var/log/nginx/plone-lemoncurry.error.log;
+#
+#     # Note that domain name spelling in VirtualHostBase URL matters
+#     # -> this is what Plone sees as the "real" HTTP request URL.
+#     # "Plone" in the URL is your site id (case sensitive)
+#     location / {
+#           proxy_pass http://plone/VirtualHostBase/http/plone.lemoncurry.nl:80/LemonPlone/VirtualHostRoot/;
+#     }
+# }
 
 server {
-
-    listen 80;
     server_name plone.lemoncurry.nl;
-    access_log /var/log/nginx/plone-lemoncurry.access.log;
-    error_log /var/log/nginx/plone-lemoncurry.error.log;
+    # root /home/albert/lemontrac;
+    error_log /var/log/nginx/plone.lemoncurry-error.log warn;
+    access_log /var/log/nginx/plone.lemoncurry-access.log ;
 
-    # Note that domain name spelling in VirtualHostBase URL matters
-    # -> this is what Plone sees as the "real" HTTP request URL.
-    # "Plone" in the URL is your site id (case sensitive)
     location / {
-          proxy_pass http://plone/VirtualHostBase/http/plone.lemoncurry.nl:80/LemonPlone/VirtualHostRoot/;
-    }
+        proxy_pass      http://127.0.0.1:8090;
+        # proxy_redirect on;
+        # proxy_set_header Host $host;
+        }
 }
