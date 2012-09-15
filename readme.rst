@@ -28,11 +28,14 @@ Files:
     configuration for local sites driven by Drupal
 `joomla`
     configuration for local Joomla sites
+`plone`
+    configuration for local Plone instance
 `others`
     currently empty
 
 non-Nginx configs:
 ..................
+configs that are not in user-editable directories (e.g. /etc) or only here
 
 `fcgiwrap.conf`
     config for a general FCGI wrapper
@@ -43,13 +46,22 @@ non-Nginx configs:
 `rc.local`
     Not strictly a config but a standard Linux startup script, adapted to start my personal servers at bootup
 
+Apache configs:
+...............
+Some of the few things I salvaged from my old installation.
+Roughly the same ones as I use for Nginx, collected in a subdirectory called `apache2`
+and managable through routines in the fabfile.
+
 Scripts:
 ........
 
 `apache2nginx.py`
     a script I wrote to partly convert Apache config files to Nginx
 `fabfile.py`
-    script containing the utility functions to manage the above, as in copy the files to the correct locations, (re)start the corresponding servers etc.
+    script containing the utility functions to manage the above, as in
+    copy the files to the correct locations,
+    (re)start the corresponding servers
+    etc.
 `start_logviewer.py`, `start_rst2html.py`, `start_magiokis.py`
     scripts imported by cherryd to start specific applications
 
@@ -57,7 +69,7 @@ Requirements
 ============
 
 - a Linux/Unix-based system
-- Nginx
+- Nginx (or Apache for the Apache stuff)
 - Python
 
 where applicable:
@@ -69,3 +81,4 @@ where applicable:
 - Trac
 - Joomla
 - Drupal
+- Plone
