@@ -204,3 +204,14 @@ def restart_cherry(project):
     stop_cherry(project)
     start_cherry(project)
 
+def start_plone():
+    with lcd('/home/albert/Plone/zinstance'):
+        local('bin/plonectl start')
+
+def stop_plone():
+    with lcd('/home/albert/Plone/zinstance'):
+        local('bin/plonectl stop')
+
+def restart_plone():
+    stop_plone()
+    start_plone()
