@@ -16,5 +16,6 @@ fab start_hgweb
 fab start_trac
 fab start_cherry
 fab start_django
+fab start_plone
 
 exit 0
