@@ -38,6 +38,8 @@ extconf = {
     'rst2html': ('/home/albert/rst2html-web', False, '.conf'),
     'rc.local': ('/etc', True, ''),
     'hosts': ('/etc', True, ''),
+    'apache2': ('/etc/apache2', True, '.conf'),
+    'ports': ('/etc/apache2', True, '.conf'),
     }
 
 def _addconf(name):
@@ -228,15 +230,15 @@ def buildout_plone():
 
 def stop_apache():
     "stop apache"
-    local('sudo /etc/init.d/apache stop')
+    local('sudo /etc/init.d/apache2 stop')
 
 def start_apache():
     "start apache"
-    local('sudo /etc/init.d/apache start')
+    local('sudo /etc/init.d/apache2 start')
 
 def restart_apache():
     "restart apache"
-    local('sudo /etc/init.d/apache restart')
+    local('sudo /etc/init.d/apache2 restart')
 
 def addconf_apache(*names):
     for conf in names:
@@ -246,7 +248,7 @@ def addconf_apache(*names):
 
 def modconf_apache(*names):
     for conf in names:
-        oldname = os.path.join(HERE, 'apache2', name)
+        oldname = os.path.join(HERE, 'apache', conf)
         local('sudo cp {} {}'.format(oldname, A_AVAIL))
 
 def rmconf_apache(*names):
