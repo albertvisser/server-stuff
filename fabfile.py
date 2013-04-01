@@ -35,6 +35,8 @@ django_project_path = {
     }
 extconf = {
     'fcgiwrap': ('/etc/nginx', True, '.conf'),
+    'nginx': ('/etc/nginx', True, '.conf'),
+    'php-fcgi': ('/etc/init.d', True, ''),
     'rst2html': ('/home/albert/rst2html-web', False, '.conf'),
     'rc.local': ('/etc', True, ''),
     'hosts': ('/etc', True, ''),
@@ -94,6 +96,18 @@ def start_nginx():
 def restart_nginx():
     "restart nginx"
     local('sudo killall -HUP nginx')
+
+def stop_php():
+    "stop php"
+    local('sudo /etc/init.d/php-fcgi stop')
+
+def start_php():
+    "start php"
+    local('sudo /etc/init.d/php-fcgi start')
+
+def restart_php():
+    "restart php"
+    local('sudo /etc/init.d/php-fcgi restart')
 
 def stop_hgweb():
     "stop local Mercurial web server"
@@ -157,10 +171,13 @@ def start_django(*project):
     for proj in project:
         start(proj)
 
-def restart_django(project):
+def restart_django(*project):
     "restart django indicated server(s)"
-    stop_django(project)
-    start_django(project)
+    if not project:
+        project = django_project_path.keys()
+    for proj in project:
+        stop_django(proj)
+        start_django(proj)
 
 def _get_cherry_parms(project):
     if project == 'rst2html':
@@ -241,17 +258,25 @@ def restart_apache():
     local('sudo /etc/init.d/apache2 restart')
 
 def addconf_apache(*names):
+    """enable Apache configuration for one or more (file) names
+    provided as a comma separated string"""
     for conf in names:
         oldname = os.path.join(A_AVAIL, conf)
         newname = os.path.join(A_ENABL, conf)
         local('sudo ln -s {} {}'.format(oldname, newname))
 
 def modconf_apache(*names):
+    "deploy modifications for Apache configuration file(s)"
     for conf in names:
         oldname = os.path.join(HERE, 'apache', conf)
         local('sudo cp {} {}'.format(oldname, A_AVAIL))
 
 def rmconf_apache(*names):
+    "disable Apache configuration for one or more file names"
     for conf in names:
         newname = os.path.join(A_ENABL, name)
         local(' sudo rm {}'.format(newname))
+
+def edit(name):
+    "edit a file related to the server configuration"
+    local("SciTE {} &".format(os.path.join(HERE, name)))
