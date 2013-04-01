@@ -31,11 +31,11 @@ Files:
 `plone`
     configuration for local Plone instance
 `others`
-    currently empty
+    currently containing a copy of the previous version of a site I maintain
 
 non-Nginx configs:
 ..................
-configs that are not in user-editable directories (e.g. /etc) or only here
+configs that are not in user-editable directories (e.g. in /etc) or only here
 
 `fcgiwrap.conf`
     config for a general FCGI wrapper
@@ -45,6 +45,14 @@ configs that are not in user-editable directories (e.g. /etc) or only here
     my local DNS (all kinds of names, all mapped to the local machine)
 `rc.local`
     Not strictly a config but a standard Linux startup script, adapted to start my personal servers at bootup
+`nginx.conf`
+    base configuration for nginx
+`apache2.conf`
+    base configuration for Apache
+`php-fcgi`
+    startup script for PHP
+`ports.conf`
+    port configuration for Apache serving on port 81
 
 Apache configs:
 ...............
