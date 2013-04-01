@@ -71,6 +71,10 @@ def _modconf(name):
 
 def modconf(*names):
     "deploy modifications for Nginx configuration file(s)"
+    if names[0] == "?":
+        text = "Available non-Nginx confs: " + ", ".join(extconf.keys())
+        print(text)
+        return
     for conf in names:
         _modconf(conf.strip())
 
@@ -175,37 +179,35 @@ def restart_django(*project):
     "restart django indicated server(s)"
     if not project:
         project = django_project_path.keys()
+    elif project[0] == "?":
+        text = "Available Django projects: " + ", ".join(django_project_path.keys())
+        print(text)
+        return
     for proj in project:
         stop_django(proj)
         start_django(proj)
 
-def _get_cherry_parms(project):
-    if project == 'rst2html':
-        pad = '/home/albert/rst2html-web'
-        ## conf = os.path.join(pad, 'rst2html.conf')
-        conf = os.path.join(HERE, 'rst2html.conf')
-        ## prog = 'rst2html'
-        prog = 'start_rst2html'
-        pid = os.path.join(runpath, '{}.pid'.format(project))
-        sock = os.path.join(runpath, '{}.sock'.format(project))
-    elif project == 'logviewer':
-        pad = '/home/albert/logviewer'
-        conf = os.path.join(HERE, 'logviewer.conf')
-        prog = 'start_logviewer'
-        pid = os.path.join(runpath, '{}.pid'.format(project))
-        sock = os.path.join(runpath, '{}.sock'.format(project))
-    elif project == 'magiokis':
+def _get_cherry_parms(project=None):
+    allproj = ('rst2html', 'logviewer', 'magiokis')
+    if not project:
+        return allproj
+    pad = '/home/albert/{}'.format(project)
+    conf = os.path.join(HERE, '{}.conf'.format(project))
+    prog = 'start_{}'.format(project)
+    pid = os.path.join(runpath, '{}.pid'.format(project))
+    sock = os.path.join(runpath, '{}.sock'.format(project))
+    if project == allproj[0]:
+        pad += '-web'
+    elif project == allproj[2]:
         pad = '/home/albert/www/cherrypy/magiokis'
-        conf = os.path.join(pad, 'magiokis.conf')
-        prog = 'start_magiokis'
+        conf = os.path.join(pad, '{}.conf'.format(project))
         pid = os.path.join(runpath, '{}c.pid'.format(project))
-        sock = os.path.join(runpath, '{}.sock'.format(project))
     return conf, pad, prog, pid, sock
 
 def stop_cherry(*project):
     "stop indicated cherrypy server(s)"
     if not project:
-        project = ('rst2html', 'logviewer', 'magiokis')
+        project = _get_cherry_parms()
     for proj in project:
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
@@ -215,13 +217,17 @@ def stop_cherry(*project):
 def start_cherry(*project):
     "start indicated cherrypy server(s) (through cherryd)"
     if not project:
-        project = ('rst2html', 'logviewer', 'magiokis')
+        project = _get_cherry_parms()
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 def restart_cherry(project):
     "restart cherrypy site (arg:project)"
+    if project == '?':
+        text = "Available CherryPy projects: " + ", ".join(_get_cherry_parms())
+        print(text)
+        return
     stop_cherry(project)
     start_cherry(project)
 
