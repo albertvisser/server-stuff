@@ -13,20 +13,16 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 
 192.168.2.1     router
-192.168.1.1     huis
+192.168.17.1     huis
 
 127.0.0.1     lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
-127.0.0.1     pythoneer.lemoncurry.nl
-127.0.0.1     magiokis.lemoncurry.nl
-127.0.0.1     doctool.lemoncurry.nl
-127.0.0.1     joomtest.lemoncurry.nl
 127.0.0.1     actiereg.lemoncurry.nl
 127.0.0.1     myprojects.lemoncurry.nl
+127.0.0.1     joomtest.lemoncurry.nl
 127.0.0.1     hg.lemoncurry.nl
 127.0.0.1     trac.lemoncurry.nl
 127.0.0.1     rst2html.lemoncurry.nl
-127.0.0.1     phpmyadmin.lemoncurry.nl
 127.0.0.1     droopy.lemoncurry.nl
 127.0.0.1     mydomains.lemoncurry.nl
 127.0.0.1     myapps.lemoncurry.nl
@@ -35,6 +31,8 @@ ff02::2 ip6-allrouters
 127.0.0.1     rstblog.lemoncurry.nl
 127.0.0.1     bitbucket.lemoncurry.nl
 127.0.0.1     plone.lemoncurry.nl
+127.0.0.1     gunny.lemoncurry.nl
+127.0.0.1     ragingdragon.lemoncurry.nl
 
 127.0.0.1     www.pythoneer.nl
 127.0.0.1     adr.pythoneer.nl
@@ -42,20 +40,11 @@ ff02::2 ip6-allrouters
 127.0.0.1     muziek.pythoneer.nl
 127.0.0.1     absentie.pythoneer.nl
 127.0.0.1     doctool.pythoneer.nl
-127.0.0.1     woefdram.pythoneer.nl
-127.0.0.1     deparadox.pythoneer.nl
-127.0.0.1     joomtest.pythoneer.nl
 127.0.0.1     django.pythoneer.nl
-127.0.0.1     actiereg.pythoneer.nl
-127.0.0.1     mysite.pythoneer.nl
-127.0.0.1     myprojects.pythoneer.nl
-127.0.0.1     testwsgi.pythoneer.nl
-127.0.0.1     hg.pythoneer.nl
-127.0.0.1     rst2html.pythoneer.nl
-127.0.0.1     phpmyadmin.pythoneer.nl
 
 127.0.0.1     preview.magiokis.nl
 127.0.0.1     local.magiokis.nl
+127.0.0.1     wwwblog.magiokis.nl
 127.0.0.1     php.magiokis.nl
 127.0.0.1     cherrypy.magiokis.nl
 127.0.0.1     data.magiokis.nl
@@ -66,6 +55,7 @@ ff02::2 ip6-allrouters
 127.0.0.1	    django.magiokis.nl
 
 127.0.0.1     local.schooldeparadox.nl
+127.0.0.1     flatpages.schooldeparadox.nl
 
 # KaZaA related:
 
