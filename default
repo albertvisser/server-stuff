@@ -19,7 +19,7 @@
 
 server {
 	#listen   80; ## listen for ipv4; this line is default and implied
-	#listen   [::]:80 default ipv6only=on; ## listen for ipv6
+	#listen   [::]:80 default_server ipv6only=on; ## listen for ipv6
 
 	root /usr/share/nginx/www;
 	index index.html index.htm;
@@ -29,21 +29,24 @@ server {
 
 	location / {
 		# First attempt to serve request as file, then
-		# as directory, then fall back to index.html
+		# as directory, then fall back to displaying a 404.
 		try_files $uri $uri/ /index.html;
+		# Uncomment to enable naxsi on this location
+		# include /etc/nginx/naxsi.rules
 	}
 
-	location /doc {
-		root /usr/share;
+	location /doc/ {
+		alias /usr/share/doc/;
 		autoindex on;
 		allow 127.0.0.1;
+		allow ::1;
 		deny all;
 	}
 
-	location /images {
-		root /usr/share;
-		autoindex off;
-	}
+	# Only for nginx-naxsi used with nginx-naxsi-ui : process denied requests
+	#location /RequestDenied {
+	#	proxy_pass http://127.0.0.1:8080;
+	#}
 
 	#error_page 404 /404.html;
 
@@ -54,19 +57,20 @@ server {
 	#	root /usr/share/nginx/www;
 	#}
 
-	# proxy the PHP scripts to Apache listening on 127.0.0.1:80
-	#
-	#location ~ \.php$ {
-	#	proxy_pass http://127.0.0.1;
-	#}
-
 	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
 	#
 	#location ~ \.php$ {
+	#	fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	#	# NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+	#
+	#	# With php5-cgi alone:
 	#	fastcgi_pass 127.0.0.1:9000;
+	#	# With php5-fpm:
+	#	fastcgi_pass unix:/var/run/php5-fpm.sock;
 	#	fastcgi_index index.php;
 	#	include fastcgi_params;
 	#}
+
     location /phpmyadmin {
         root /usr/share/;
         index index.php index.html index.htm;
@@ -85,8 +89,6 @@ server {
    location /phpMyAdmin {
           rewrite ^/* /phpmyadmin last;
    }
-
-
 
     location ~ \.php$ {
         # Filter out arbitrary code execution
@@ -115,7 +117,7 @@ server {
 #	index index.html index.htm;
 #
 #	location / {
-#		try_files $uri $uri/ /index.html;
+#		try_files $uri $uri/ =404;
 #	}
 #}
 
@@ -140,6 +142,6 @@ server {
 #	ssl_prefer_server_ciphers on;
 #
 #	location / {
-#		try_files $uri $uri/ /index.html;
+#		try_files $uri $uri/ =404;
 #	}
 #}

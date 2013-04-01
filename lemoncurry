@@ -17,20 +17,6 @@ server {
         }
     }
 server {
-    server_name doctool.lemoncurry.nl;
-    root /home/albert/www/pythoneer/doctool;
-    #script_alias /home/albert/www/cgi-bin/doctool/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/doctool/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/doctool$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/doctool.lemoncurry-error.log error;
-    access_log /var/log/nginx/doctool.lemoncurry-access.log ;
-    }
-server {
     server_name rstblog.lemoncurry.nl;
     root /home/albert/rstblog/venv/avisser.bitbucket.org/_build;
     error_log /var/log/nginx/rstblog.lemoncurry-error.log error;
@@ -42,3 +28,17 @@ server {
     error_log /var/log/nginx/bitbucket.lemoncurry-error.log error;
     access_log /var/log/nginx/bitbucket.lemoncurry-access.log ;
     }
+server {
+    listen 80;
+    server_name gunny.lemoncurry.nl;
+    #root /home/albert/www/gunicorn;
+    error_log  /var/log/nginx/gunicorn.lemoncurry-error.log;
+    access_log  /var/log/nginx/gunicorn.lemoncurry-access.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

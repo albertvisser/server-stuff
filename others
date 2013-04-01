@@ -1,1 +1,15 @@
+server {
+    server_name flatpages.schooldeparadox.nl;
+    root /home/albert/www/deparadox;
+    ## ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox/"
+    error_log /var/log/nginx/flatpages.paradox-error.log;
+    access_log /var/log/nginx/flatpages-paradox-access.log;
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
 
+      include fastcgi_params;
+      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_index index.php;
+        }
+    }

@@ -1,36 +1,4 @@
 server {
-    server_name pythoneer.lemoncurry.nl;
-    error_log /var/log/nginx/pythoneer.lemoncurry-error.log error;
-    access_log /var/log/nginx/pythoneer.lemoncurry-access.log ;
-    location /media {
-        root   /home/albert/www/django/pythoneer;
-        }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
-        {
-        root /home/albert/www/django/pythoneer;
-        expires 30d;
-        break;
-        }
-    location / {
-        fastcgi_pass unix:/var/run/pythoneer.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
-        fastcgi_pass_header Authorization;
-        fastcgi_intercept_errors off;
-        fastcgi_param REMOTE_USER       $remote_user;
-        fastcgi_param UID_SET           $uid_set;
-        fastcgi_param UID_GOT           $uid_got;
-        }
-    }
-server {
     server_name django.pythoneer.nl;
     error_log /var/log/nginx/django.pythoneer-error.log error;
     access_log /var/log/nginx/django.pythoneer-access.log;
@@ -58,33 +26,6 @@ server {
         }
     }
 
-server {
-    server_name magiokis.lemoncurry.nl;
-    error_log /var/log/nginx/magiokis.lemoncurry-error.log error;
-    access_log /var/log/nginx/magiokis.lemoncurry-access.log ;
-    location /media {
-        root   /home/albert/www/django/magiokis/;
-        }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
-        {
-        root /home/albert/www/django/magiokis;
-        expires 30d;
-        break;
-        }
-    location / {
-        fastcgi_pass unix:/var/run/magiokis.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
-        }
-    }
 server {
     server_name django.magiokis.nl;
     error_log /var/log/nginx/django.magiokis-error.log error;
@@ -140,65 +81,11 @@ server {
         fastcgi_param	SERVER_NAME		$server_name;
         }
     }
-server {
-    server_name actiereg.pythoneer.nl;
-    error_log /var/log/nginx/actiereg.pythoneer-error.log error;
-    access_log /var/log/nginx/actiereg.pythoneer-access.log;
-    location /media {
-        root   /home/albert/www/django/actiereg/;
-        }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
-        {
-        root /home/albert/www/django/actiereg;
-        expires 30d;
-        break;
-        }
-    location / {
-        fastcgi_pass unix:/var/run/actiereg.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
-        }
-    }
 
 server {
     server_name myprojects.lemoncurry.nl;
     error_log /var/log/nginx/myprojects.lemoncurry-error.log error;
     access_log /var/log/nginx/myprojects.lemoncurry-access.log ;
-    location /media {
-        root   /home/albert/www/django/doctool/;
-        }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
-        {
-        root /home/albert/www/django/doctool;
-        expires 30d;
-        break;
-        }
-    location / {
-        fastcgi_pass unix:/var/run/myprojects.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
-        }
-    }
-server {
-    server_name myprojects.pythoneer.nl;
-    error_log /var/log/nginx/myprojects.pythoneer-error.log error;
-    access_log /var/log/nginx/myprojects.pythoneer-access.log;
     location /media {
         root   /home/albert/www/django/doctool/;
         }
