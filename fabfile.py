@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import shutil
 from fabric.api import local, sudo, lcd
@@ -13,35 +15,35 @@ includes:
 """
 
 HERE = os.path.dirname(__file__)
-AVAIL = '/etc/nginx/sites-available'
-ENABL = '/etc/nginx/sites-enabled'
-A_AVAIL = '/etc/apache2/sites-available'
-A_ENABL = '/etc/apache2/sites-enabled'
-runpath = '/var/run'
-HGWEB = '/home/albert/www/hgweb'
+INIT, NGINX, APACHE = 'etc/init.d', '/etc/nginx', '/etc/apache2'
+AVL, NBL = 'sites-available', 'sites-enabled'
+AVAIL = os.path.join(NGINX, AVL)
+ENABL = os.path.join(NGINX, NBL)
+A_AVAIL = os.path.join(APACHE, AVL)
+A_ENABL = os.path.join(APACHE, NBL)
+runpath, HOME = '/var/run', '/home/albert'
+HGWEB = os.path.join(HOME, 'www/hgweb')
 hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
 hgweb_sock = os.path.join(runpath, 'hgwebdir.sock')
-TRAC = '/home/albert/lemontrac'
+TRAC = os.path.join(HOME, 'lemontrac')
 project = os.path.basename(TRAC)
 trac_pid = os.path.join(runpath, '{}.pid'.format(project))
 trac_sock = os.path.join(runpath, '{}.sock'.format(project))
-django_project_path = {
-    'pythoneer': '/home/albert/www/django/pythoneer',
-    'magiokis': '/home/albert/www/django/magiokis',
-    'actiereg': '/home/albert/www/django/actiereg',
-    'myprojects': '/home/albert/www/django/doctool',
-    'mydomains': '/home/albert/www/testdjango/domainchecker',
-    'myapps': '/home/albert/www/testdjango/myapps',
-    }
+django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
+    'myapps']
+django_project_path = {x: os.path.join(HOME, 'www/django', x) for x in
+    django_sites}
 extconf = {
-    'fcgiwrap': ('/etc/nginx', True, '.conf'),
-    'nginx': ('/etc/nginx', True, '.conf'),
-    'php-fcgi': ('/etc/init.d', True, ''),
-    'rst2html': ('/home/albert/rst2html-web', False, '.conf'),
+    'fcgiwrap': (NGINX, True, '.conf'),
+    'nginx': (NGINX, True, '.conf'),
+    'php-fcgi': (INIT, True, ''),
+    'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '.conf'),
     'rc.local': ('/etc', True, ''),
     'hosts': ('/etc', True, ''),
-    'apache2': ('/etc/apache2', True, '.conf'),
-    'ports': ('/etc/apache2', True, '.conf'),
+    'apache2': (APACHE, True, '.conf'),
+    'ports': (APACHE, True, '.conf'),
+    'hgweb': (HGWEB, False, '-config'),
+    'trac': (os.path.join(TRAC, 'conf'), False, '.ini'),
     }
 
 def _addconf(name):
@@ -91,11 +93,11 @@ def rmconf(*names):
 
 def stop_nginx():
     "stop nginx"
-    local('sudo /etc/init.d/nginx stop')
+    local('sudo {}/nginx stop'.format(INIT))
 
 def start_nginx():
     "start nginx"
-    local('sudo /etc/init.d/nginx start')
+    local('sudo {}/nginx start'.format(INIT))
 
 def restart_nginx():
     "restart nginx"
@@ -103,15 +105,15 @@ def restart_nginx():
 
 def stop_php():
     "stop php"
-    local('sudo /etc/init.d/php-fcgi stop')
+    local('sudo {}/php-fcgi stop'.format(INIT))
 
 def start_php():
     "start php"
-    local('sudo /etc/init.d/php-fcgi start')
+    local('sudo {}/php-fcgi start'.format(INIT))
 
 def restart_php():
     "restart php"
-    local('sudo /etc/init.d/php-fcgi restart')
+    local('sudo {}/php-fcgi restart'.format(INIT))
 
 def stop_hgweb():
     "stop local Mercurial web server"
@@ -135,7 +137,7 @@ def stop_trac():
 def start_trac():
     "start local trac server using tracd"
     start = os.path.join(TRAC, 'trac.fcgi')
-    auth = '{},{},{}'.format(project,os.path.join(TRAC,'trac_users'),project)
+    auth = '{},{},{}'.format(project,os.path.join(TRAC, 'trac_users'),project)
     local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(
         trac_pid, TRAC, auth))
     ## local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, trac_sock,
@@ -191,7 +193,7 @@ def _get_cherry_parms(project=None):
     allproj = ('rst2html', 'logviewer', 'magiokis')
     if not project:
         return allproj
-    pad = '/home/albert/{}'.format(project)
+    pad = os.path.join(HOME, project)
     conf = os.path.join(HERE, '{}.conf'.format(project))
     prog = 'start_{}'.format(project)
     pid = os.path.join(runpath, '{}.pid'.format(project))
@@ -199,7 +201,7 @@ def _get_cherry_parms(project=None):
     if project == allproj[0]:
         pad += '-web'
     elif project == allproj[2]:
-        pad = '/home/albert/www/cherrypy/magiokis'
+        pad = os.path.join(HOME, 'www/cherrypy/magiokis')
         conf = os.path.join(pad, '{}.conf'.format(project))
         pid = os.path.join(runpath, '{}c.pid'.format(project))
     return conf, pad, prog, pid, sock
@@ -220,7 +222,8 @@ def start_cherry(*project):
         project = _get_cherry_parms()
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
-        local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
+        with lcd(HERE):
+            local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 def restart_cherry(project):
     "restart cherrypy site (arg:project)"
@@ -233,12 +236,12 @@ def restart_cherry(project):
 
 def start_plone():
     "start Plone default instance"
-    with lcd('/home/albert/Plone/zinstance'):
+    with lcd(os.path.join(HOME, 'Plone/zinstance')):
         local('bin/plonectl start')
 
 def stop_plone():
     "stop Plone default instance"
-    with lcd('/home/albert/Plone/zinstance'):
+    with lcd(os.path.join(HOME, 'Plone/zinstance')):
         local('bin/plonectl stop')
 
 def restart_plone():
@@ -248,20 +251,20 @@ def restart_plone():
 
 def buildout_plone():
     "run buildout on Plone instance"
-    with lcd('/home/albert/Plone/zinstance'):
+    with lcd(os.path.join(HOME, 'Plone/zinstance')):
         local('bin/buildout')
 
 def stop_apache():
     "stop apache"
-    local('sudo /etc/init.d/apache2 stop')
+    local('sudo {}/apache2 stop'.format(INIT))
 
 def start_apache():
     "start apache"
-    local('sudo /etc/init.d/apache2 start')
+    local('sudo {}/apache2 start'.format(INIT))
 
 def restart_apache():
     "restart apache"
-    local('sudo /etc/init.d/apache2 restart')
+    local('sudo {}/apache2 restart'.format(INIT))
 
 def addconf_apache(*names):
     """enable Apache configuration for one or more (file) names
