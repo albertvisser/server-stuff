@@ -49,6 +49,14 @@ extconf = {
     'trac': (os.path.join(TRAC, 'conf'), False, '.ini'),
     }
 
+def addstartup(name):
+    """add an init file to the startup sequence
+
+    register in the extconf dict with INIT as destination
+    """
+    local('sudo chmod +x {}/{}'.format(INIT, name))     # make sure it's executable
+    local('sudo update-rc.d {} defaults'.format(name))  # add to defaults
+
 def _addconf(name):
     "enable new configuration by creating symlink"
     oldname = os.path.join(AVAIL, name)
