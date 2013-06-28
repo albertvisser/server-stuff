@@ -200,6 +200,60 @@ def restart_django(*project):
         stop_django(proj)
         start_django(proj)
 
+def django_css(*project):
+    "add symlink to admin CSS for Django project"
+    def fix_media_prefix(path):
+        find = 'ADMIN_MEDIA_PREFIX'
+        prefix = "'/static/admin/'"
+        settingsfile = os.path.join(path, 'settings.py')
+        modified = True
+        with open(settingsfile) as _in:
+            buf = _in.read()
+        if find in buf:
+            test = buf.split(find, 1)
+            if len(test) > 1:
+                head = test[0].rstrip().rstrip('#').rstrip() # uncomment if necessary
+                test = test[1].lstrip().lstrip('=').lstrip(' ')
+                if test.startswith(os.linesep):
+                    tail = test
+                else:
+                    if test.startswith(prefix):
+                       tail = test[len(prefix):]
+                    else:
+                        tail = os.linesep + rest
+            else:
+                head = test[0]
+                tail = os.linesep
+        else:
+             head = buf.rstrip()
+             tail = os.linesep
+        if modified:
+            shutil.copyfile(settingsfile, settingsfile + '~')
+            with open(settingsfile, 'w') as _out:
+                _out.write('{}\n{} = {}{}'.format(head, find, prefix,
+                    tail))
+    def link(project):
+        pid, sock, path = _get_django_args(project)
+        skip = False
+        # maak indien nog niet aanwezig directory static onder site root
+        test = os.path.join(path, 'static')
+        skip = False
+        if os.path.exists(test):
+            if os.path.exists(os.path.join(test, 'admin'):
+                skip = True
+        else:
+            if not os.path.isdir(test):
+                os.remove(test)
+            os.mkdir(test)
+        if not skip:
+            with lcd(test):
+                local('ln -s /usr/share/pyshared/django/contrib/admin/static/admin')
+            fix_media_prefix(path)
+    if not project:
+        project = django_project_path.keys()
+    for proj in project:
+        link(proj)
+
 def _get_cherry_parms(project=None):
     allproj = ('rst2html', 'logviewer', 'magiokis')
     if not project:
