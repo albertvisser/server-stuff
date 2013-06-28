@@ -6,6 +6,8 @@ server {
     error_log /var/log/nginx/joomtest.lemoncurry-error.log warn;
     access_log /var/log/nginx/joomtest.lemoncurry-access.log ;
     index index.php index.html index.htm;
+    fastcgi_buffers 16 16k;
+    fastcgi_buffer_size 32k;
     # Support Clean (aka Search Engine Friendly) URLs
     location / {
             try_files $uri $uri/ /index.php?q=$uri&$args;
