@@ -43,6 +43,9 @@ extconf = {
     'apache2': (APACHE, True, '.conf'),
     'ports': (APACHE, True, '.conf'),
     'hgweb': (HGWEB, False, '-config'),
+    'hgweb.cgi': (HGWEB, False, ''),
+    'hgweb.fcgi': (HGWEB, False, ''),
+    'hgweb.wsgi': (HGWEB, False, ''),
     'trac': (os.path.join(TRAC, 'conf'), False, '.ini'),
     }
 
