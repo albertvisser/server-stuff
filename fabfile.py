@@ -239,7 +239,7 @@ def django_css(*project):
         test = os.path.join(path, 'static')
         skip = False
         if os.path.exists(test):
-            if os.path.exists(os.path.join(test, 'admin'):
+            if os.path.exists(os.path.join(test, 'admin')):
                 skip = True
         else:
             if not os.path.isdir(test):
