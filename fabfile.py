@@ -276,6 +276,7 @@ def stop_cherry(*project):
     if not project:
         project = _get_cherry_parms()
     for proj in project:
+        print(proj)
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
             local('sudo kill -s SIGKILL `cat {}`'.format(pid))
@@ -288,16 +289,22 @@ def start_cherry(*project):
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(HERE):
-            local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
+            ## # voor Python 2
+            ## local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
+            # voor Python 3
+            local('sudo /usr/local/bin/cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
-def restart_cherry(project):
+def restart_cherry(*project):
     "restart cherrypy site (arg:project)"
-    if project == '?':
+    if project and project[0] == '?':
         text = "Available CherryPy projects: " + ", ".join(_get_cherry_parms())
         print(text)
         return
-    stop_cherry(project)
-    start_cherry(project)
+    if not project:
+        project = _get_cherry_parms()
+    for proj in project:
+        stop_cherry(proj)
+        start_cherry(proj)
 
 def start_plone():
     "start Plone default instance"
