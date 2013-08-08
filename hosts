@@ -3,7 +3,6 @@
 # 127.0.0.1	localhost.localdomain	localhost
 # ::1	lemoncurry	localhost6.localdomain6	localhost6
 127.0.0.1	localhost
-127.0.1.1	lemoncurry
 
 # The following lines are desirable for IPv6 capable hosts
 ::1     ip6-localhost ip6-loopback
@@ -19,6 +18,8 @@ ff02::2 ip6-allrouters
 127.0.0.1     eelcraft.nl
 127.0.0.1     www.eelcraft.nl
 
+127.0.0.1	    lemoncurry
+127.0.0.1	    lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
 127.0.0.1     actiereg.lemoncurry.nl
 127.0.0.1     myprojects.lemoncurry.nl
