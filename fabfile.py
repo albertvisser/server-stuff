@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+c# -*- coding: utf-8 -*-
 
 import os
 import shutil
@@ -33,21 +33,23 @@ django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps']
 django_project_path = {x: os.path.join(HOME, 'www/django', x) for x in
     django_sites}
+PLONE = os.path.join(HOME, 'Plone/zinstance')
 extconf = {
-    'fcgiwrap': (NGINX, True, '.conf'),
-    'nginx': (NGINX, True, '.conf'),
-    'php-fcgi': (INIT, True, ''),
-    'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '.conf'),
-    'rc.local': ('/etc', True, ''),
-    'hosts': ('/etc', True, ''),
-    'apache2': (APACHE, True, '.conf'),
-    'ports': (APACHE, True, '.conf'),
-    'hgweb': (HGWEB, False, '-config'),
-    'hgweb.cgi': (HGWEB, False, ''),
-    'hgweb.fcgi': (HGWEB, False, ''),
-    'hgweb.wsgi': (HGWEB, False, ''),
-    'trac': (os.path.join(TRAC, 'conf'), False, '.ini'),
-    }
+    'fcgiwrap': (NGINX, True, '@.conf'),
+    'nginx': (NGINX, True, '@.conf'),
+    'php-fcgi': (INIT, True, '@'),
+    'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '@.conf'),
+    'rc.local': ('/etc', True, '@'),
+    'hosts': ('/etc', True, '@'),
+    'apache2': (APACHE, True, '@.conf'),
+    'ports': (APACHE, True, '@.conf'),
+    'hgweb': (HGWEB, False, '@-config'),
+    'hgweb.cgi': (HGWEB, False, '@'),
+    'hgweb.fcgi': (HGWEB, False, '@'),
+    'hgweb.wsgi': (HGWEB, False, '@'),
+    'trac.ini': (os.path.join(TRAC, 'conf'), False, '@'),
+    'trac.fcgi': (TRAC, False, '@'),
+    'plone-conf': (PLONE, False, 'buildout.cfg')}
 
 def addstartup(name):
     """add an init file to the startup sequence
@@ -76,8 +78,10 @@ def _modconf(name):
     ## newname = os.path.join(AVAIL, name)
     ## shutil.copyfile(oldname, newname)
     if name in extconf:
-        dest, uses_sudo, ext = extconf[name]
-        fname = os.path.join(HERE, name + ext)
+        dest, uses_sudo, fname = extconf[name]
+        if fname.startswith('@'):
+            fname = name + fname[1:]
+        fname = os.path.join(HERE, fname)
         local('{} cp {} {}'.format('sudo' if uses_sudo else '', fname, dest))
     else:
         local('sudo cp {} {}'.format(oldname, AVAIL))
@@ -147,10 +151,10 @@ def stop_trac():
 
 def start_trac():
     "start local trac server using tracd"
-    start = os.path.join(TRAC, 'trac.fcgi')
-    auth = '{},{},{}'.format(project,os.path.join(TRAC, 'trac_users'),project)
+    auth = '{},{},{}'.format(project, os.path.join(TRAC, 'trac_users'), project)
     local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(
         trac_pid, TRAC, auth))
+    ## start = os.path.join(TRAC, 'trac.fcgi')
     ## local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, trac_sock,
         ## trac_pid, 'www-data'))
 
@@ -308,12 +312,12 @@ def restart_cherry(*project):
 
 def start_plone():
     "start Plone default instance"
-    with lcd(os.path.join(HOME, 'Plone/zinstance')):
+    with lcd(PLONE):
         local('bin/plonectl start')
 
 def stop_plone():
     "stop Plone default instance"
-    with lcd(os.path.join(HOME, 'Plone/zinstance')):
+    with lcd(PLONE):
         local('bin/plonectl stop')
 
 def restart_plone():
@@ -323,7 +327,7 @@ def restart_plone():
 
 def buildout_plone():
     "run buildout on Plone instance"
-    with lcd(os.path.join(HOME, 'Plone/zinstance')):
+    with lcd(PLONE):
         local('bin/buildout')
 
 def stop_apache():
