@@ -2,7 +2,7 @@ c# -*- coding: utf-8 -*-
 
 import os
 import shutil
-from fabric.api import local, sudo, lcd
+from fabric.api import * # local, sudo, lcd, hide, settings
 """collection of shortcut functions concerning deployment
 of my local ngnix stuff
 includes:
@@ -94,6 +94,22 @@ def modconf(*names):
         return
     for conf in names:
         _modconf(conf.strip())
+
+def _diffconf(name):
+    if name in extconf:
+        dest, _, fname = extconf[name]
+        if fname.startswith('@'):
+            fname = name + fname[1:]
+    else:
+        dest, fname = AVAIL, name
+    with settings(hide('warnings'), warn_only=True):
+        local('diff {} {}'.format(os.path.join(dest, fname),
+            os.path.join(HERE, fname)))
+
+def diffconf(*names):
+    "compare named configuration files"
+    for conf in names:
+        _diffconf(conf.strip())
 
 def _rmconf(name):
     "disable configuration by removing symlink"
