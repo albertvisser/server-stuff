@@ -7,7 +7,7 @@ import cgitb
 cgitb.enable()
 import cherrypy
 
-ROOT = '/home/albert/rst2html-web'
+ROOT = '/home/albert/rst2html'
 os.chdir(ROOT)
 sys.path.insert(0, ROOT)
 from rst2html import Rst2Html
