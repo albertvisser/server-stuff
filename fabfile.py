@@ -1,4 +1,4 @@
-c# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 import os
 import shutil
@@ -38,7 +38,7 @@ extconf = {
     'fcgiwrap': (NGINX, True, '@.conf'),
     'nginx': (NGINX, True, '@.conf'),
     'php-fcgi': (INIT, True, '@'),
-    'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '@.conf'),
+    ## 'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '@.conf'),
     'rc.local': ('/etc', True, '@'),
     'hosts': ('/etc', True, '@'),
     'apache2': (APACHE, True, '@.conf'),
@@ -279,13 +279,12 @@ def _get_cherry_parms(project=None):
     if not project:
         return allproj
     pad = os.path.join(HOME, project)
-    conf = os.path.join(HERE, '{}.conf'.format(project))
+    ## conf = os.path.join(HERE, '{}.conf'.format(project))
+    conf = '{}.conf'.format(project)
     prog = 'start_{}'.format(project)
     pid = os.path.join(runpath, '{}.pid'.format(project))
     sock = os.path.join(runpath, '{}.sock'.format(project))
-    if project == allproj[0]:
-        pad += '-web'
-    elif project == allproj[2]:
+    if project == allproj[2]:
         pad = os.path.join(HOME, 'www/cherrypy/magiokis')
         conf = os.path.join(pad, '{}.conf'.format(project))
         pid = os.path.join(runpath, '{}c.pid'.format(project))
@@ -296,7 +295,6 @@ def stop_cherry(*project):
     if not project:
         project = _get_cherry_parms()
     for proj in project:
-        print(proj)
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
             local('sudo kill -s SIGKILL `cat {}`'.format(pid))
@@ -308,7 +306,8 @@ def start_cherry(*project):
         project = _get_cherry_parms()
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
-        with lcd(HERE):
+        ## with lcd(HERE):
+        with lcd(pad):
             ## # voor Python 2
             ## local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
             # voor Python 3
