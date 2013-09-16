@@ -5,54 +5,69 @@ When I transferred my system from Ubuntu to Linux Mint I also decided to trade i
 
 Besides the actual Nginx configuration files (or rather: includes) I collected some other configurations here so they are centralized and version controlled as well. And of course the script to manage it all is here.
 
-Files:
-......
+Nginx configs:
+..............
 
-`default`
+``default``
     a copy of the config file that came with the installation
-`lemoncurry`
+``lemoncurry``
     configuration for flat HTML, CGI and php subdomains on my home server
-`magiokis`
+``magiokis``
     another one, for another series of those domains
-`pythoneer`
+``pythoneer``
     and another one
-`mercurial`
+``mercurial``
     config for serving my local Mercurial repositories
-`trac`
+``trac``
     config for my local Trac site
-`django`
+``django``
     config for the subdomains that contain Django sites
-`cherrypy`
+``cherrypy``
     config for the subdomains powered by CherryPy
-`drupal`
+``drupal``
     configuration for local sites driven by Drupal
-`joomla`
+``joomla``
     configuration for local Joomla sites
-`plone`
+``plone``
     configuration for local Plone instance
-`others`
+``others``
     currently containing a copy of the previous version of a site I maintain
 
 non-Nginx configs:
 ..................
 configs that are not in user-editable directories (e.g. in /etc) or only here
 
-`fcgiwrap.conf`
+``fcgiwrap.conf``
     config for a general FCGI wrapper
-`logviewer.conf`, `rst2html.conf`
+`logviewer.conf`, `rst2html.conf`   -- verplaatst naar eigen repo`s
     cherrypy server configuration parameters
-`hosts`
+``hosts``
     my local DNS (all kinds of names, all mapped to the local machine)
-`rc.local`
+``rc.local``
     Not strictly a config but a standard Linux startup script, adapted to start my personal servers at bootup
-`nginx.conf`
+``nginx.conf``
     base configuration for nginx
-`apache2.conf`
+``apache2.conf``
     base configuration for Apache
-`php-fcgi`
+``php-fcgi``
     startup script for PHP
-`ports.conf`
+``ports.conf``
     port configuration for Apache serving on port 81
+``hgweb.config``
+    configuration for local mercurial web server
+``hgweb.cgi``
+``hgweb.fcgi``
+``hgweb.wsgi``
+    startup script for local mercurial server
+``trac.ini``
+    configuration for trac server
+``trac.fcgi``
+    alternate startup script for running trac over gunicorn (not under vc)
+``buildout.cfg`` (plone-conf)
+    configuration for plone (not under vc)
+
+
+
 
 Apache configs:
 ...............
@@ -70,7 +85,7 @@ Scripts:
     copy the files to the correct locations,
     (re)start the corresponding servers
     etc.
-`start_logviewer.py`, `start_rst2html.py`, `start_magiokis.py`
+`start_logviewer.py`, `start_rst2html.py`, `start_magiokis.py` -- verplaatst
     scripts imported by cherryd to start specific applications
 
 Requirements
@@ -78,7 +93,7 @@ Requirements
 
 - a Linux/Unix-based system
 - Nginx (or Apache for the Apache stuff)
-- Python
+- Python, fabric
 
 where applicable:
 
