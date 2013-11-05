@@ -1,4 +1,5 @@
 server {
+    listen 80;
     server_name trac.lemoncurry.nl;
     # root /home/albert/lemontrac;
     error_log /var/log/nginx/trac.lemoncurry-error.log warn;
@@ -7,6 +8,9 @@ server {
     location / {
         proxy_pass      http://127.0.0.1:9000;
         proxy_redirect default;
+        auth_basic "lemontrac";
+        auth_basic_user_file /home/albert/lemontrac/trac_users;     # Will effectively be /etc/nginx/htpasswd in Ubuntu, check your distribution
+        proxy_pass_header Authorization;   # Here you tell Nginx to forward the Authorization header to tracd
         # proxy_set_header Host $host;
         # fastcgi_pass      http://127.0.0.1:9000;
         # include fastcgi_params;
