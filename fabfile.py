@@ -29,6 +29,10 @@ TRAC = os.path.join(HOME, 'lemontrac')
 project = os.path.basename(TRAC)
 trac_pid = os.path.join(runpath, '{}.pid'.format(project))
 trac_sock = os.path.join(runpath, '{}.sock'.format(project))
+GUNI = os.path.join(HOME, 'www/gunicorn')
+gproject = os.path.basename(GUNI)
+guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
+guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps']
 django_project_path = {x: os.path.join(HOME, 'www/django', x) for x in
@@ -380,3 +384,18 @@ def rmconf_apache(*names):
 def edit(name):
     "edit a file related to the server configuration"
     local("SciTE {} &".format(os.path.join(HERE, name)))
+
+def stop_gunicorn():
+    "stop local trac server"
+    local('sudo kill `cat {}`'.format(guni_pid))
+
+def start_gunicorn():
+    "start local gunicorn server+app"
+    ## auth = '{},{},{}'.format(gproject, os.path.join(GUNI, 'trac_users'), gproject)
+    with lcd('~/www/gunicorn'):
+        local('sudo gunicorn -D -b 127.0.0.1:9100 -p {} myapp:app'.format(guni_pid))
+
+def restart_gunicorn():
+    "restart local trac server"
+    stop_gunicorn()
+    start_gunicorn()
