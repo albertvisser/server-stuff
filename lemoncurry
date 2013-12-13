@@ -1,7 +1,7 @@
 # index index.html index.htm;
 server {
 	server_name lemoncurry.nl www.lemoncurry.nl;
-	root /var/www;
+	root /usr/share/nginx/html;
     #script_alias /usr/lib/cgi-bin/;
     error_log /var/log/nginx/lemoncurry-error.log warn;
     access_log /var/log/nginx/lemoncurry-access.log ;
