@@ -34,7 +34,7 @@ gproject = os.path.basename(GUNI)
 guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
-    'myapps']
+    'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'www/django', x) for x in
     django_sites}
 PLONE = os.path.join(HOME, 'Plone/zinstance')

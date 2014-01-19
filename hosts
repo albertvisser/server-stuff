@@ -22,6 +22,7 @@ ff02::2 ip6-allrouters
 127.0.0.1	    lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
 127.0.0.1     actiereg.lemoncurry.nl
+127.0.0.1     albums.lemoncurry.nl
 127.0.0.1     myprojects.lemoncurry.nl
 127.0.0.1     joomtest.lemoncurry.nl
 127.0.0.1     hg.lemoncurry.nl
@@ -58,6 +59,7 @@ ff02::2 ip6-allrouters
 127.0.0.1	    django.magiokis.nl
 
 127.0.0.1     local.schooldeparadox.nl
+127.0.0.1     local25.schooldeparadox.nl
 127.0.0.1     flatpages.schooldeparadox.nl
 
 # KaZaA related:
