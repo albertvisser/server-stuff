@@ -35,7 +35,7 @@ guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps', 'albums']
-django_project_path = {x: os.path.join(HOME, 'www/django', x) for x in
+django_project_path = {x: os.path.join(HOME, 'www', 'django', x) for x in
     django_sites}
 PLONE = os.path.join(HOME, 'Plone/zinstance')
 extconf = {
@@ -282,15 +282,14 @@ def _get_cherry_parms(project=None):
     allproj = ('rst2html', 'logviewer', 'magiokis')
     if not project:
         return allproj
-    pad = os.path.join(HOME, project)
+    pad = os.path.join(HOME, 'www', 'cherrypy', project)
     ## conf = os.path.join(HERE, '{}.conf'.format(project))
     conf = '{}.conf'.format(project)
+    ## conf = os.path.join(pad, '{}.conf'.format(project))
     prog = 'start_{}'.format(project)
     pid = os.path.join(runpath, '{}.pid'.format(project))
     sock = os.path.join(runpath, '{}.sock'.format(project))
     if project == allproj[2]:
-        pad = os.path.join(HOME, 'www/cherrypy/magiokis')
-        conf = os.path.join(pad, '{}.conf'.format(project))
         pid = os.path.join(runpath, '{}c.pid'.format(project))
     return conf, pad, prog, pid, sock
 
