@@ -1,6 +1,6 @@
 server {
     server_name hg.lemoncurry.nl;
-    root /home/albert/hg_repos;
+    # root /home/albert/hg_repos;
     error_log /var/log/nginx/hg.lemoncurry-error.log error;
     access_log /var/log/nginx/hg.lemoncurry-access.log ;
     location / {
@@ -46,7 +46,7 @@ server {
 
 server {
     server_name hg.pythoneer.nl;
-    root /home/albert/hg_repos;
+    # root /home/albert/hg_repos;
     error_log /var/log/nginx/hg.pythoneer-error.log error;
     access_log /var/log/nginx/hg.pythoneer-access.log;
     location / {

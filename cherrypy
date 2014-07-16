@@ -1,6 +1,6 @@
 server {
     server_name rst2html.lemoncurry.nl;
-    root /home/albert/rst2html-web;
+    # root /home/albert/rst2html-web;
     error_log /var/log/nginx/rst2html.lemoncurry-error.log error;
     access_log /var/log/nginx/rst2html.lemoncurry-access.log ;
     location / {
@@ -24,7 +24,7 @@ server {
 #     }
 server {
     server_name logviewer.lemoncurry.nl;
-    root /home/albert/logviewer;
+    # root /home/albert/logviewer;
     error_log /var/log/nginx/logviewer.lemoncurry-error.log error;
     access_log /var/log/nginx/logviewer.lemoncurry-access.log ;
     location / {
@@ -36,7 +36,7 @@ server {
     }
 server {
     server_name cherrypy.magiokis.nl;
-    root /home/albert/www/cherrypy/magiokis;
+    # root /home/albert/www/cherrypy/magiokis;
     error_log /var/log/nginx/cherrypy.magiokis-error.log error;
     access_log /var/log/nginx/cherrypy.magiokis-access.log ;
     location / {

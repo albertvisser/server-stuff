@@ -40,7 +40,7 @@ server {
 server {
     server_name local.schooldeparadox.nl;
         server_name_in_redirect off;
-    root /home/albert/www/schooldeparadox;
+    #root /home/albert/www/schooldeparadox;
     #script_alias /home/albert/www/cgi-bin/paradox;
     error_log /var/log/nginx/local.paradox-error.log warn;
     access_log /var/log/nginx/local.paradox-access.log ;

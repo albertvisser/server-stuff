@@ -23,7 +23,7 @@
     Order deny,allow
     Allow from all
 </Directory>
-<VirtualHost *:80>
+<VirtualHost *:81>
     ServerName trac2.lemoncurry.nl
     DocumentRoot "/home/albert/trac/htdocs"
     ErrorLog /var/log/apache2/trac2.lemoncurry-error.log
@@ -70,7 +70,7 @@
     Order deny,allow
     Allow from all
 </Directory>
-<VirtualHost *:80>
+<VirtualHost *:81>
     ServerName trac.lemoncurry.nl
     ErrorLog /var/log/apache2/trac.lemoncurry-error.log
     CustomLog /var/log/apache2/trac.lemoncurry-access.log common

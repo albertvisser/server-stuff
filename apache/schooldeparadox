@@ -1,4 +1,4 @@
-<VirtualHost *:80>
+<VirtualHost *:81>
     ServerName local.schooldeparadox.nl
     DocumentRoot "/home/albert/www/schooldeparadox"
     ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox"
