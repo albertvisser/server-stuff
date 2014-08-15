@@ -1,3 +1,6 @@
+upstream pythoneer_server {
+    server unix:/var/run/pythoneer.sock fail_timeout=0;
+    }
 server {
     server_name django.pythoneer.nl;
     error_log /var/log/nginx/django.pythoneer-error.log error;
@@ -12,20 +15,27 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/pythoneer.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://pythoneer_server;
+        # fastcgi_pass unix:/var/run/pythoneer.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
+upstream magiokis_server {
+    server unix:/var/run/magiokis.sock fail_timeout=0;
+    }
 server {
     server_name django.magiokis.nl;
     error_log /var/log/nginx/django.magiokis-error.log error;
@@ -40,20 +50,27 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/magiokis.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://magiokis_server;
+        # fastcgi_pass unix:/var/run/magiokis.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
+upstream actiereg_server {
+    server unix:/var/run/actiereg.sock fail_timeout=0;
+    }
 server {
     server_name actiereg.lemoncurry.nl;
     error_log /var/log/nginx/actiereg.lemoncurry-error.log error;
@@ -68,20 +85,27 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/actiereg.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://actiereg_server;
+        # fastcgi_pass unix:/var/run/actiereg.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
+upstream myprojects_server {
+    server unix:/var/run/myprojects.sock fail_timeout=0;
+}
 server {
     server_name myprojects.lemoncurry.nl;
     error_log /var/log/nginx/myprojects.lemoncurry-error.log error;
@@ -96,18 +120,26 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/myprojects.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://myprojects_server;
+        # fastcgi_pass unix:/var/run/myprojects.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
+    }
+
+upstream mydomains_server {
+    server unix:/var/run/mydomains.sock fail_timeout=0;
     }
 server {
     server_name mydomains.lemoncurry.nl;
@@ -123,25 +155,32 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/mydomains.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_pass_header Authorization;
-        fastcgi_intercept_errors off;
-        fastcgi_param REMOTE_USER       $remote_user;
-        fastcgi_param UID_SET           $uid_set;
-        fastcgi_param UID_GOT           $uid_got;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://mydomains_server;
+        # fastcgi_pass unix:/var/run/mydomains.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_pass_header Authorization;
+        # fastcgi_intercept_errors off;
+        # fastcgi_param REMOTE_USER       $remote_user;
+        # fastcgi_param UID_SET           $uid_set;
+        # fastcgi_param UID_GOT           $uid_got;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
+upstream myapps_server {
+    server unix:/var/run/myapps.sock fail_timeout=0;
+    }
 server {
     server_name myapps.lemoncurry.nl;
     error_log /var/log/nginx/myapps.lemoncurry-error.log error;
@@ -156,25 +195,33 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/myapps.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_pass_header Authorization;
-        fastcgi_intercept_errors off;
-        fastcgi_param REMOTE_USER       $remote_user;
-        fastcgi_param UID_SET           $uid_set;
-        fastcgi_param UID_GOT           $uid_got;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://myapps_server;
+        # proxy_set_header X-Real-IP $remote_addr;
+        # fastcgi_pass unix:/var/run/myapps.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_pass_header Authorization;
+        # fastcgi_intercept_errors off;
+        # fastcgi_param REMOTE_USER       $remote_user;
+        # fastcgi_param UID_SET           $uid_set;
+        # fastcgi_param UID_GOT           $uid_got;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }
 
+upstream albums_server {
+    server unix:/var/run/albums.sock fail_timeout=0;
+    }
 server {
     server_name albums.lemoncurry.nl;
     error_log /var/log/nginx/albums.lemoncurry-error.log error;
@@ -189,21 +236,25 @@ server {
         break;
         }
     location / {
-        fastcgi_pass unix:/var/run/albums.sock;
-        fastcgi_param PATH_INFO $fastcgi_script_name;
-        fastcgi_param REQUEST_METHOD $request_method;
-        fastcgi_param  QUERY_STRING       $query_string;
-        fastcgi_param CONTENT_TYPE $content_type;
-        fastcgi_param CONTENT_LENGTH $content_length;
-        fastcgi_param REMOTE_ADDR $remote_addr;
-        # include /etc/nginx/fastcgi_params;
-        fastcgi_pass_header Authorization;
-        fastcgi_intercept_errors off;
-        fastcgi_param REMOTE_USER       $remote_user;
-        fastcgi_param UID_SET           $uid_set;
-        fastcgi_param UID_GOT           $uid_got;
-        fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        fastcgi_param	SERVER_PORT		$server_port;
-        fastcgi_param	SERVER_NAME		$server_name;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass http://albums_server;
+        # fastcgi_pass unix:/var/run/albums.sock;
+        # fastcgi_param PATH_INFO $fastcgi_script_name;
+        # fastcgi_param REQUEST_METHOD $request_method;
+        # fastcgi_param  QUERY_STRING       $query_string;
+        # fastcgi_param CONTENT_TYPE $content_type;
+        # fastcgi_param CONTENT_LENGTH $content_length;
+        # fastcgi_param REMOTE_ADDR $remote_addr;
+        # # include /etc/nginx/fastcgi_params;
+        # fastcgi_pass_header Authorization;
+        # fastcgi_intercept_errors off;
+        # fastcgi_param REMOTE_USER       $remote_user;
+        # fastcgi_param UID_SET           $uid_set;
+        # fastcgi_param UID_GOT           $uid_got;
+        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
+        # fastcgi_param	SERVER_PORT		$server_port;
+        # fastcgi_param	SERVER_NAME		$server_name;
         }
     }

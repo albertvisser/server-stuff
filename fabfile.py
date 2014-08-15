@@ -22,14 +22,14 @@ ENABL = os.path.join(NGINX, NBL)
 A_AVAIL = os.path.join(APACHE, AVL)
 A_ENABL = os.path.join(APACHE, NBL)
 runpath, HOME = '/var/run', '/home/albert'
-HGWEB = os.path.join(HOME, 'www/hgweb')
+HGWEB = os.path.join(HOME, 'www', 'hgweb')
 hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
 hgweb_sock = os.path.join(runpath, 'hgwebdir.sock')
 TRAC = os.path.join(HOME, 'lemontrac')
 project = os.path.basename(TRAC)
 trac_pid = os.path.join(runpath, '{}.pid'.format(project))
 trac_sock = os.path.join(runpath, '{}.sock'.format(project))
-GUNI = os.path.join(HOME, 'www/gunicorn')
+GUNI = os.path.join(HOME, 'www', 'gunicorn')
 gproject = os.path.basename(GUNI)
 guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
@@ -157,8 +157,8 @@ def stop_hgweb():
 def start_hgweb():
     "start local Mercurial web server using hgweb.fcgi"
     start = os.path.join(HGWEB, 'hgweb.fcgi')
-    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, hgweb_sock,
-        hgweb_pid, 'www-data'))
+    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start,
+        hgweb_sock, hgweb_pid, 'www-data'))
 
 def restart_hgweb():
     "restart local Mercurial web server"
@@ -171,12 +171,18 @@ def stop_trac():
 
 def start_trac():
     "start local trac server using tracd"
-    auth = '{},{},{}'.format(project, os.path.join(TRAC, 'trac_users'), project)
-    local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(
-        trac_pid, TRAC, auth))
-    ## start = os.path.join(TRAC, 'trac.fcgi')
-    ## local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, trac_sock,
-        ## trac_pid, 'www-data'))
+    ## auth = '{},{},{}'.format(project, os.path.join(TRAC, 'trac_users'), project)
+    ## local('sudo tracd -d -p 9000 --pidfile {} -s {} --basic-auth="{}"'.format(
+        ## trac_pid, TRAC, auth))
+    ## # start = os.path.join(TRAC, 'trac.fcgi')
+    ## # local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, trac_sock,
+    ## #     trac_pid, 'www-data'))
+    # trac via gunicorn
+    sock = 'unix:/var/run/lemontrac.sock'
+    with lcd(TRAC):
+        local('sudo /usr/bin/gunicorn -D -b {} -p {} '
+            'tracwsgi:application'.format(sock, trac_pid))
+    ## # local('sudo chown www-data {}'.format(sock))
 
 def restart_trac():
     "restart local trac server"
@@ -191,7 +197,7 @@ def _get_django_args(project):
 def stop_django(*project):
     "stop indicated Django server(s)"
     def stop(project):
-        django_pid, _, _ = _get_django_args(project)
+        django_pid = _get_django_args(project)[0]
         if os.path.exists(django_pid):
             local('sudo kill `cat {}`'.format(django_pid))
             local('sudo rm -f {}'.format(django_pid))
@@ -201,12 +207,16 @@ def stop_django(*project):
         stop(proj)
 
 def start_django(*project):
-    "start indicated Django server(s) using manage.py over fastcgi"
+    """start indicated Django server(s) using manage.py over fastcgi (python 2)
+    or Gunicorn (python 3)
+    """
     def start(project):
         pid, sock, path = _get_django_args(project)
-        local('sudo python {}/manage.py runfcgi socket={} pidfile={}'.format(path,
-            sock, pid))
-        local('sudo chown www-data {}'.format(sock))
+        with lcd(path):
+            local('sudo /usr/local/bin/gunicorn -D -b unix:{} -p {} '
+                '{}.wsgi:application'.format(sock, pid, project))
+        ## local('sudo chown www-data {}'.format(sock))
+
     if not project:
         project = django_project_path.keys()
     for proj in project:
@@ -291,6 +301,7 @@ def _get_cherry_parms(project=None):
     sock = os.path.join(runpath, '{}.sock'.format(project))
     if project == allproj[2]:
         pid = os.path.join(runpath, '{}c.pid'.format(project))
+        sock = os.path.join(runpath, '{}c.sock'.format(project))
     return conf, pad, prog, pid, sock
 
 def stop_cherry(*project):
@@ -314,7 +325,8 @@ def start_cherry(*project):
             ## # voor Python 2
             ## local('sudo cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
             # voor Python 3
-            local('sudo /usr/local/bin/cherryd -c {} -d -p {} -i {}'.format(conf, pid, prog))
+            local('sudo /usr/local/bin/cherryd -c {} -d -p {} -i {}'.format(conf,
+                pid, prog))
 
 def restart_cherry(*project):
     "restart cherrypy site (arg:project)"

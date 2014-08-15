@@ -1,3 +1,7 @@
+upstream trac_gunicorn {
+    server unix:/var/run/lemontrac.sock;      ##    http://127.0.0.1:9000;
+}
+
 server {
     listen 80;
     server_name trac.lemoncurry.nl;
@@ -5,37 +9,43 @@ server {
     error_log /var/log/nginx/trac.lemoncurry-error.log warn;
     access_log /var/log/nginx/trac.lemoncurry-access.log ;
 
+   # include         "/etc/nginx/acl.conf";
+
     location / {
-        proxy_pass      http://127.0.0.1:9000;
-        proxy_redirect default;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        proxy_pass      http://trac_gunicorn;
+#        proxy_redirect default;
         auth_basic "lemontrac";
-        auth_basic_user_file /home/albert/lemontrac/trac_users;     # Will effectively be /etc/nginx/htpasswd in Ubuntu, check your distribution
+        auth_basic_user_file /home/albert/lemontrac/trac_users;
+        proxy_set_header REMOTE_USER $remote_user;
         proxy_pass_header Authorization;   # Here you tell Nginx to forward the Authorization header to tracd
-        # proxy_set_header Host $host;
-        # fastcgi_pass      http://127.0.0.1:9000;
-        # include fastcgi_params;
-        # fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
-        # fastcgi_param  PATH_INFO          $fastcgi_path_info;
-        # fastcgi_param  AUTH_USER          $remote_user;
-        # fastcgi_param  REMOTE_USER        $remote_user;
-        # fastcgi_intercept_errors  off;
+#        # proxy_set_header Host $host;
+#        # fastcgi_pass      http://127.0.0.1:9000;
+#        # include fastcgi_params;
+#        # fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+#        # fastcgi_param  PATH_INFO          $fastcgi_path_info;
+#        # fastcgi_param  AUTH_USER          $remote_user;
+#        # fastcgi_param  REMOTE_USER        $remote_user;
+#        # fastcgi_intercept_errors  off;
         }
-
-#        ssl                  on;
-#        ssl_certificate      /etc/ssl/trac.example.crt;
-#        ssl_certificate_key  /etc/ssl/trac.example.key;
 #
-#        ssl_session_timeout  5m;
+##        ssl                  on;
+##        ssl_certificate      /etc/ssl/trac.example.crt;
+##        ssl_certificate_key  /etc/ssl/trac.example.key;
+##
+##        ssl_session_timeout  5m;
+##
+##        ssl_protocols  SSLv2 SSLv3 TLSv1;
+##        ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+##        ssl_prefer_server_ciphers   on;
 #
-#        ssl_protocols  SSLv2 SSLv3 TLSv1;
-#        ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
-#        ssl_prefer_server_ciphers   on;
-
-    # (Or ``^/some/prefix/(.*)``.
-    if ($uri ~ ^/(.*)) {
-         set $path_info /$1;
-    }
-
+#    # (Or ``^/some/prefix/(.*)``.
+#    if ($uri ~ ^/(.*)) {
+#         set $path_info /$1;
+#    }
+#
     # it makes sense to serve static resources through Nginx
     location /chrome/ {
          alias /home/albert/lemontrac/htdocs/;
