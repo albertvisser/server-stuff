@@ -138,6 +138,15 @@ def restart_nginx():
     "restart nginx"
     local('sudo killall -HUP nginx')
 
+def start_ftp():
+    local('sudo start vsftpd')
+
+def stop_ftp():
+    local('sudo stop vsftpd')
+
+def restart_ftp():
+    local('sudo restart vsftpd')
+
 def stop_php():
     "stop php"
     local('sudo {}/php-fcgi stop'.format(INIT))
