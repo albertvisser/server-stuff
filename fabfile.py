@@ -42,7 +42,6 @@ extconf = {
     'fcgiwrap': (NGINX, True, '@.conf'),
     'nginx': (NGINX, True, '@.conf'),
     'php-fcgi': (INIT, True, '@'),
-    ## 'rst2html': (os.path.join(HOME, 'rst2html-web'), False, '@.conf'),
     'rc.local': ('/etc', True, '@'),
     'hosts': ('/etc', True, '@'),
     'apache2': (APACHE, True, '@.conf'),
