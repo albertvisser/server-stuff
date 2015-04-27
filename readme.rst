@@ -1,7 +1,7 @@
 Nginx-config
 ============
 
-When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Apache for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - very satisfactory indeed.
+When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Apache for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - and it turned out very satisfactory indeed.
 
 Besides the actual Nginx configuration files (or rather: includes) I collected some other configurations here so they are centralized and version controlled as well. And of course the script to manage it all is here.
 
@@ -11,7 +11,7 @@ Nginx configs:
 ``default``
     a copy of the config file that came with the installation
 ``lemoncurry``
-    configuration for flat HTML, CGI and php subdomains on my home server
+    configuration for various subdomains on my home server
 ``magiokis``
     another one, for another series of those domains
 ``pythoneer``
@@ -19,7 +19,9 @@ Nginx configs:
 ``mercurial``
     config for serving my local Mercurial repositories
 ``trac``
-    config for my local Trac site
+    config for my local Trac site, served via Gunicorn
+``trac_via_tracd``
+    older config running tracd over port 9001 instead of over a socket
 ``django``
     config for the subdomains that contain Django sites
 ``cherrypy``
@@ -31,73 +33,63 @@ Nginx configs:
 ``plone``
     configuration for local Plone instance
 ``others``
-    currently containing a copy of the previous version of a site I maintain
+    currently only containing a copy of the previous (flat HTML) version of a Joomla site I maintain
 
-non-Nginx configs:
+Apache configs:
+...............
+Some of the few things I salvaged from my old installation. Roughly the same ones as I use for Nginx, collected in a subdirectory called `apache2` and managable through routines in the fabfile.
+
+
+Other configs:
 ..................
 configs that are not in user-editable directories (e.g. in /etc) or only here
 
 ``fcgiwrap.conf``
     config for a general FCGI wrapper
-`logviewer.conf`, `rst2html.conf`   -- verplaatst naar eigen repo`s
-    cherrypy server configuration parameters
 ``hosts``
     my local DNS (all kinds of names, all mapped to the local machine)
-``rc.local``
-    Not strictly a config but a standard Linux startup script, adapted to start my personal servers at bootup
 ``nginx.conf``
     base configuration for nginx
 ``apache2.conf``
     base configuration for Apache
-``php-fcgi``
-    startup script for PHP
 ``ports.conf``
     port configuration for Apache serving on port 81
 ``hgweb.config``
     configuration for local mercurial web server
-``hgweb.cgi``
-``hgweb.fcgi``
-``hgweb.wsgi``
-    startup script for local mercurial server
 ``trac.ini``
     configuration for trac server
-``trac.fcgi``
-    alternate startup script for running trac over gunicorn (not under vc)
 ``buildout.cfg`` (plone-conf)
     configuration for plone (not under vc)
-
-
-
-
-Apache configs:
-...............
-Some of the few things I salvaged from my old installation.
-Roughly the same ones as I use for Nginx, collected in a subdirectory called `apache2`
-and managable through routines in the fabfile.
 
 Scripts:
 ........
 
-`apache2nginx.py`
-    a script I wrote to partly convert Apache config files to Nginx
-`fabfile.py`
+``rc.local``
+    the standard Linux user startup script, adapted to start my personal servers at bootup
+``php-fcgi``
+    startup script for PHP
+``hgweb.cgi`` ``hgweb.fcgi`` ``hgweb.wsgi``
+    startup script for local mercurial server
+``trac.fcgi``
+    alternate startup script for running trac over gunicorn (not under vc)
+``fabfile.py``
     script containing the utility functions to manage the above, as in
     copy the files to the correct locations,
     (re)start the corresponding servers
     etc.
-`start_logviewer.py`, `start_rst2html.py`, `start_magiokis.py` -- verplaatst
-    scripts imported by cherryd to start specific applications
+``apache2nginx.py``
+    a script I wrote to partly convert Apache config files to Nginx
 
 Requirements
 ============
 
 - a Linux/Unix-based system
 - Nginx (or Apache for the Apache stuff)
-- Python, fabric
+- Python, Fabric
 
 where applicable:
 
-- php
+- PHP
 - Django
 - CherryPy
 - Mercurial
@@ -105,3 +97,4 @@ where applicable:
 - Joomla
 - Drupal
 - Plone
+- Gunicorn
