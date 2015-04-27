@@ -59,7 +59,6 @@ ff02::2 ip6-allrouters
 127.0.0.1	    django.magiokis.nl
 
 127.0.0.1     local.schooldeparadox.nl
-127.0.0.1     local25.schooldeparadox.nl
 127.0.0.1     flatpages.schooldeparadox.nl
 
 # KaZaA related:
