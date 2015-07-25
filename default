@@ -90,6 +90,25 @@ server {
           rewrite ^/* /phpmyadmin last;
    }
 
+    location /phppgadmin {
+        root /usr/share/;
+        index index.php index.html index.htm;
+        location ~ ^/phppgadmin/(.+\.php)$ {
+                try_files $uri =404;
+                root /usr/share/;
+                fastcgi_pass  unix:/tmp/php.socket;
+                fastcgi_index index.php;
+                fastcgi_param SCRIPT_FILENAME $request_filename;
+                include /etc/nginx/fastcgi_params;
+        }
+        location ~* ^/phppgadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+                root /usr/share/;
+        }
+   }
+   location /phpPgAdmin {
+          rewrite ^/* /phpmyadmin last;
+   }
+
     location ~ \.php$ {
         # Filter out arbitrary code execution
         location ~ \..*/.*\.php$ {return 404;}
