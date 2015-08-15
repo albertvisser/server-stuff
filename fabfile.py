@@ -419,7 +419,7 @@ def edit(name):
     local("SciTE {} &".format(os.path.join(HERE, name)))
 
 def stop_gunicorn():
-    "stop local trac server"
+    "stop local gunicorn server"
     local('sudo kill `cat {}`'.format(guni_pid))
 
 def start_gunicorn():
@@ -429,6 +429,6 @@ def start_gunicorn():
         local('sudo gunicorn -D -b 127.0.0.1:9100 -p {} myapp:app'.format(guni_pid))
 
 def restart_gunicorn():
-    "restart local trac server"
+    "restart local gunicorn server"
     stop_gunicorn()
     start_gunicorn()
