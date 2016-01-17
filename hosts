@@ -14,10 +14,6 @@ ff02::2 ip6-allrouters
 192.168.2.1     router
 192.168.17.1     huis
 
-127.0.0.1     eelcraft
-127.0.0.1     eelcraft.nl
-127.0.0.1     www.eelcraft.nl
-
 127.0.0.1	    lemoncurry
 127.0.0.1	    lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
