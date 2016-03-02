@@ -38,7 +38,7 @@ django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'www', 'django', x) for x in
     django_sites}
-PLONE = os.path.join(HOME, 'Plone/zinstance')
+PLONES = ('plone', 'plone5')
 extconf = {
     'fcgiwrap': (NGINX, True, '@.conf'),
     'nginx': (NGINX, True, '@.conf'),
@@ -53,8 +53,11 @@ extconf = {
     'hgweb.wsgi': (HGWEB, False, '@'),
     'trac.ini': (os.path.join(TRAC, 'conf'), False, '@'),
     'trac.fcgi': (TRAC, False, '@'),
-    'plone-conf': (PLONE, False, 'buildout.cfg')}
-
+    ## 'plone-conf': (PLONE, False, 'buildout.cfg')
+    }
+for plone in PLONES:
+    extconf['{}-conf'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
+        plone.title())), False, 'buildout.cfg')
 def addstartup(name):
     """add an init file to the startup sequence
 
@@ -362,25 +365,38 @@ def check_all_servers(*project):
     if all_clear:
         print("all local servers ok")
 
-def start_plone():
+def _plone(action, *sitenames):
+    def _doit(sitename, action):
+        plonedir = os.path.join(HOME, '{}/zinstance'.format(sitename.title()))
+        with lcd(plonedir):
+            if action == 'start':
+                local('bin/plonectl start')
+            elif action == 'stop':
+                local('bin/plonectl stop')
+            elif action == 'buildout':
+                local('bin/buildout')
+    PLONES = ('plone', 'plone5')
+    if not sitenames:
+        sitenames = PLONES
+    for name in sitenames:
+        _doit(name, action)
+
+def start_plone(*sitenames):
     "start Plone default instance"
-    with lcd(PLONE):
-        local('bin/plonectl start')
+    _plone('start', *sitenames)
 
-def stop_plone():
+def stop_plone(*sitenames):
     "stop Plone default instance"
-    with lcd(PLONE):
-        local('bin/plonectl stop')
+    _plone('stop', *sitenames)
 
-def restart_plone():
+def restart_plone(*sitenames):
     "restart Plone default instance"
-    stop_plone()
-    start_plone()
+    stop_plone(*sitenames)
+    start_plone(*sitenames)
 
-def buildout_plone():
+def buildout_plone(*sitenames):
     "run buildout on Plone instance"
-    with lcd(PLONE):
-        local('bin/buildout')
+    _plone('buildout', *sitenames)
 
 def stop_apache():
     "stop apache"

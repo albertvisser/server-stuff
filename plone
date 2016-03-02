@@ -38,12 +38,25 @@
 
 server {
     server_name plone.lemoncurry.nl;
-    # root /home/albert/lemontrac;
+    # root /home/albert/Plone;
     error_log /var/log/nginx/plone.lemoncurry-error.log warn;
     access_log /var/log/nginx/plone.lemoncurry-access.log ;
 
     location / {
         proxy_pass      http://127.0.0.1:8090;
+        # proxy_redirect on;
+        # proxy_set_header Host $host;
+        }
+}
+
+server {
+    server_name plone5.lemoncurry.nl;
+    # root /home/albert/Plone5;
+    error_log /var/log/nginx/plone5.lemoncurry-error.log warn;
+    access_log /var/log/nginx/plone5.lemoncurry-access.log ;
+
+    location / {
+        proxy_pass      http://127.0.0.1:8095;
         # proxy_redirect on;
         # proxy_set_header Host $host;
         }
