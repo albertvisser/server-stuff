@@ -10,6 +10,18 @@ server {
         proxy_pass      http://127.0.0.1:9001;
         }
     }
+server {
+    server_name rst2html_mongo.lemoncurry.nl;
+    # root /home/albert/rst2html-web;
+    error_log /var/log/nginx/rst2html_mongo.lemoncurry-error.log error;
+    access_log /var/log/nginx/rst2html_mongo.lemoncurry-access.log ;
+    location / {
+        #include fastcgi_params;
+        #fastcgi_pass  unix:/var/run/rst2html_mongo.sock;
+        # fastcgi_pass  127.0.0.1:9007;
+        proxy_pass      http://127.0.0.1:9007;
+        }
+    }
 # server {
 #     server_name bitbucket.lemoncurry.nl;
 #     root /home/albert/www/bitbucket;

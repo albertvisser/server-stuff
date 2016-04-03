@@ -291,10 +291,12 @@ def django_css(*project):
             _fix_media_prefix(path)
 
 def _get_cherry_parms(project=None):
-    allproj = ('rst2html', 'logviewer', 'magiokis')
+    allproj = ('rst2html', 'logviewer', 'magiokis', 'rst2html_mongo')
     if not project:
         return allproj
     pad = os.path.join(HOME, 'www', 'cherrypy', project)
+    if project == allproj[3]:
+        pad = os.path.join(HOME, 'www', 'cherrypy', allproj[0])
     ## conf = os.path.join(HERE, '{}.conf'.format(project))
     conf = '{}.conf'.format(project)
     ## conf = os.path.join(pad, '{}.conf'.format(project))
