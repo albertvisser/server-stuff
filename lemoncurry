@@ -97,16 +97,22 @@ server {
     access_log /var/log/nginx/bitbucket.lemoncurry-access.log ;
     }
 server {
-    listen 80;
-    server_name gunny.lemoncurry.nl;
-    #root /home/albert/www/gunicorn;
-    error_log  /var/log/nginx/gunicorn.lemoncurry-error.log;
-    access_log  /var/log/nginx/gunicorn.lemoncurry-access.log;
-
-    location / {
-        proxy_pass http://127.0.0.1:9100;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    server_name bitbucket_mongo.lemoncurry.nl;
+    root /home/albert/www/cherrypy/rst2html/rst2html-data/bitbucket;
+    error_log /var/log/nginx/bitbucket_mongo.lemoncurry-error.log error;
+    access_log /var/log/nginx/bitbucket_mongo.lemoncurry-access.log ;
     }
-}
+#server {
+#    listen 80;
+#    server_name gunny.lemoncurry.nl;
+#    #root /home/albert/www/gunicorn;
+#    error_log  /var/log/nginx/gunicorn.lemoncurry-error.log;
+#    access_log  /var/log/nginx/gunicorn.lemoncurry-access.log;
+#
+#    location / {
+#        proxy_pass http:/_mongo/127.0.0.1:9100;
+#        proxy_set_header Host $host;
+#        proxy_set_header X-Real-IP $remote_addr;
+#        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#    }
+#}
