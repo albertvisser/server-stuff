@@ -91,7 +91,7 @@ server {
     }
 server {
     server_name preview.magiokis.nl;
-    root /home/albert/www/magiokis_vv;
+    root /home/albert/www/magiokis_vv/site;
     #script_alias /home/albert/www/cgi-bin/magiokis-vv/;
     error_log /var/log/nginx/preview.magiokis-error.log error;
     access_log /var/log/nginx/preview.magiokis-access.log ;
