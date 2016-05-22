@@ -15,75 +15,19 @@ server {
         }
     }
 server {
-    server_name adr.lemoncurry.nl;
-    root /home/albert/www/lemoncurry/adressen;
-    #script_alias /home/albert/www/cgi-bin/adressen/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/adressen/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/adressen$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/adr.lemoncurry-error.log error;
-    access_log /var/log/nginx/adr.lemoncurry-access.log;
-    }
-server {
-    server_name films.lemoncurry.nl;
-    root /home/albert/www/lemoncurry/films;
-    #script_alias /home/albert/www/cgi-bin/films/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/films/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/films$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/films.lemoncurry-error.log error;
-    access_log /var/log/nginx/films.lemoncurry-access.log;
-    }
-server {
     server_name muziek.lemoncurry.nl;
-    root /home/albert/www/lemoncurry/muziek;
-    #script_alias /home/albert/www/cgi-bin/muziek/;
+    root /home/albert/projects/pythoneer/muziek/html;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/www/cgi-bin/muziek/;
+        alias /home/albert/projects/pythoneer/muziek/cgi-bin/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/muziek$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/pythoneer/muziek/cgi-bin$fastcgi_script_name;
         }
     error_log /var/log/nginx/muziek.lemoncurry-error.log error;
     access_log /var/log/nginx/muziek.lemoncurry-access.log;
     }
-server {
-    server_name absentie.lemoncurry.nl;
-    root /home/albert/www/lemoncurry/absentie;
-    #script_alias /home/albert/www/cgi-bin/absentie/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/absentie/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/absentie$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/school.lemoncurry-error.log error;
-    access_log /var/log/nginx/school.lemoncurry-access.log;
-    }
-server {
-    server_name doctool.lemoncurry.nl;
-    root /home/albert/www/lemoncurry/doctool;
-    #script_alias /home/albert/www/cgi-bin/doctool/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/doctool/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/doctool$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/doctool.lemoncurry-error.log error;
-    access_log /var/log/nginx/doctool.lemoncurry-access.log;
-    }
+
 server {
     server_name rstblog.lemoncurry.nl;
     root /home/albert/rstblog/venv/avisser.bitbucket.org/_build;
@@ -116,3 +60,60 @@ server {
 #        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 #    }
 #}
+
+server {
+    server_name adr.lemoncurry.nl;
+    root /home/albert/projects/pythoneer/adressen/html;
+    #script_alias /home/albert/www/cgi-bin/adressen/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/pythoneer/adressen/cgi-bin;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/pythoneer/adressen/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/adr.lemoncurry-error.log error;
+    access_log /var/log/nginx/adr.lemoncurry-access.log;
+    }
+server {
+    server_name films.lemoncurry.nl;
+    root /home/albert/projects/pythoneer/films/html;
+    #script_alias /home/albert/www/cgi-bin/films/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/pythoneer/films/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/pythoneer/films/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/films.lemoncurry-error.log error;
+    access_log /var/log/nginx/films.lemoncurry-access.log;
+    }
+server {
+    server_name absentie.lemoncurry.nl;
+    root /home/albert/projects/absentie/html;
+    #script_alias /home/albert/www/absentie/cgi-bin;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/absentie/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/absentie/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/school.lemoncurry-error.log error;
+    access_log /var/log/nginx/school.lemoncurry-access.log;
+    }
+server {
+    server_name doctool.lemoncurry.nl;
+    root /home/albert/projects/doctool/html;
+    #script_alias /home/albert/www/doctool/cgi-bin;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/doctool/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/doctool/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/doctool.lemoncurry-error.log error;
+    access_log /var/log/nginx/doctool.lemoncurry-access.log;
+    }

@@ -11,11 +11,10 @@ ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters
 
-192.168.2.1     router
-192.168.17.1     huis
+192.168.6.1     huis
 
-127.0.0.1	    lemoncurry
-127.0.0.1	    lemoncurry.nl
+127.0.0.1     lemoncurry
+127.0.0.1     lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
 127.0.0.1     actiereg.lemoncurry.nl
 127.0.0.1     albums.lemoncurry.nl
@@ -51,11 +50,11 @@ ff02::2 ip6-allrouters
 127.0.0.1     php.magiokis.nl
 127.0.0.1     cherrypy.magiokis.nl
 127.0.0.1     data.magiokis.nl
-127.0.0.1	    songs.magiokis.nl
-127.0.0.1	    denk.magiokis.nl
-127.0.0.1	    dicht.magiokis.nl
-127.0.0.1	    vertel.magiokis.nl
-127.0.0.1	    django.magiokis.nl
+127.0.0.1     songs.magiokis.nl
+127.0.0.1     denk.magiokis.nl
+127.0.0.1     dicht.magiokis.nl
+127.0.0.1     vertel.magiokis.nl
+127.0.0.1     django.magiokis.nl
 
 127.0.0.1     local.schooldeparadox.nl
 127.0.0.1     flatpages.schooldeparadox.nl

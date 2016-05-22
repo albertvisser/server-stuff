@@ -1,12 +1,12 @@
 server {
     server_name local.magiokis.nl;
-    root /home/albert/www/magiokis;
+    root /home/albert/projects/magiokis/html;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/www/cgi-bin/magiokis/;
+        alias /home/albert/projects/magiokis/cgi-bin/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/magiokis$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
         }
     error_log /var/log/nginx/local.magiokis-error.log error;
     access_log /var/log/nginx/local.magiokis-access.log ;
@@ -27,62 +27,6 @@ server {
         }
     }
 server {
-    server_name songs.magiokis.nl;
-    root /home/albert/www/magiokis/songs;
-    #script_alias /home/albert/www/cgi-bin/magiokis/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/magiokis/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/magiokis$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/songs.magiokis-error.log error;
-    access_log /var/log/nginx/songs.magiokis-access.log ;
-    }
-server {
-    server_name denk.magiokis.nl;
-    root /home/albert/www/magiokis/denk;
-    #script_alias /home/albert/www/cgi-bin/magiokis/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/magiokis/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/magiokis$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/denk.magiokis-error.log error;
-    access_log /var/log/nginx/denk.magiokis-access.log ;
-    }
-server {
-    server_name dicht.magiokis.nl;
-    root /home/albert/www/magiokis/dicht;
-    #script_alias /home/albert/www/cgi-bin/magiokis/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/magiokis/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/magiokis$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/dicht.magiokis-error.log error;
-    access_log /var/log/nginx/dicht.magiokis-access.log ;
-    }
-server {
-    server_name vertel.magiokis.nl;
-    root /home/albert/www/magiokis/vertel;
-    #script_alias /home/albert/www/cgi-bin/magiokis/;
-    location /cgi-bin/ {
-        gzip off;
-        alias /home/albert/www/cgi-bin/magiokis/;
-        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/www/cgi-bin/magiokis$fastcgi_script_name;
-        }
-    error_log /var/log/nginx/vertel.magiokis-error.log error;
-    access_log /var/log/nginx/vertel.magiokis-access.log ;
-    }
-server {
     server_name data.magiokis.nl;
     root /home/albert/magiokis/data;
     #script_alias /home/albert/www/cgi-bin/magiokis/;
@@ -95,4 +39,61 @@ server {
     #script_alias /home/albert/www/cgi-bin/magiokis-vv/;
     error_log /var/log/nginx/preview.magiokis-error.log error;
     access_log /var/log/nginx/preview.magiokis-access.log ;
+    }
+
+server {
+    server_name songs.magiokis.nl;
+    root /home/albert/projects/magiokis/html/songs;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/magiokis/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/songs.magiokis-error.log error;
+    access_log /var/log/nginx/songs.magiokis-access.log ;
+    }
+server {
+    server_name denk.magiokis.nl;
+    root /home/albert/projects/magiokis/html/denk;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/magiokis/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/denk.magiokis-error.log error;
+    access_log /var/log/nginx/denk.magiokis-access.log ;
+    }
+server {
+    server_name dicht.magiokis.nl;
+    root /home/albert/projects/magiokis/html/dicht;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/magiokis/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/dicht.magiokis-error.log error;
+    access_log /var/log/nginx/dicht.magiokis-access.log ;
+    }
+server {
+    server_name vertel.magiokis.nl;
+    root /home/albert/projects/magiokis/html/vertel;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/magiokis/cgi-bin/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/vertel.magiokis-error.log error;
+    access_log /var/log/nginx/vertel.magiokis-access.log ;
     }
