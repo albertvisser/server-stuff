@@ -41,11 +41,11 @@ server {
     error_log /var/log/nginx/django.magiokis-error.log error;
     access_log /var/log/nginx/django.magiokis-access.log ;
     location /media {
-        root   /home/albert/www/django/magiokis/;
+        root   /home/albert/projects/magiokis-django/;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/magiokis;
+        root /home/albert/projects/magiokis-django;
         expires 30d;
         break;
         }
@@ -76,11 +76,11 @@ server {
     error_log /var/log/nginx/actiereg.lemoncurry-error.log error;
     access_log /var/log/nginx/actiereg.lemoncurry-access.log ;
     location /media {
-        root   /home/albert/www/django/actiereg/;
+        root   /home/albert/projects/actiereg/;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/actiereg;
+        root /home/albert/projects/actiereg;
         expires 30d;
         break;
         }
@@ -111,11 +111,11 @@ server {
     error_log /var/log/nginx/myprojects.lemoncurry-error.log error;
     access_log /var/log/nginx/myprojects.lemoncurry-access.log ;
     location /media {
-        root   /home/albert/www/django/myprojects/;
+        root   /home/albert/projects/myprojects/;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/myprojects;
+        root /home/albert/projects/myprojects;
         expires 30d;
         break;
         }
@@ -146,11 +146,11 @@ server {
     error_log /var/log/nginx/mydomains.lemoncurry-error.log error;
     access_log /var/log/nginx/mydomains.lemoncurry-access.log ;
     location /media {
-        root   /home/albert/www/django/mydomains;
+        root   /home/albert/projects/mydomains;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/mydomains;
+        root /home/albert/projects/mydomains;
         expires 30d;
         break;
         }
@@ -186,11 +186,11 @@ server {
     error_log /var/log/nginx/myapps.lemoncurry-error.log error;
     access_log /var/log/nginx/myapps.lemoncurry-access.log ;
     location /media {
-        root   /home/albert/www/django/myapps;
+        root   /home/albert/projects/myapps;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/myapps;
+        root /home/albert/projects/myapps;
         expires 30d;
         break;
         }
@@ -227,11 +227,11 @@ server {
     error_log /var/log/nginx/albums.lemoncurry-error.log error;
     access_log /var/log/nginx/albums.lemoncurry-access.log ;
     location /media {
-        root   /home/albert/www/django/albums;
+        root   /home/albert/projects/albums;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/www/django/albums;
+        root /home/albert/projects/albums;
         expires 30d;
         break;
         }

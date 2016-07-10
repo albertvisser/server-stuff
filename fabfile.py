@@ -36,7 +36,7 @@ guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps', 'albums']
-django_project_path = {x: os.path.join(HOME, 'www', 'django', x) for x in
+django_project_path = {x: os.path.join(HOME, 'projects', x) for x in
     django_sites}
 PLONES = ('plone', 'plone5')
 extconf = {
@@ -291,12 +291,15 @@ def django_css(*project):
             _fix_media_prefix(path)
 
 def _get_cherry_parms(project=None):
-    allproj = ('rst2html', 'logviewer', 'magiokis', 'rst2html_mongo')
+    allproj = ('rst2html', 'logviewer', 'magiokis-cherry', 'rst2html_mongo')
     if not project:
         return allproj
-    pad = os.path.join(HOME, 'www', 'cherrypy', project)
-    if project == allproj[3]:
-        pad = os.path.join(HOME, 'www', 'cherrypy', allproj[0])
+    ## pad = os.path.join(HOME, 'www', 'cherrypy', project)
+    pad = os.path.join(HOME, 'projects', project)
+    if project == allproj[2]:
+        project = project.split('-')[0]
+    elif project == allproj[3]:
+        pad = os.path.join(HOME, 'projects', allproj[0])
     ## conf = os.path.join(HERE, '{}.conf'.format(project))
     conf = '{}.conf'.format(project)
     ## conf = os.path.join(pad, '{}.conf'.format(project))
@@ -377,7 +380,6 @@ def _plone(action, *sitenames):
                 local('bin/plonectl stop')
             elif action == 'buildout':
                 local('bin/buildout')
-    PLONES = ('plone', 'plone5')
     if not sitenames:
         sitenames = PLONES
     for name in sitenames:
@@ -450,3 +452,47 @@ def restart_gunicorn():
     "restart local gunicorn server"
     stop_gunicorn()
     start_gunicorn()
+
+def _serve(*names, **kwargs):
+    stop_server = 'stop' in kwargs
+    start_server = 'start' in kwargs
+    funcs = {
+        'django': (start_django, stop_django),
+        'cherry': (start_cherry, stop_cherry),
+        'plone': (start_plone, stop_plone),
+        'trac': (start_trac, stop_trac),
+        'hgweb': (start_hgweb, stop_hgweb),
+        'apache': (start_apache, stop_apache, restart_apache),
+        'nginx': (start_nginx, stop_nginx, restart_nginx),
+        'php': (start_php, stop_php, restart_php),
+        'ftp': (start_ftp, stop_ftp, restart_ftp),
+        }
+    for name in names:
+        if name in funcs:
+            if stop_server and start_server and len(funcs[name]) > 2:
+                funcs[name][2]()
+                return
+            start, stop = funcs[name]
+            if stop_server: stop(name)
+            if start_server: start(name)
+        elif name in django_sites:
+            if stop_server: stop_django(name)
+            if start_server: start_django(name)
+        elif name in _get_cherry_parms():
+            if stop_server: stop_cherry(name)
+            if start_server: start_cherry(name)
+        elif name in PLONES:
+            if stop_server: stop_plone(name)
+            if start_server: start_plone(name)
+
+def stop_server(names):
+    "stop local server"
+    _serve(names, stop=True)
+
+def start_server(names):
+    "start local server"
+    _serve(names, start=True)
+
+def restart_server(names):
+    "restart local server"
+    _serve(names, stop=True, start=True)
