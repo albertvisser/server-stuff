@@ -457,11 +457,11 @@ def _serve(*names, **kwargs):
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
     funcs = {
-        'django': (start_django, stop_django),
-        'cherry': (start_cherry, stop_cherry),
-        'plone': (start_plone, stop_plone),
-        'trac': (start_trac, stop_trac),
-        'hgweb': (start_hgweb, stop_hgweb),
+        'django': (start_django, stop_django, ''),
+        'cherry': (start_cherry, stop_cherry, ''),
+        'plone': (start_plone, stop_plone, ''),
+        'trac': (start_trac, stop_trac, ''),
+        'hgweb': (start_hgweb, stop_hgweb, ''),
         'apache': (start_apache, stop_apache, restart_apache),
         'nginx': (start_nginx, stop_nginx, restart_nginx),
         'php': (start_php, stop_php, restart_php),
@@ -469,12 +469,12 @@ def _serve(*names, **kwargs):
         }
     for name in names:
         if name in funcs:
-            if stop_server and start_server and len(funcs[name]) > 2:
-                funcs[name][2]()
+            start, stop, restart = funcs[name]
+            if stop_server and start_server and restart:
+                restart()
                 return
-            start, stop = funcs[name]
-            if stop_server: stop(name)
-            if start_server: start(name)
+            if stop_server: stop()
+            if start_server: start()
         elif name in django_sites:
             if stop_server: stop_django(name)
             if start_server: start_django(name)
