@@ -47,7 +47,8 @@ server {
                 include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                 fastcgi_intercept_errors on;
-                fastcgi_pass unix:/tmp/php.socket;
+                #fastcgi_pass unix:/tmp/php.socket;
+                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         }
 
         # Fighting with ImageCache? This little gem is amazing.
@@ -114,7 +115,8 @@ server {
                 include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                 fastcgi_intercept_errors on;
-                fastcgi_pass unix:/tmp/php.socket;
+                #fastcgi_pass unix:/tmp/php.socket;
+                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         }
 
         # Fighting with ImageCache? This little gem is amazing.
@@ -181,7 +183,8 @@ server {
                 include fastcgi_params;
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
                 fastcgi_intercept_errors on;
-                fastcgi_pass unix:/tmp/php.socket;
+                #fastcgi_pass unix:/tmp/php.socket;
+                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
         }
 
         # Fighting with ImageCache? This little gem is amazing.

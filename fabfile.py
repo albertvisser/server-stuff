@@ -38,7 +38,8 @@ django_sites = ['pythoneer', 'magiokis', 'actiereg', 'myprojects', 'mydomains',
     'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'projects', x) for x in
     django_sites}
-PLONES = ('plone', 'plone5')
+django_project_path['magiokis'] += '-django'
+PLONES = ('plone',)
 extconf = {
     'fcgiwrap': (NGINX, True, '@.conf'),
     'nginx': (NGINX, True, '@.conf'),
@@ -56,7 +57,7 @@ extconf = {
     ## 'plone-conf': (PLONE, False, 'buildout.cfg')
     }
 for plone in PLONES:
-    extconf['{}-conf'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
+    extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
         plone.title())), False, 'buildout.cfg')
 def addstartup(name):
     """add an init file to the startup sequence
@@ -95,8 +96,8 @@ def _modconf(name):
 
 def modconf(*names):
     "deploy modifications for Nginx configuration file(s)"
-    if names[0] == "?":
-        text = "Available non-Nginx confs: " + ", ".join(extconf.keys())
+    if not names or names[0] == "?":
+        text = "Available non-Nginx confs: " + ", ".join(sorted(extconf.keys()))
         print(text)
         return
     for conf in names:
@@ -186,6 +187,7 @@ def stop_trac():
     local('sudo kill `cat {}`'.format(trac_pid))
 
 def start_trac():
+    # Note: uses gunicorn for Python 2
     "start local trac server"
     sock = 'unix:/var/run/lemontrac.sock'
     with lcd(TRAC):
@@ -221,7 +223,7 @@ def start_django(*project):
     for proj in project:
         pid, sock, path = _get_django_args(proj)
         with lcd(path):
-            local('sudo /usr/local/bin/gunicorn -D -b unix:{} -p {} '
+            local('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
                 '{}.wsgi:application'.format(sock, pid, proj))
 
 def restart_django(*project):
@@ -329,10 +331,9 @@ def start_cherry(*project):
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(pad):
             cherrydloc = ''
-            if sys.version >= '3':
-                cherrydloc = '/usr/local/bin/'
-            local('sudo {}cherryd -c {} -d -p {} -i {}'.format(cherrydloc, conf,
-                pid, prog))
+            ## if sys.version >= '3':
+                ## cherrydloc = '/usr/local/bin/'
+            local('sudo /usr/sbin/cherryd3 -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 def restart_cherry(*project):
     "restart cherrypy site (arg:project)"
@@ -399,7 +400,11 @@ def restart_plone(*sitenames):
     start_plone(*sitenames)
 
 def buildout_plone(*sitenames):
-    "run buildout on Plone instance"
+    """run buildout on Plone instance
+
+    to be used in this combo:
+        fabsrv modconf:plone-buildout buildout_plone restart_plone
+    """
     _plone('buildout', *sitenames)
 
 def stop_apache():

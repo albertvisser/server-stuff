@@ -1,14 +1,18 @@
 server {
     server_name local.magiokis.nl;
     root /home/albert/projects/magiokis/html;
+    location / {
+        try_files $uri $uri/ /cgi-bin/;
+    }
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/magiokis/cgi-bin/;
+        #alias /home/albert/projects/magiokis/cgi-bin;
+        alias /home/albert/projects/magiokis;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
-    error_log /var/log/nginx/local.magiokis-error.log error;
+    error_log /var/log/nginx/local.magiokis-error.log warn;
     access_log /var/log/nginx/local.magiokis-access.log ;
     }
 server {
@@ -17,12 +21,16 @@ server {
     #script_alias /home/albert/www/cgi-bin/magiokis/;
     error_log /var/log/nginx/php.magiokis-error.log error;
     access_log /var/log/nginx/php.magiokis-access.log ;
+    location / {
+        try_files $uri $uri/ /index.php;
+    }
     location ~ \.php$ {
       # Filter out arbitrary code execution
       location ~ \..*/.*\.php$ {return 404;}
 
       include fastcgi_params;
-      fastcgi_pass  unix:/tmp/php.socket;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_pass  unix:/run/php/php7.0-fpm.sock;
       fastcgi_index index.php;
         }
     }
@@ -47,10 +55,11 @@ server {
     #script_alias /home/albert/projects/magiokis/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/magiokis/cgi-bin/;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
     error_log /var/log/nginx/songs.magiokis-error.log error;
     access_log /var/log/nginx/songs.magiokis-access.log ;
@@ -61,10 +70,11 @@ server {
     #script_alias /home/albert/projects/magiokis/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/magiokis/cgi-bin/;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
     error_log /var/log/nginx/denk.magiokis-error.log error;
     access_log /var/log/nginx/denk.magiokis-access.log ;
@@ -75,10 +85,11 @@ server {
     #script_alias /home/albert/projects/magiokis/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/magiokis/cgi-bin/;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
     error_log /var/log/nginx/dicht.magiokis-error.log error;
     access_log /var/log/nginx/dicht.magiokis-access.log ;
@@ -89,10 +100,11 @@ server {
     #script_alias /home/albert/projects/magiokis/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/magiokis/cgi-bin/;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME  /home/albert/projects/magiokis/cgi-bin$fastcgi_script_name;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
     error_log /var/log/nginx/vertel.magiokis-error.log error;
     access_log /var/log/nginx/vertel.magiokis-access.log ;
