@@ -1,38 +1,3 @@
-upstream pythoneer_server {
-    server unix:/var/run/pythoneer.sock fail_timeout=0;
-    }
-server {
-    server_name django.pythoneer.nl;
-    error_log /var/log/nginx/django.pythoneer-error.log error;
-    access_log /var/log/nginx/django.pythoneer-access.log;
-    location /media {
-        root   /home/albert/www/django/pythoneer;
-        }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
-        {
-        root /home/albert/www/django/pythoneer;
-        expires 30d;
-        break;
-        }
-    location / {
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header Host $http_host;
-        proxy_redirect off;
-        proxy_pass http://pythoneer_server;
-        # fastcgi_pass unix:/var/run/pythoneer.sock;
-        # fastcgi_param PATH_INFO $fastcgi_script_name;
-        # fastcgi_param REQUEST_METHOD $request_method;
-        # fastcgi_param  QUERY_STRING       $query_string;
-        # fastcgi_param CONTENT_TYPE $content_type;
-        # fastcgi_param CONTENT_LENGTH $content_length;
-        # fastcgi_param REMOTE_ADDR $remote_addr;
-        # # include /etc/nginx/fastcgi_params;
-        # fastcgi_param	SERVER_PROTOCOL		$server_protocol;
-        # fastcgi_param	SERVER_PORT		$server_port;
-        # fastcgi_param	SERVER_NAME		$server_name;
-        }
-    }
-
 upstream magiokis_server {
     server unix:/var/run/magiokis.sock fail_timeout=0;
     }

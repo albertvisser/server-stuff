@@ -12,3 +12,11 @@ server {
     error_log /var/log/nginx/www.pythoneer-error.log error;
     access_log /var/log/nginx/www.pythoneer-access.log;
     }
+
+server {
+    server_name django.pythoneer.nl;
+    root /home/albert/projects/pythoneer/;
+    ## ScriptAlias /cgi-bin/ "/home/albert/www/cgi-bin/paradox/"
+    error_log /var/log/nginx/django.pythoneer-error.log;
+    access_log /var/log/nginx/django-pythoneer-access.log;
+    }
