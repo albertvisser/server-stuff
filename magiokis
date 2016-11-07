@@ -1,5 +1,5 @@
 server {
-    server_name local.magiokis.nl;
+    server_name original.magiokis.nl;
     root /home/albert/projects/magiokis/html;
     location / {
         try_files $uri $uri/ /cgi-bin/;
@@ -12,8 +12,8 @@ server {
         include /etc/nginx/fastcgi_params;
         fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
         }
-    error_log /var/log/nginx/local.magiokis-error.log warn;
-    access_log /var/log/nginx/local.magiokis-access.log ;
+    error_log /var/log/nginx/original.magiokis-error.log warn;
+    access_log /var/log/nginx/original.magiokis-access.log ;
     }
 server {
     server_name php.magiokis.nl;
@@ -42,11 +42,11 @@ server {
     access_log /var/log/nginx/data.magiokis-access.log ;
     }
 server {
-    server_name preview.magiokis.nl;
+    server_name oldlocal.magiokis.nl;
     root /home/albert/www/magiokis_vv/site;
     #script_alias /home/albert/www/cgi-bin/magiokis-vv/;
-    error_log /var/log/nginx/preview.magiokis-error.log error;
-    access_log /var/log/nginx/preview.magiokis-access.log ;
+    error_log /var/log/nginx/oldlocal.magiokis-error.log error;
+    access_log /var/log/nginx/oldlocal.magiokis-access.log ;
     }
 
 server {

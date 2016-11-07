@@ -135,9 +135,13 @@ server {
     }
 
 server {
-    server_name wwwblog.magiokis.nl;
-    error_log /var/log/nginx/wwwblog.magiokis-error.log info;
-    access_log /var/log/nginx/wwwblog.magiokis-access.log ;
+    # server_name wwwblog.magiokis.nl;
+    # error_log /var/log/nginx/wwwblog.magiokis-error.log info;
+    # access_log /var/log/nginx/wwwblog.magiokis-access.log ;
+    #    root /home/albert/www/magiokis_vv/blog; ## <-- Your only path reference.
+    server_name local.magiokis.nl;
+    error_log /var/log/nginx/local.magiokis-error.log info;
+    access_log /var/log/nginx/local.magiokis-access.log ;
         root /home/albert/www/magiokis_vv/blog; ## <-- Your only path reference.
 
         location = /favicon.ico {
