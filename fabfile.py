@@ -296,19 +296,17 @@ def _get_cherry_parms(project=None):
     allproj = ('rst2html', 'logviewer', 'magiokis-cherry', 'rst2html_mongo')
     if not project:
         return allproj
-    ## pad = os.path.join(HOME, 'www', 'cherrypy', project)
+    origproj = project
     pad = os.path.join(HOME, 'projects', project)
     if project == allproj[2]:
         project = project.split('-')[0]
     elif project == allproj[3]:
         pad = os.path.join(HOME, 'projects', allproj[0])
-    ## conf = os.path.join(HERE, '{}.conf'.format(project))
     conf = '{}.conf'.format(project)
-    ## conf = os.path.join(pad, '{}.conf'.format(project))
     prog = 'start_{}'.format(project)
     pid = os.path.join(runpath, '{}.pid'.format(project))
     sock = os.path.join(runpath, '{}.sock'.format(project))
-    if project == allproj[2]:
+    if origproj == allproj[2]:
         pid = os.path.join(runpath, '{}c.pid'.format(project))
         sock = os.path.join(runpath, '{}c.sock'.format(project))
     return conf, pad, prog, pid, sock
@@ -330,9 +328,6 @@ def start_cherry(*project):
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(pad):
-            cherrydloc = ''
-            ## if sys.version >= '3':
-                ## cherrydloc = '/usr/local/bin/'
             local('sudo /usr/sbin/cherryd3 -c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 def restart_cherry(*project):
