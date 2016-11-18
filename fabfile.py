@@ -3,6 +3,7 @@
 import os
 import sys
 import shutil
+import requests
 from fabric.api import * # local, sudo, lcd, hide, settings
 """collection of shortcut functions concerning deployment
 of my local ngnix stuff
@@ -365,6 +366,63 @@ def check_all_servers(*project):
         all_clear = False
     if all_clear:
         print("all local servers ok")
+
+def _get_sitenames():
+    sites = []
+    with open('/etc/hosts') as _in:
+        for line in _in:
+            if line.startswith('#'):
+                continue
+            for name in ('lemoncurry', 'magiokis'):
+                if name in line:
+                    sites.append(line.strip().split()[1])
+    return sites
+
+def _check_page(address):
+    return requests.get('http://' + address)
+
+def _check_frontpage(sitename):
+    r = _check_page(sitename)
+    if sitename.startswith('trac'):
+        if r.status_code == 401: # not authenticated is the right answer here
+            return 200
+    return r.status_code
+
+def _check_sites(quick=True):
+    check_address = {
+        'quick': {
+            'original.magiokis.nl': '/cgi-bin/mainscript.py',
+            'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
+            'cherrypy.magiokis.nl': '/ow/',
+            'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
+            'denk.magiokis.nl': '/cgi-bin/denk_select.py',
+            'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
+            'vertel.magiokis.nl': '/cgi-bin/vertel_select.py',
+            },
+        'full': {},
+        }
+    sitenames = _get_sitenames()
+    results = []
+    for x in sitenames:
+        ok = _check_frontpage(x)
+        if ok != 200:
+            results.append('error {} on {}'.format(ok, x))
+            continue
+        if quick:
+            if x in check_address['quick']:
+                test = x + check_address['quick'][x]
+                ok = _check_page(test).status_code
+                if ok != 200:
+                    results.append('error {} on {}'.format(ok, test))
+            continue
+    if not results:
+        results = ["All clear"]
+    return results
+
+def check_all_sites():
+    "quick (frontpage only) check if all local sites are working"
+    for line in _check_sites():
+        print(line)
 
 def _plone(action, *sitenames):
     def _doit(sitename, action):
