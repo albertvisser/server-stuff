@@ -42,7 +42,7 @@ server {
     }
 server {
     server_name bitbucket_mongo.lemoncurry.nl;
-    root /home/albert/www/cherrypy/rst2html/rst2html-data/bitbucket;
+    root /home/albert/projects/rst2html/rst2html-data/bitbucket;
     error_log /var/log/nginx/bitbucket_mongo.lemoncurry-error.log error;
     access_log /var/log/nginx/bitbucket_mongo.lemoncurry-access.log ;
     }
