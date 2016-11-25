@@ -1,3 +1,4 @@
+from __future__ import print_function
 # -*- coding: utf-8 -*-
 
 import os
@@ -402,27 +403,36 @@ def _check_sites(quick=True):
         'full': {},
         }
     sitenames = _get_sitenames()
-    results = []
-    for x in sitenames:
-        ok = _check_frontpage(x)
+    for base in sitenames:
+        print('checking {}... '.format(base), end='')
+        ok = _check_frontpage(base)
         if ok != 200:
-            results.append('error {} on {}'.format(ok, x))
+            print('error {}'.format(ok))
             continue
+        print('ok')
         if quick:
-            if x in check_address['quick']:
-                test = x + check_address['quick'][x]
+            if base in check_address['quick']:
+                test = base + check_address['quick'][base]
                 ok = _check_page(test).status_code
                 if ok != 200:
-                    results.append('error {} on {}'.format(ok, test))
+                    print('    error {} on {}'.format(ok, test))
             continue
-    if not results:
-        results = ["All clear"]
-    return results
+        to_check = check_address['full'].get(base, [])
+        if base in check_address['quick']:
+            to_check.insert(0, check_address['quick'][base])
+        for test in to_check:
+            test = base + test
+            ok = _check_page(test).status_code
+            if ok != 200:
+                print('    error {} on {}'.format(ok, test))
 
 def check_all_sites():
     "quick (frontpage only) check if all local sites are working"
-    for line in _check_sites():
-        print(line)
+    _check_sites()
+
+def check_all_pages():
+    "full check if all local sites are working"
+    _check_sites(quick=False)
 
 def _plone(action, *sitenames):
     def _doit(sitename, action):

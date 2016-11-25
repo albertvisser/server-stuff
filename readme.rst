@@ -1,7 +1,7 @@
 Nginx-config
 ============
 
-When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Apache for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - and it turned out very satisfactory indeed.
+When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Lighttpd for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - and it turned out very satisfactory indeed.
 
 Besides the actual Nginx configuration files (or rather: includes) I collected some other configurations here so they are centralized and version controlled as well. And of course the script to manage it all is here.
 
