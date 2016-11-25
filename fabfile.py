@@ -1,5 +1,5 @@
-from __future__ import print_function
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
 import os
 import sys
@@ -389,7 +389,18 @@ def _check_frontpage(sitename):
             return 200
     return r.status_code
 
-def _check_sites(quick=True):
+def _check_sites(quick=True, sites=None):
+    """
+    verkorte versie:
+    alle locale sites langslopen om te zien of de frontpage werkt
+    van sommige sites wil je ook zien of vervolgpagina's werken
+
+    complete versie:
+    van alle locale sites waar een beperkt aantal vervolgpagina's mogelijk is
+    al deze mogelijkheden aflopen
+    van gelijksoortige pagina's is één variant voldoende
+    """
+    # TODO: check_address inlezen vanuit een bestand (all_local_pages.txt)
     check_address = {
         'quick': {
             'original.magiokis.nl': '/cgi-bin/mainscript.py',
@@ -403,6 +414,8 @@ def _check_sites(quick=True):
         'full': {},
         }
     sitenames = _get_sitenames()
+    if sites:
+        sitenames = [name for name in sites if name in sitenames]
     for base in sitenames:
         print('checking {}... '.format(base), end='')
         ok = _check_frontpage(base)
@@ -430,9 +443,12 @@ def check_all_sites():
     "quick (frontpage only) check if all local sites are working"
     _check_sites()
 
-def check_all_pages():
+def check_all_pages(*args):
     "full check if all local sites are working"
-    _check_sites(quick=False)
+    if not args:
+        _check_sites(quick=False)
+    else:
+        _check_sites(quick=False, sites=[x for x in args])
 
 def _plone(action, *sitenames):
     def _doit(sitename, action):
