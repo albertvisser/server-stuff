@@ -1,0 +1,47 @@
+server {
+    server_name data.magiokis.nl;
+    root /home/albert/magiokis/data;
+    #script_alias /home/albert/www/cgi-bin/magiokis/;
+    error_log /var/log/nginx/data.magiokis-error.log error;
+    access_log /var/log/nginx/data.magiokis-access.log ;
+    }
+server {
+    server_name oldlocal.magiokis.nl;
+    root /home/albert/www/magiokis_vv/site;
+    #script_alias /home/albert/www/cgi-bin/magiokis-vv/;
+    error_log /var/log/nginx/oldlocal.magiokis-error.log error;
+    access_log /var/log/nginx/oldlocal.magiokis-access.log ;
+    }
+server {
+    server_name lemoncurry.nl www.lemoncurry.nl;
+    root /usr/share/nginx/html;
+    #script_alias /usr/lib/cgi-bin/;
+    error_log /var/log/nginx/lemoncurry-error.log warn;
+    access_log /var/log/nginx/lemoncurry-access.log ;
+    #location ~ \.php$ {
+    #  # Filter out arbitrary code execution
+    #  location ~ \..*/.*\.php$ {return 404;}
+    #  include fastcgi_params;
+    #  fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    #  fastcgi_pass  unix:/tmp/php.socket;
+    #  fastcgi_index index.php;
+    #    }
+    }
+server {
+    server_name rstblog.lemoncurry.nl;
+    root /home/albert/rstblog/venv/avisser.bitbucket.org/_build;
+    error_log /var/log/nginx/rstblog.lemoncurry-error.log error;
+    access_log /var/log/nginx/rstblog.lemoncurry-access.log ;
+    }
+server {
+    server_name bitbucket.lemoncurry.nl;
+    root /home/albert/www/bitbucket;
+    error_log /var/log/nginx/bitbucket.lemoncurry-error.log error;
+    access_log /var/log/nginx/bitbucket.lemoncurry-access.log ;
+    }
+server {
+    server_name bitbucket_mongo.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/bitbucket;
+    error_log /var/log/nginx/bitbucket_mongo.lemoncurry-error.log error;
+    access_log /var/log/nginx/bitbucket_mongo.lemoncurry-access.log ;
+    }

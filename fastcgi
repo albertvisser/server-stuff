@@ -1,0 +1,163 @@
+server {
+    server_name hg.lemoncurry.nl;
+    # root /home/albert/hg_repos;
+    error_log /var/log/nginx/hg.lemoncurry-error.log error;
+    access_log /var/log/nginx/hg.lemoncurry-access.log ;
+    location / {
+        #proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        #proxy_set_header Host $http_host;
+        #proxy_redirect off;
+        #proxy_pass      http://hgweb_gunicorn;
+            fastcgi_pass	unix:/var/run/hgwebdir.sock;
+            fastcgi_param	PATH_INFO	$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    }
+
+server {
+    server_name original.magiokis.nl;
+    root /home/albert/projects/magiokis/html;
+    location / {
+        try_files $uri $uri/ /cgi-bin/;
+    }
+    location /cgi-bin/ {
+        gzip off;
+        #alias /home/albert/projects/magiokis/cgi-bin;
+        alias /home/albert/projects/magiokis;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/original.magiokis-error.log warn;
+    access_log /var/log/nginx/original.magiokis-access.log ;
+    }
+server {
+    server_name songs.magiokis.nl;
+    root /home/albert/projects/magiokis/html/songs;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/songs.magiokis-error.log error;
+    access_log /var/log/nginx/songs.magiokis-access.log ;
+    }
+server {
+    server_name denk.magiokis.nl;
+    root /home/albert/projects/magiokis/html/denk;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/denk.magiokis-error.log error;
+    access_log /var/log/nginx/denk.magiokis-access.log ;
+    }
+server {
+    server_name dicht.magiokis.nl;
+    root /home/albert/projects/magiokis/html/dicht;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/dicht.magiokis-error.log error;
+    access_log /var/log/nginx/dicht.magiokis-access.log ;
+    }
+server {
+    server_name vertel.magiokis.nl;
+    root /home/albert/projects/magiokis/html/vertel;
+    #script_alias /home/albert/projects/magiokis/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        #alias /home/albert/projects/magiokis/cgi-bin/;
+        alias /home/albert/projects/magiokis/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/vertel.magiokis-error.log error;
+    access_log /var/log/nginx/vertel.magiokis-access.log ;
+    }
+
+server {
+    server_name muziek.lemoncurry.nl;
+    root /home/albert/projects/pythoneer/muziek/html;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/pythoneer/muziek/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/muziek.lemoncurry-error.log error;
+    access_log /var/log/nginx/muziek.lemoncurry-access.log;
+    }
+server {
+    server_name adr.lemoncurry.nl;
+    root /home/albert/projects/pythoneer/adressen/html;
+    #script_alias /home/albert/www/cgi-bin/adressen/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/pythoneer/adressen/;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/adr.lemoncurry-error.log error;
+    access_log /var/log/nginx/adr.lemoncurry-access.log;
+    }
+server {
+    server_name films.lemoncurry.nl;
+    root /home/albert/projects/pythoneer/films/html;
+    #script_alias /home/albert/www/cgi-bin/films/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/pythoneer/films;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/films.lemoncurry-error.log error;
+    access_log /var/log/nginx/films.lemoncurry-access.log;
+    }
+server {
+    server_name absentie.lemoncurry.nl;
+    root /home/albert/projects/absentie/html;
+    #script_alias /home/albert/www/absentie/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/absentie;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/school.lemoncurry-error.log error;
+    access_log /var/log/nginx/school.lemoncurry-access.log;
+    }
+server {
+    server_name doctool.lemoncurry.nl;
+    root /home/albert/projects/doctool/html;
+    #script_alias /home/albert/www/doctool/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /home/albert/projects/doctool;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    error_log /var/log/nginx/doctool.lemoncurry-error.log error;
+    access_log /var/log/nginx/doctool.lemoncurry-access.log;
+    }

@@ -1,0 +1,19 @@
+server {
+    server_name php.magiokis.nl;
+    root /home/albert/projects/magiokis-php;
+    #script_alias /home/albert/www/cgi-bin/magiokis/;
+    error_log /var/log/nginx/php.magiokis-error.log error;
+    access_log /var/log/nginx/php.magiokis-access.log ;
+    location / {
+        try_files $uri $uri/ /index.php;
+    }
+    location ~ \.php$ {
+      # Filter out arbitrary code execution
+      location ~ \..*/.*\.php$ {return 404;}
+
+      include fastcgi_params;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_pass  unix:/run/php/php7.0-fpm.sock;
+      fastcgi_index index.php;
+        }
+    }
