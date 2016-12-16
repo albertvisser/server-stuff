@@ -94,10 +94,10 @@ server {
 
 server {
     server_name muziek.lemoncurry.nl;
-    root /home/albert/projects/pythoneer/muziek/html;
+    root /home/albert/projects/albums-cgi/html;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/pythoneer/muziek/;
+        alias /home/albert/projects/albums-cgi/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
         #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
