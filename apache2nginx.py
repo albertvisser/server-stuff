@@ -1,3 +1,5 @@
+"""convert apache configuration to nginx config
+"""
 import sys
 import os
 INLOC = '/home/albert/van_backup/etc/apache2/sites-available'
@@ -8,6 +10,7 @@ usage: [python] apache2nginx.py <basename>
 takes a file in {}
 and converts it to a same-named file in {}
 """.format(INLOC, OUTLOC)
+
 
 def zetom(infile, outfile):
     "zet per virtual host de apache statements een voor een om in nginx statements"
