@@ -16,6 +16,7 @@ import os
 import shutil
 import requests
 from fabric.api import *  # local, sudo, lcd, hide, settings
+from all_local_pages import check_address
 
 HERE = os.path.dirname(__file__)
 INIT, NGINX, APACHE = '/etc/init.d', '/etc/nginx', '/etc/apache2'
@@ -436,16 +437,16 @@ def _check_sites(quick=True, sites=None):
     al deze mogelijkheden aflopen
     van gelijksoortige pagina's is één variant voldoende
     """
-    # TODO: check_address inlezen vanuit een bestand (all_local_pages.txt)
-    check_address = {
-        'quick': {'original.magiokis.nl': '/cgi-bin/mainscript.py',
-                  'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
-                  'cherrypy.magiokis.nl': '/ow/',
-                  'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
-                  'denk.magiokis.nl': '/cgi-bin/denk_select.py',
-                  'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
-                  'vertel.magiokis.nl': '/cgi-bin/vertel_select.py'},
-        'full': {}}
+    ## # TODO: check_address inlezen vanuit een bestand (all_local_pages.txt)
+    ## check_address = {
+        ## 'quick': {'original.magiokis.nl': '/cgi-bin/mainscript.py',
+                  ## 'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
+                  ## 'cherrypy.magiokis.nl': '/ow/',
+                  ## 'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
+                  ## 'denk.magiokis.nl': '/cgi-bin/denk_select.py',
+                  ## 'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
+                  ## 'vertel.magiokis.nl': '/cgi-bin/vertel_select.py'},
+        ## 'full': {}}
     sitenames = _get_sitenames()
     if sites:
         sitenames = [name for name in sites if name in sitenames]
@@ -462,15 +463,15 @@ def _check_sites(quick=True, sites=None):
                 ok = _check_page(test).status_code
                 if ok != 200:
                     print('    error {} on {}'.format(ok, test))
-            continue
-        to_check = check_address['full'].get(base, [])
-        if base in check_address['quick']:
-            to_check.insert(0, check_address['quick'][base])
-        for test in to_check:
-            test = base + test
-            ok = _check_page(test).status_code
-            if ok != 200:
-                print('    error {} on {}'.format(ok, test))
+        else:
+            to_check = check_address['full'].get(base, [])
+            if base in check_address['quick']:
+                to_check.insert(0, check_address['quick'][base])
+            for test in to_check:
+                test = base + test
+                ok = _check_page(test).status_code
+                if ok != 200:
+                    print('    error {} on {}'.format(ok, test))
 
 
 def check_all_sites():
