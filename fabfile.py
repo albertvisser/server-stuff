@@ -20,6 +20,7 @@ from all_local_pages import check_address
 
 HERE = os.path.dirname(__file__)
 INIT, NGINX, APACHE = '/etc/init.d', '/etc/nginx', '/etc/apache2'
+PHP = '/etc/php/7.0/fpm/'
 AVL, NBL = 'sites-available', 'sites-enabled'
 AVAIL = os.path.join(NGINX, AVL)
 ENABL = os.path.join(NGINX, NBL)
@@ -56,7 +57,8 @@ extconf = {'fcgiwrap': (NGINX, True, '@.conf'),
            'hgweb.wsgi': (HGWEB, False, '@'),
            ## 'plone-conf': (PLONE, False, 'buildout.cfg'),
            'trac.ini': (os.path.join(TRAC, 'conf'), False, '@'),
-           'trac.fcgi': (TRAC, False, '@')}
+           'trac.fcgi': (TRAC, False, '@'),
+           'php.ini': (PHP, True, '@')}
 for plone in PLONES:
     extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
         plone.title())), False, 'buildout.cfg')
@@ -175,17 +177,17 @@ def restart_ftp():
 
 def stop_php():
     "stop php"
-    local('sudo {}/php-fcgi stop'.format(INIT))
+    local('sudo {}/php7.0-fpm stop'.format(INIT))
 
 
 def start_php():
     "start php"
-    local('sudo {}/php-fcgi start'.format(INIT))
+    local('sudo {}/php7.0-fpm start'.format(INIT))
 
 
 def restart_php():
     "restart php"
-    local('sudo {}/php-fcgi restart'.format(INIT))
+    local('sudo {}/php7.0-fpm restart'.format(INIT))
 
 
 def stop_hgweb():
@@ -196,8 +198,22 @@ def stop_hgweb():
 def start_hgweb():
     "start local Mercurial web server using hgweb.fcgi"
     start = os.path.join(HGWEB, 'hgweb.fcgi')
-    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start, hgweb_sock,
-                                                           hgweb_pid, 'www-data'))
+    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start,
+                                                           hgweb_sock,
+                                                           hgweb_pid,
+                                                           'www-data'))
+    #gunicorn3 kan mercurial niet importeren; gunicorn2 slaat vast, als ik het niet als daemon
+    # uitvoer zie ik
+    #Traceback (most recent call last):
+    #File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 130, in handle
+    #    self.handle_request(listener, req, client, addr)
+    #File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 176, in handle_request
+    #    for item in respiter:
+    #TypeError: 'hgwebdir' object is not iterable
+    ## "start local Mercurial web server using gunicorn for Python 3"
+    ## with lcd(HGWEB):
+        ## local('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
+              ## 'hgwebwsgi:application'.format(hgweb_sock, hgweb_pid))
 
 
 def restart_hgweb():
@@ -211,12 +227,13 @@ def stop_trac():
     local('sudo kill `cat {}`'.format(trac_pid))
 
 
-def start_trac():  # Note: uses gunicorn for Python 2
+def start_trac():  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
     "start local trac server"
-    sock = 'unix:/var/run/lemontrac.sock'
     with lcd(TRAC):
-        local('sudo /usr/bin/gunicorn -D -b {} -p {} '
-              'tracwsgi:application'.format(sock, trac_pid))
+        result = local('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
+                       'tracwsgi:application'.format(trac_sock, trac_pid))
+        print(result.stdout)
+        print(result.stderr)
 
 
 def restart_trac():
@@ -243,16 +260,18 @@ def stop_django(*project):
 
 
 def start_django(*project):
-    """start indicated Django server(s) using manage.py over fastcgi (python 2)
-    or using Gunicorn (python 3)
+    """start indicated Django server(s) using manage.py over fastcgi (python 2 - see
+    version history) or using Gunicorn (python 3)
     """
     if not project:
         project = django_project_path.keys()
     for proj in project:
         pid, sock, path = _get_django_args(proj)
         with lcd(path):
-            local('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
-                  '{}.wsgi:application'.format(sock, pid, proj))
+            result = local('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
+                           '{}.wsgi:application'.format(sock, pid, proj))
+            print(result.stdout)
+            print(result.stderr)
 
 
 def restart_django(*project):
@@ -361,7 +380,8 @@ def start_cherry(*project):
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(pad):
-            local('sudo /usr/sbin/cherryd3 -c {} -d -p {} -i {}'.format(conf, pid, prog))
+            local('sudo /usr/sbin/cherryd3 '
+                  '-c {} -d -p {} -i {}'.format(conf, pid, prog))
 
 
 def restart_cherry(*project):
@@ -464,9 +484,14 @@ def _check_sites(quick=True, sites=None):
                 if ok != 200:
                     print('    error {} on {}'.format(ok, test))
         else:
-            to_check = check_address['full'].get(base, [])
-            if base in check_address['quick']:
-                to_check.insert(0, check_address['quick'][base])
+            to_check = []
+            if base in check_address['full']:
+                to_read = check_address['full'][base]
+                if os.path.exists(to_read):
+                    with open(to_read) as _in:
+                        to_check = [line.strip() for line in _in]
+            ## if base in check_address['quick']:
+                ## to_check.insert(0, check_address['quick'][base])
             for test in to_check:
                 test = base + test
                 ok = _check_page(test).status_code
@@ -641,3 +666,8 @@ def start_server(names):
 def restart_server(names):
     "restart local server"
     _serve(names, stop=True, start=True)
+
+
+def list_servers():
+    server_list = django_project_path.keys() + [x for x in _get_cherry_parms()]
+    print("list of django and cherrypy server names:", ', '.join(server_list))
