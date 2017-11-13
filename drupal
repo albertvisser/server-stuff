@@ -144,6 +144,8 @@ server {
     access_log /var/log/nginx/local.magiokis-access.log ;
         root /home/albert/www/magiokis_vv/blog; ## <-- Your only path reference.
 
+        client_max_body_size 8M;
+
         location = /favicon.ico {
                 log_not_found off;
                 access_log off;
