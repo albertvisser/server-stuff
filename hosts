@@ -32,8 +32,6 @@ ff02::2 ip6-allrouters
 127.0.0.1     plone.lemoncurry.nl
 127.0.0.1     ragingdragon.lemoncurry.nl
 
-127.0.0.1     adr.lemoncurry.nl
-127.0.0.1     films.lemoncurry.nl
 127.0.0.1     muziek.lemoncurry.nl
 127.0.0.1     absentie.lemoncurry.nl
 127.0.0.1     doctool.lemoncurry.nl
