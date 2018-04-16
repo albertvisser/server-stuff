@@ -15,6 +15,7 @@ import os
 ## import sys
 import shutil
 import requests
+import datetime
 from fabric.api import *  # local, sudo, lcd, hide, settings
 from all_local_pages import check_address
 
@@ -38,27 +39,39 @@ GUNI = os.path.join(HOME, 'www', 'gunicorn')
 gproject = os.path.basename(GUNI)
 guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
+intconfs = ['default', 'cherrypy', 'django', 'drupal', 'fastcgi', 'flatpages',
+            'others', 'plone', 'php-sites', 'trac']
+intconf = {}
+for conf in intconfs:
+    intconf[conf] = []
+    with open(os.path.join(HERE, conf)) as _in:
+        for line in _in:
+            if line.strip().startswith('server_name'):
+                test = line.split('server_name', 1)
+                name = test[1].split(';')[0].strip()
+                intconf[conf].append(name)
 django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains',
                 'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'projects', x) for x in
                        django_sites}
 django_project_path['magiokis'] += '-django'
+PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
 PLONES = ('plone',)
-extconf = {'fcgiwrap': (NGINX, True, '@.conf'),
-           'nginx': (NGINX, True, '@.conf'),
-           'php-fcgi': (INIT, True, '@'),
-           'rc.local': ('/etc', True, '@'),
+extconf = {'nginx': (NGINX, True, '@.conf'),
+           'fastcgi': (NGINX, True, 'fcgiwrap.conf'),
+           'php': (PHP, True, '@.ini'),
+           'hgweb': (HGWEB, False, '@-config'),
+           'trac-conf': (os.path.join(TRAC, 'conf'), False, 'trac.ini'),
+           'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
            'hosts': ('/etc', True, '@'),
            'apache2': (APACHE, True, '@.conf'),
            'ports': (APACHE, True, '@.conf'),
-           'hgweb': (HGWEB, False, '@-config'),
-           'hgweb.cgi': (HGWEB, False, '@'),
-           'hgweb.fcgi': (HGWEB, False, '@'),
-           'hgweb.wsgi': (HGWEB, False, '@'),
-           ## 'plone-conf': (PLONE, False, 'buildout.cfg'),
-           'trac.ini': (os.path.join(TRAC, 'conf'), False, '@'),
-           'trac.fcgi': (TRAC, False, '@'),
-           'php.ini': (PHP, True, '@')}
+           ## 'php-fcgi': (INIT, True, '@'),
+           'rc.local': ('/etc', True, '@'),
+           'hgweb-srv': (HGWEB, False, 'hgweb.fcgi'),
+           ## 'hgweb.cgi': (HGWEB, False, '@'),
+           ## 'hgweb.wsgi': (HGWEB, False, '@'),
+           'trac-srv': (TRAC, False, 'tracwsgi.py')}
 for plone in PLONES:
     extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
         plone.title())), False, 'buildout.cfg')
@@ -88,50 +101,6 @@ def addconf(*names):
         _addconf(conf.strip())
 
 
-def _modconf(name):
-    "copy configuration after editing"
-    oldname = os.path.join(HERE, name)
-    ## newname = os.path.join(AVAIL, name)
-    ## shutil.copyfile(oldname, newname)
-    if name in extconf:
-        dest, uses_sudo, fname = extconf[name]
-        if fname.startswith('@'):
-            fname = name + fname[1:]
-        fname = os.path.join(HERE, fname)
-        local('{} cp {} {}'.format('sudo' if uses_sudo else '', fname, dest))
-    else:
-        local('sudo cp {} {}'.format(oldname, AVAIL))
-
-
-def modconf(*names):
-    "deploy modifications for Nginx configuration file(s)"
-    if not names or names[0] == "?":
-        text = "Available non-Nginx confs: " + ", ".join(sorted(extconf.keys()))
-        print(text)
-        return
-    for conf in names:
-        _modconf(conf.strip())
-
-
-def _diffconf(name):
-    "compare a configuration file"
-    if name in extconf:
-        dest, _, fname = extconf[name]
-        if fname.startswith('@'):
-            fname = name + fname[1:]
-    else:
-        dest, fname = AVAIL, name
-    with settings(hide('warnings'), warn_only=True):
-        local('diff {} {}'.format(os.path.join(dest, fname),
-                                  os.path.join(HERE, fname)))
-
-
-def diffconf(*names):
-    "compare named configuration files"
-    for conf in names:
-        _diffconf(conf.strip())
-
-
 def _rmconf(name):
     "disable configuration by removing symlink"
     newname = os.path.join(ENABL, name)
@@ -143,6 +112,105 @@ def rmconf(*names):
     "disable Nginx configuration for one or more file names"
     for conf in names:
         _rmconf(conf.strip())
+
+
+def _modconf(name, backup=False, append=False):
+    "copy configuration after editing"
+    if append: backup = True
+    if backup:
+        today = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
+
+    if name in extconf:
+        dest, needs_sudo, fname = extconf[name]
+        fname = fname.replace('@', name)
+    else:
+        dest = AVAIL
+        needs_sudo = True
+        fname = name
+
+    if backup:
+        src = os.path.join(dest, fname)
+        trg = os.path.join('backup', '-'.join((fname, today)))
+        with lcd(HERE):
+            local('cp {} {}'.format(src,  trg))
+
+    if append:
+        tmp = fname + '~~'
+        tmp2 = tmp + '~'
+        with lcd(HERE):
+            local('cp {} {}'.format(fname, tmp))
+            local('cat {} {} > {}'.format(trg, fname, tmp2))
+            local('mv -f {} {}'.format(tmp2, fname))
+
+    with lcd(HERE):
+        local('{} cp {} {}'.format('sudo' if needs_sudo else '', fname, dest))
+
+    if append:
+        with lcd(HERE):
+            local('mv -f {} {}'.format(tmp, fname))
+
+
+def modconf(*names):
+    "deploy modifications for Nginx configuration file(s); replace version"
+    for conf in names:
+        _modconf(conf.strip())
+
+
+def modconfb(*names):
+    "modconf: backup & replace version"
+    for conf in names:
+        _modconf(conf.strip(), backup=True)
+
+
+def modconfa(*names):
+    "modconf: backup & append version"
+    for conf in names:
+        _modconf(conf.strip(), append=True)
+
+
+def newconf(*names):
+    """shortcut to define and enable a new Nginx config in one go
+    """
+    for conf in names:
+        _modconf(conf.strip())
+        _addconf(conf.strip())
+
+
+def _diffconf(name, gui=False):
+    "compare a configuration file"
+    if name in extconf:
+        dest, _, fname = extconf[name]
+        if fname.startswith('@'):
+            fname = name + fname[1:]
+    else:
+        dest, fname = AVAIL, name
+    if gui:
+        local('meld {} {}'.format(os.path.join(dest, fname),
+                                  os.path.join(HERE, fname)))
+    else:
+        with settings(hide('warnings'), warn_only=True):
+            local('diff {} {}'.format(os.path.join(dest, fname),
+                                      os.path.join(HERE, fname)))
+
+
+def diffconf(*names):
+    "compare named configuration files"
+    for conf in names:
+        _diffconf(conf.strip())
+
+
+def diffconfg(*names):
+    "compare named configuration files + show results in gui"
+    for conf in names:
+        _diffconf(conf.strip(), gui=True)
+
+
+def listconf():
+    "list available configs"
+    text = "Available Nginx configs: " + ', '.join(sorted(intconf.keys()))
+    print(text)
+    text = "Available non-Nginx confs: " + ", ".join(sorted(extconf.keys()))
+    print(text)
 
 
 def stop_nginx():
@@ -441,7 +509,7 @@ def _check_page(address):
 def _check_frontpage(sitename):
     r = _check_page(sitename)
     if sitename.startswith('trac'):
-        if r.status_code == 401:  # not authenticated is the right answer here
+        if r.status_code == 401:  # not authenticated is enough for an answer here
             return 200
     return r.status_code
 
@@ -669,5 +737,29 @@ def restart_server(names):
 
 
 def list_servers():
+    "list of django and cherrypy server names"
+    ## print('er zijn nog verschillen:')
+    ## print(sorted(intconf['django']))
+    ## print(sorted(django_project_path.keys()))
+    ## print(sorted(intconf['cherrypy']))
+    ## print(sorted(x for x in _get_cherry_parms()))
     server_list = django_project_path.keys() + [x for x in _get_cherry_parms()]
     print("list of django and cherrypy server names:", ', '.join(server_list))
+
+
+def list_domains(*args):
+    "list of virtual domains per Nginx configuration"
+    allconfs = intconf.keys()
+    if not args:
+        args = allconfs
+
+    for conf in args:
+        try:
+            sites = intconf[conf]
+        except KeyError:
+            print('unknown config')
+        else:
+            print("domains for config {}: {}".format(conf, ', '.join(sites)))
+
+
+
