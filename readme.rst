@@ -9,7 +9,12 @@ Nginx configs:
 ..............
 
 ``default``
-    a copy of the config file that came with the installation
+    a copy of the config file that came with the installation, with some stuff added
+
+At first the others were organized per virtual domain (lemoncurry, pythoneer and magiokis) but I decided orgamnizing per implementation/framework type would be more logical
+
+so these are now obsolete:
+
 ``lemoncurry``
     configuration for various subdomains on my home server
 ``magiokis``
@@ -18,22 +23,36 @@ Nginx configs:
     and another one
 ``mercurial``
     config for serving my local Mercurial repositories
-``trac``
-    config for my local Trac site, served via Gunicorn
+
+``others``
+    currently only containing a copy of the previous (flat HTML) version of a Joomla site I maintained but that no longer exists
+as well as these:
+
 ``trac_via_tracd``
     older config running tracd over port 9001 instead of over a socket
-``django``
-    config for the subdomains that contain Django sites
+``joomla``
+    configuration for local Joomla sites (no longer in use)
+
+and these are the ones currently in use:
+
 ``cherrypy``
     config for the subdomains powered by CherryPy
+``django``
+    config for the subdomains that contain Django sites
 ``drupal``
     configuration for local sites driven by Drupal
-``joomla``
-    configuration for local Joomla sites
+``fastcgi``
+    config for the sites served using traditional cgi, including my locakl mercurial
+    server
+``flatpages``
+    config for local non-dynamic sites (html/css/js only)
 ``plone``
     configuration for local Plone instance
-``others``
-    currently only containing a copy of the previous (flat HTML) version of a Joomla site I maintain
+``php-sites``
+    config for the one php site I built
+
+``trac``
+    config for my local Trac site, served via Gunicorn
 
 Apache configs:
 ...............
