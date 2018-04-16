@@ -1,0 +1,53 @@
+# nginx configs
+#
+# first we'll want to set up local dns
+#fabsrv modconfa:hosts       # append versie
+
+#
+# update server configs
+#
+fabsrv modconfb:nginx       # changes upload buffer size
+#! modconf:fcgiwrap         # needed only if you want to run fcgi from localhost
+#! modconf:php-fcgi         # not needed because of php-fpm
+# install mysql, install php with fpm, mysql, sqlite support
+fabsrv modconfb:php.ini     # changes file upload size
+
+# update root domain: enable php + add locations docs, phpmyadmin & phppgadmin
+fabsrv modconfb:default restart_nginx           # backup & replace version
+
+# setup for testing
+binfab wwwcopy index.html,sites.html,info.php
+
+# start up browser and check the following pages:
+http://localhost            # should have a "here" link - follow this as well
+http://localhost/info.php   # should show php info
+
+# update virtual domains and add them to nginx
+
+fabsrv newconf:flatpages,php-sites
+# install "fcgiwrap" (includes spawn-fcgi) to make fastcgi work
+fabsrv newconf:fastcgi restart_nginx
+# hgweb needs "python-flup" as well
+fabsrv modconf:hgweb,hgweb.fcgi start_hgweb
+
+# install trac, python-gunicorn
+fabsrv addconf:trac restart_nginx modconf:trac.ini start_trac
+
+# install cherrypy3, python3-yaml, python3-docutils (for rst2html)
+fabsrv addconf:cherrypy restart_nginx start_cherry
+
+# install django, python3-gunicorn
+fabsrv addconf:django restart_nginx start_django
+
+# install plone (from website); edit buildout.cfg to serve from localhost:8090
+fabsrv addconf:plone restart_nginx modconf:buildout.cfg plone_buildout start_plone
+
+# enable startup on boot
+fabsrv modconf:rc.local
+----- all done up to here
+# copy over appropriate mysql databases
+fabsrv newconf:drupal
+
+# also configure Apache
+fabsrv modconf:apache2
+fabsrv modconf:ports
