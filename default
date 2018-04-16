@@ -33,11 +33,13 @@ server {
 	#
 	# include snippets/snakeoil.conf;
 
-	root /usr/share/nginx/html;
-	index index.html index.htm index.nginx-albert.html;
+	# leave /var/www for Apache
+	# root /var/www/html;
+    root /usr/share/nginx/html;
 
-	# Make site accessible from http://localhost/
-	# server_name localhost;
+	# Add index.php to the list if you are using PHP
+	index index.html index.htm index.nginx-debian.html index.nginx-albert.html index.php;
+
 	server_name _;
 
 	location / {
@@ -61,8 +63,8 @@ server {
 
 	#	# With php7.0-cgi alone:
 	#	fastcgi_pass 127.0.0.1:9000;
-		# With php7.0-fpm:
-		fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+    # With php7.0-fpm:
+    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
 	}
 
 	# deny access to .htaccess files, if Apache's document root
