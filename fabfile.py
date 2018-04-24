@@ -205,7 +205,7 @@ def diffconfg(*names):
         _diffconf(conf.strip(), gui=True)
 
 
-def listconf():
+def listconfs():
     "list available configs"
     text = "Available Nginx configs: " + ', '.join(sorted(intconf.keys()))
     print(text)
@@ -760,6 +760,3 @@ def list_domains(*args):
             print('unknown config')
         else:
             print("domains for config {}: {}".format(conf, ', '.join(sites)))
-
-
-
