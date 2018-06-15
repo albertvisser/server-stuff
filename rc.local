@@ -10,12 +10,3 @@
 # bits.
 #
 # By default this script does nothing.
-
-cd /home/albert/nginx-config
-fab start_plone > /tmp/plone-startup.log
-fab start_django > /tmp/django-startup.log
-fab start_cherry > /tmp/cherrypy-startup.log
-fab start_hgweb > /tmp/hgweb-startup.log
-fab start_trac > /tmp/trac-startup.log
-
-exit 0
