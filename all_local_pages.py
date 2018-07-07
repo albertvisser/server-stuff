@@ -1,97 +1,57 @@
 # -*- coding: utf-8 -*-
-"""
-'lemoncurry'                                    flat
-'lemoncurry.nl'                                 flat
-'www.lemoncurry.nl'                             flat
-'actiereg.lemoncurry.nl'                        django
-'albums.lemoncurry.nl'                          django
-'myprojects.lemoncurry.nl'                      django
-'hg.lemoncurry.nl'                              not-mine
-'trac.lemoncurry.nl'                            not-mine
-'rst2html.lemoncurry.nl'                        cherrypy
-'rst2html_mongo.lemoncurry.nl'                  cherrypy
-'mydomains.lemoncurry.nl'       full            django
-'myapps.lemoncurry.nl'          full (commented) django
-'logviewer.lemoncurry.nl'                       cherrypy
-'rstblog.lemoncurry.nl'                         flat
-'bitbucket.lemoncurry.nl'                       cherrypy
-'bitbucket_mongo.lemoncurry.nl'                 cherrypy
-'plone.lemoncurry.nl'                           not-mine
-'ragingdragon.lemoncurry.nl'                    not-mine (drupal)
-'adr.lemoncurry.nl'                             obsolete?
-'films.lemoncurry.nl'                           obsolete?
-'muziek.lemoncurry.nl'                          cgi
-'absentie.lemoncurry.nl'                        cgi
-'doctool.lemoncurry.nl'                         cgi
-'original.magiokis.nl'          quick           cgi
-'oldlocal.magiokis.nl'                          flat
-'local.magiokis.nl'                             not-mine (drupal)
-'php.magiokis.nl'               quick           php
-'cherrypy.magiokis.nl'          quick           cherrypy
-'data.magiokis.nl'                              not accessible
-'songs.magiokis.nl'             quick           cgi
-'denk.magiokis.nl'              quick           cgi
-'dicht.magiokis.nl'             quick           cgi
-'vertel.magiokis.nl'            quick           cgi
-'django.magiokis.nl'                            django
-"""
 from __future__ import print_function
 import pdb
 import sys
 import os
 import collections
 
-check_address = {
-    'quick': {
-        'original.magiokis.nl': '/cgi-bin/mainscript.py',
-        'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
-        'cherrypy.magiokis.nl': '/ow/',
-        'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
-        'denk.magiokis.nl': '/cgi-bin/denk_select.py',
-        'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
-        'vertel.magiokis.nl': '/cgi-bin/vertel_select.py',
-    },
-    'full': {
-        # platte html hoeft wat mij betreft niet meer dan index pagina
-        'lemoncurry': None,
-        'lemoncurry.nl': None,
-        'www.lemoncurry.nl': None,
-        'rstblog.lemoncurry.nl': None,
-        'bitbucket.lemoncurry.nl': None,
-        'bitbucket_mongo.lemoncurry.nl': None,
-        'oldlocal.magiokis.nl': None,
-        'data.magiokis.nl': None,
-        # Drupal en andere frameworks hoeft van mij ook niet
-        'plone.lemoncurry.nl': None,
-        'ragingdragon.lemoncurry.nl': None,
-        'local.lemoncurry.nl': None,
-        'hg.lemoncurry.nl': None,
-        'trac.lemoncurry.nl': None,
-        # platte CGI wel
-        'muziek.lemoncurry.nl': 'muziek-urls.rst',
-        'absentie.lemoncurry.nl': 'absenties-urls.rst',
-        'doctool.lemoncurry.nl': 'doctool-urls.rst',
-        'original.magiokis.nl': 'original-urls.rst',
-        'songs.magiokis.nl': 'songs-urls.rst',
-        'denk.magiokis.nl': 'denk-urls.rst',
-        'dicht.magiokis.nl': 'dicht-urls.rst',
-        'vertel.magiokis.nl': 'vertel-urls.rst',
-        # php-cgi ook
-        'php.magiokis.nl': 'magiokis-php-urls.rst',
-        # Django wel
-        'mydomains.lemoncurry.nl': 'mydomains-urls.rst',
-        'myapps.lemoncurry.nl': 'myapps-urls.rst',
-        'myprojects.lemoncurry.nl': 'myprojects-urls.rst',
-        'actiereg.lemoncurry.nl': 'actiereg-urls.rst',
-        'albums.lemoncurry.nl': 'albums-urls.rst',
-        'django.magiokis.nl': 'magiokis-django-urls.rst',
-        # Cherrypy ook
-        'cherrypy.magiokis.nl': 'magiokis-cherrypy-urls.rst',
-        'rst2html.lemoncurry.nl': 'rst2html-urls.rst',
-        'rst2html_mongo.lemoncurry.nl': 'rst2html-mongo-urls.rst',
-        'logviewer.lemoncurry.nl': 'logviewer-urls.rst',
-    },
-}
+check_address = {'quick': {
+                    'original.magiokis.nl': '/cgi-bin/mainscript.py',
+                    'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
+                    'cherrypy.magiokis.nl': '/ow/',
+                    'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
+                    'denk.magiokis.nl': '/cgi-bin/denk_select.py',
+                    'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
+                    'vertel.magiokis.nl': '/cgi-bin/vertel_select.py', },
+                 'full': {
+                    # platte html hoeft wat mij betreft niet meer dan index pagina
+                    'lemoncurry': None,
+                    'lemoncurry.nl': None,
+                    'www.lemoncurry.nl': None,
+                    'rstblog.lemoncurry.nl': None,
+                    'bitbucket.lemoncurry.nl': None,
+                    'bitbucket_mongo.lemoncurry.nl': None,
+                    'oldlocal.magiokis.nl': None,
+                    'data.magiokis.nl': None,
+                    # Drupal en andere frameworks hoeft van mij ook niet
+                    'ragingdragon.lemoncurry.nl': None,
+                    'local.lemoncurry.nl': None,
+                    'plone.lemoncurry.nl': None,
+                    'hg.lemoncurry.nl': None,
+                    'trac.lemoncurry.nl': None,
+                    # platte CGI wel
+                    'muziek.lemoncurry.nl': 'muziek-urls.rst',
+                    'absentie.lemoncurry.nl': 'absenties-urls.rst',
+                    'doctool.lemoncurry.nl': 'doctool-urls.rst',
+                    'original.magiokis.nl': 'original-urls.rst',
+                    'songs.magiokis.nl': 'songs-urls.rst',
+                    'denk.magiokis.nl': 'denk-urls.rst',
+                    'dicht.magiokis.nl': 'dicht-urls.rst',
+                    'vertel.magiokis.nl': 'vertel-urls.rst',
+                    # php-cgi ook
+                    'php.magiokis.nl': 'magiokis-php-urls.rst',
+                    # Django wel
+                    'mydomains.lemoncurry.nl': 'mydomains-urls.rst',
+                    'myapps.lemoncurry.nl': 'myapps-urls.rst',
+                    'myprojects.lemoncurry.nl': 'myprojects-urls.rst',
+                    'actiereg.lemoncurry.nl': 'actiereg-urls.rst',
+                    'albums.lemoncurry.nl': 'albums-urls.rst',
+                    'django.magiokis.nl': 'magiokis-django-urls.rst',
+                    # Cherrypy ook
+                    'cherrypy.magiokis.nl': 'magiokis-cherrypy-urls.rst',
+                    'rst2html.lemoncurry.nl': 'rst2html-urls.rst',
+                    'rst2html_mongo.lemoncurry.nl': 'rst2html-mongo-urls.rst',
+                    'logviewer.lemoncurry.nl': 'logviewer-urls.rst', }, }
 
 
 def discover(here, root=None, urllist=None):
@@ -117,8 +77,10 @@ def discover(here, root=None, urllist=None):
             urllist.update(discover(test, root, urllist))
     return urllist
 
+
 def sortlocs(x):
     return len(x.split('/')), x
+
 
 def parse_result(urllist):
     result = collections.defaultdict(list)
@@ -185,6 +147,7 @@ def parse_part(urlpart):
         return ['unexpected url part: <{}>'.format(urlpart)] # TODO do I need to handle this?
     else:
         return [urlpart]
+
 
 def build_urllist(project, result):
     """platslaan, sorteren en domein voorvoegen
@@ -494,23 +457,62 @@ def do_magiokis_php():
 
 
 def do_plaincgi(name):
-    """
+    """Analyse the site's scripts directory to collect the various parameters that can be
+    provided
+    only examine files that are marked executable
     """
     root = os.path.join(os.path.expanduser('~'), 'projects', name, 'cgi-bin')
+    parms = collections.defaultdict(list)
     for name in os.listdir(root):
         # file moet executable zijn
         path = os.path.join(root, name)
+        if not os.path.isfile(path):
+            continue
         test = os.stat(path).st_mode
         import stat
         if not test & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH):
             continue
         # en nu dan proberen de mogelijke aanroepen te bepalen
-        # 1. bepaal aan welke variabele de FieldStorage wordt gekoppeld
-        # 2. bepaal welke variabelen er uit gehaald worden, meestal zal dat met "getfirst" zijn
-        # of getlist maar ik weet niet of ik dat vaak gebruik
-        # het kan ook zijn dat dat er alleen op aanwezigheid wordt getest met "in"
-        # helaas heb ik dan nog geen idee van het type / mogelijke waarden hiervan
-        # laat staan in welke combinaties ze kunnen voorkomen
+        with open(path) as _in:
+            lines = _in.readlines()
+        searchfor = []
+        for line in lines:
+            # 1. bepaal aan welke variabele de FieldStorage wordt gekoppeld
+            if 'FieldStorage' in line and '=' in line:
+                pos = line.index('FieldStorage')
+                parts = line[:pos].rsplit('=', 1)
+                fs_item = parts[0].rstrip().rsplit(' ', 1)[1]
+                searchfor = ['{}.getfirst'.format(fs_item),
+                             '{}.getlist'.format(fs_item),
+                             ' in {}'.format(fs_item)]
+                continue
+            # 2. bepaal welke variabelen er uit gehaald worden, meestal zal dat met "getfirst"
+            # zijn of getlist maar ik weet niet of ik dat vaak gebruik
+            # het kan ook zijn dat dat er alleen op aanwezigheid wordt getest met "in"
+            while line:
+                found = False
+                for ix, item in enumerate(searchfor):
+                    if item in line:
+                        found = True
+                        pos = line.index(item)
+                        if ix == 2:
+                            arg_name = line[:pos].rstrip().rsplit(' ', 1)[1]
+                            pos += len(item)
+                        else:
+                            startpos = line[pos:].index('(')
+                            endpos = line[pos:].index(')')
+                            arg_name = line[pos:][startpos + 1:endpos]
+                            if ',' in arg_name:
+                                arg_name = arg_name[:arg_name.index(',')]
+                            pos += endpos
+                        parms[name].append(arg_name)
+                        line = line[pos:]
+                        break
+                if not found:
+                    break
+    # helaas heb ik dan nog geen idee van het type / mogelijke waarden hiervan
+    # laat staan in welke combinaties ze kunnen voorkomen
+    print(parms)
 
 
 def discover_fcgi(project):
