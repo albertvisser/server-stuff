@@ -43,6 +43,16 @@ fabsrv addconf:django restart_nginx start_django
 fabsrv addconf:plone restart_nginx modconf:buildout.cfg plone_buildout start_plone
 
 # enable startup on boot
+# to start the servers automatically, update rc.local with the appropriate commands
+# however currently this causes a huge delay when shutting down or restarting the system
+echo 'cd /home/albert/nginx-config' >> rc.local
+echo 'fab start_plone > /tmp/plone-startup.log' >> rc.local
+echo 'fab start_django > /tmp/django-startup.log' >> rc.local
+echo 'fab start_cherry > /tmp/cherrypy-startup.log' >> rc.local
+echo 'fab start_hgweb > /tmp/hgweb-startup.log' >> rc.local
+echo 'fab start_trac > /tmp/trac-startup.log' >> rc.local
+echo '' >> rc.local
+echo 'exit 0' >> rc.local
 fabsrv modconf:rc.local
 ----- all done up to here
 # copy over appropriate mysql databases
