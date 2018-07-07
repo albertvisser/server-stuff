@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 'lemoncurry'                                    flat
 'lemoncurry.nl'                                 flat
@@ -51,17 +52,43 @@ check_address = {
         'vertel.magiokis.nl': '/cgi-bin/vertel_select.py',
     },
     'full': {
+        # platte html hoeft wat mij betreft niet meer dan index pagina
+        'lemoncurry': None,
+        'lemoncurry.nl': None,
+        'www.lemoncurry.nl': None,
+        'rstblog.lemoncurry.nl': None,
+        'bitbucket.lemoncurry.nl': None,
+        'bitbucket_mongo.lemoncurry.nl': None,
+        'oldlocal.magiokis.nl': None,
+        'data.magiokis.nl': None,
+        # Drupal en andere frameworks hoeft van mij ook niet
+        'plone.lemoncurry.nl': None,
+        'ragingdragon.lemoncurry.nl': None,
+        'local.lemoncurry.nl': None,
+        'hg.lemoncurry.nl': None,
+        'trac.lemoncurry.nl': None,
+        # platte CGI wel
         'muziek.lemoncurry.nl': 'muziek-urls.rst',
-        'absenties.lemoncurry.nl': 'absenties-urls.rst',
+        'absentie.lemoncurry.nl': 'absenties-urls.rst',
         'doctool.lemoncurry.nl': 'doctool-urls.rst',
+        'original.magiokis.nl': 'original-urls.rst',
+        'songs.magiokis.nl': 'songs-urls.rst',
+        'denk.magiokis.nl': 'denk-urls.rst',
+        'dicht.magiokis.nl': 'dicht-urls.rst',
+        'vertel.magiokis.nl': 'vertel-urls.rst',
+        # php-cgi ook
+        'php.magiokis.nl': 'magiokis-php-urls.rst',
+        # Django wel
         'mydomains.lemoncurry.nl': 'mydomains-urls.rst',
         'myapps.lemoncurry.nl': 'myapps-urls.rst',
         'myprojects.lemoncurry.nl': 'myprojects-urls.rst',
         'actiereg.lemoncurry.nl': 'actiereg-urls.rst',
         'albums.lemoncurry.nl': 'albums-urls.rst',
         'django.magiokis.nl': 'magiokis-django-urls.rst',
+        # Cherrypy ook
         'cherrypy.magiokis.nl': 'magiokis-cherrypy-urls.rst',
         'rst2html.lemoncurry.nl': 'rst2html-urls.rst',
+        'rst2html_mongo.lemoncurry.nl': 'rst2html-mongo-urls.rst',
         'logviewer.lemoncurry.nl': 'logviewer-urls.rst',
     },
 }
@@ -459,25 +486,75 @@ def discover_cherrypy_urls(project):
     return result
 
 
+def do_magiokis_php():
+    """
+    """
+    # zoek naar $_GET (of $_POST etc) in php files?
+    # en dan kijken door welke deze geïmporteerd worden?
+
+
+def do_plaincgi(name):
+    """
+    """
+    root = os.path.join(os.path.expanduser('~'), 'projects', name, 'cgi-bin')
+    for name in os.listdir(root):
+        # file moet executable zijn
+        path = os.path.join(root, name)
+        test = os.stat(path).st_mode
+        import stat
+        if not test & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH):
+            continue
+        # en nu dan proberen de mogelijke aanroepen te bepalen
+        # 1. bepaal aan welke variabele de FieldStorage wordt gekoppeld
+        # 2. bepaal welke variabelen er uit gehaald worden, meestal zal dat met "getfirst" zijn
+        # of getlist maar ik weet niet of ik dat vaak gebruik
+        # het kan ook zijn dat dat er alleen op aanwezigheid wordt getest met "in"
+        # helaas heb ik dan nog geen idee van het type / mogelijke waarden hiervan
+        # laat staan in welke combinaties ze kunnen voorkomen
+
+
+def discover_fcgi(project):
+    if project == 'magiokis-php':
+        result = do_magiokis_php()
+    else:
+        result = do_plaincgi(project)
+    return result
+
+
+def test_parse_part():
+    for item in [r'(?P<option>(nieuw|add))',  # betekent twee urls maken: één met de waarde xxx
+                                              # en één met yyy op deze plek
+                 r'(?P<tekst>\d+)',           # betekent op deze plek een nummer
+                 r'(?P<option>ok)',           # betekent op deze plek deze vaste waarde
+                 r'(?P<trefw>\w+)',          # op deze plek een woord (spaties(s) niet toegestaan
+                 r'(?P<trefw>(\w|\b)+)',      # op deze plek een frase (spatie(s) wel toegestaan
+                 r'(?P<trefw>(\b|\w)+)',      # op deze plek een frase (spatie(s) wel toegestaan
+                 r'(?P<sel>(\w|\s)+)',        # s staat voor whitespace (meer dan spatie)
+                 'hello',
+                 r'\d+',
+                 '(hello|sailor)']:
+        print(parse_part(item))
+
+
 if __name__ == '__main__':
-    ## print(parse_part('(?P<option>(nieuw|add))'))  # betekent twee urls maken
-    ## #   een met de waarde xxx en een met yyy op deze plek
-    ## print(parse_part('(?P<tekst>\d+)'))  # betekent dat op deze plek een nummer
-    ## print(parse_part('(?P<option>ok)'))  # betekent op deze plek deze vaste waarde
-    ## print(parse_part('(?P<trefw>\w+)'))  # betekent op deze plek een woord (spaties(s) niet toegestaan
-    ## print(parse_part('(?P<trefw>(\w|\b)+)'))  # betekent op deze plek een frase (spatie(s) wel toegestaan
-    ## print(parse_part('(?P<trefw>(\b|\w)+)'))  # betekent op deze plek een frase (spatie(s) wel toegestaan
-    ## print(parse_part('(?P<sel>(\w|\s)+)'))  # s staat voor whitespace characters (meer dan spatie)
-    ## print(parse_part('hello'))
-    ## print(parse_part('\d+'))
-    ## print(parse_part('(hello|sailor)'))
+    sys.path.append('/home/albert/bin')
+    import settings as repos
     project = sys.argv[1]
-    ## data = discover_django_urls(project)
-    data = discover_cherrypy_urls(project)
-    with open(project + '-urls.rst', 'w') as _out:
-        for x in data:
-            print(x, file=_out)
-            ## for y in data[x]:
-                ## print('   ', y, file=_out)
+    if project in repos.cherrypy_repos:
+        data = discover_cherrypy_urls(project)
+    elif project in repos.django_repos or project == "mydomains":
+        data = discover_django_urls(project)
+    elif project in repos.fcgi_repos:
+        data = discover_fcgi(project)
+    else:
+        data = []
+    if data:
+        with open(project + '-urls.rst', 'w') as _out:
+            for x in data:
+                print(x, file=_out)
+                ## for y in data[x]:
+                    ## print('   ', y, file=_out)
             ## print('   ', data[x], file=_out)
+    else:
+        print("not possible with this tool")
 
