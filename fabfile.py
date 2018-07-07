@@ -16,6 +16,7 @@ import os
 import shutil
 import requests
 import datetime
+import collections
 from fabric.api import *  # local, sudo, lcd, hide, settings
 from all_local_pages import check_address
 
@@ -41,9 +42,10 @@ guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 intconfs = ['default', 'cherrypy', 'django', 'drupal', 'fastcgi', 'flatpages',
             'others', 'plone', 'php-sites', 'trac']
-intconf = {}
+# intconf = {}
+intconf = collections.defaultdict(list)
 for conf in intconfs:
-    intconf[conf] = []
+    # intconf[conf] = []
     with open(os.path.join(HERE, conf)) as _in:
         for line in _in:
             if line.strip().startswith('server_name'):
@@ -78,7 +80,7 @@ for plone in PLONES:
 
 
 def addstartup(name):
-    """add an init file to the startup sequence
+    """add an init file to the system startup sequence
 
     register in the extconf dict with INIT as destination
     """
@@ -491,6 +493,8 @@ def check_all_servers(*project):
 
 
 def _get_sitenames():
+    """get the names of the local domains from the hosts file
+    """
     sites = []
     with open('/etc/hosts') as _in:
         for line in _in:
@@ -503,10 +507,14 @@ def _get_sitenames():
 
 
 def _check_page(address):
+    """call up a specific page to inspect the result
+    """
     return requests.get('http://' + address)
 
 
 def _check_frontpage(sitename):
+    """simply call the domain to see what response we get back
+    """
     r = _check_page(sitename)
     if sitename.startswith('trac'):
         if r.status_code == 401:  # not authenticated is enough for an answer here
@@ -515,12 +523,11 @@ def _check_frontpage(sitename):
 
 
 def _check_sites(quick=True, sites=None):
-    """
-    verkorte versie:
-    alle locale sites langslopen om te zien of de frontpage werkt
-    van sommige sites wil je ook zien of vervolgpagina's werken
+    """alle locale sites langslopen om te zien of de pagina's werken
 
-    complete versie:
+    verkorte versie: check alleen de frontpage
+    van sommige sites wil je ook zien of vervolgpagina's werken
+    vandaar de complete versie:
     van alle locale sites waar een beperkt aantal vervolgpagina's mogelijk is
     al deze mogelijkheden aflopen
     van gelijksoortige pagina's is één variant voldoende
@@ -544,27 +551,34 @@ def _check_sites(quick=True, sites=None):
         if ok != 200:
             print('error {}'.format(ok))
             continue
-        print('ok')
         if quick:
+            print('ok')
             if base in check_address['quick']:
                 test = base + check_address['quick'][base]
                 ok = _check_page(test).status_code
                 if ok != 200:
                     print('    error {} on {}'.format(ok, test))
         else:
+            print('frontpage ok', end='')
             to_check = []
             if base in check_address['full']:
-                to_read = check_address['full'][base]
+                if not check_address['full'][base]:
+                    print(', no further checking necessary')
+                    continue
+                print()
+                to_read = os.path.join('check-pages', check_address['full'][base])
                 if os.path.exists(to_read):
                     with open(to_read) as _in:
                         to_check = [line.strip() for line in _in]
-            ## if base in check_address['quick']:
-                ## to_check.insert(0, check_address['quick'][base])
-            for test in to_check:
-                test = base + test
-                ok = _check_page(test).status_code
-                if ok != 200:
-                    print('    error {} on {}'.format(ok, test))
+                    for test in to_check:
+                        ok = _check_page('{}/{}'.format(base,test)).status_code
+                        if ok != 200:
+                            print('    error {} on {}'.format(ok, test))
+                else:
+                    print('    check-pages file missing for {}'.format(base))
+            else:
+                print()
+                print('    check_address entry missing for {}'.format(base))
 
 
 def check_all_sites():
