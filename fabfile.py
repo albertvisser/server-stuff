@@ -42,10 +42,8 @@ guni_pid = os.path.join(runpath, '{}.pid'.format(gproject))
 guni_sock = os.path.join(runpath, '{}.sock'.format(gproject))
 intconfs = ['default', 'cherrypy', 'django', 'drupal', 'fastcgi', 'flatpages',
             'others', 'plone', 'php-sites', 'trac']
-# intconf = {}
 intconf = collections.defaultdict(list)
 for conf in intconfs:
-    # intconf[conf] = []
     with open(os.path.join(HERE, conf)) as _in:
         for line in _in:
             if line.strip().startswith('server_name'):
@@ -532,16 +530,6 @@ def _check_sites(quick=True, sites=None):
     al deze mogelijkheden aflopen
     van gelijksoortige pagina's is één variant voldoende
     """
-    ## # TODO: check_address inlezen vanuit een bestand (all_local_pages.txt)
-    ## check_address = {
-        ## 'quick': {'original.magiokis.nl': '/cgi-bin/mainscript.py',
-                  ## 'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
-                  ## 'cherrypy.magiokis.nl': '/ow/',
-                  ## 'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
-                  ## 'denk.magiokis.nl': '/cgi-bin/denk_select.py',
-                  ## 'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
-                  ## 'vertel.magiokis.nl': '/cgi-bin/vertel_select.py'},
-        ## 'full': {}}
     sitenames = _get_sitenames()
     if sites:
         sitenames = [name for name in sites if name in sitenames]
@@ -566,14 +554,19 @@ def _check_sites(quick=True, sites=None):
                     print(', no further checking necessary')
                     continue
                 print()
-                to_read = os.path.join('check-pages', check_address['full'][base])
+                to_read = os.path.join('~', 'nginx-config', 'check-pages', check_address['full'][base])
+                to_read = os.path.expanduser(to_read)
                 if os.path.exists(to_read):
                     with open(to_read) as _in:
                         to_check = [line.strip() for line in _in]
                     for test in to_check:
-                        ok = _check_page('{}/{}'.format(base,test)).status_code
-                        if ok != 200:
-                            print('    error {} on {}'.format(ok, test))
+                        page = '{}{}'.format(base,test)
+                        print('checking {}...'.format(page), end=' ')
+                        ok = _check_page(page).status_code
+                        if ok == 200:
+                            print('ok')
+                        else:
+                            print('error {}'.format(ok))  # test))
                 else:
                     print('    check-pages file missing for {}'.format(base))
             else:
@@ -697,6 +690,8 @@ def restart_gunicorn():
 
 
 def _serve(*names, **kwargs):
+    """manage all server managers
+    """
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
     funcs = {'django': (start_django, stop_django, ''),
