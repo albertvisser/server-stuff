@@ -4,6 +4,7 @@ import pdb
 import sys
 import os
 import collections
+import itertools
 
 check_address = {'quick': {
                     'original.magiokis.nl': '/cgi-bin/mainscript.py',
@@ -30,8 +31,8 @@ check_address = {'quick': {
                     'hg.lemoncurry.nl': None,
                     'trac.lemoncurry.nl': None,
                     # platte CGI wel
-                    'muziek.lemoncurry.nl': 'muziek-urls.rst',
-                    'absentie.lemoncurry.nl': 'absenties-urls.rst',
+                    'muziek.lemoncurry.nl': 'albums-cgi-urls.rst',
+                    'absentie.lemoncurry.nl': 'absentie-urls.rst',
                     'doctool.lemoncurry.nl': 'doctool-urls.rst',
                     'original.magiokis.nl': 'original-urls.rst',
                     'songs.magiokis.nl': 'songs-urls.rst',
@@ -456,12 +457,12 @@ def do_magiokis_php():
     # en dan kijken door welke deze geïmporteerd worden?
 
 
-def do_plaincgi(name):
+def do_plaincgi(project, getdetails=False):
     """Analyse the site's scripts directory to collect the various parameters that can be
     provided
     only examine files that are marked executable
     """
-    root = os.path.join(os.path.expanduser('~'), 'projects', name, 'cgi-bin')
+    root = os.path.join(os.path.expanduser('~'), 'projects', project, 'cgi-bin')
     parms = collections.defaultdict(list)
     for name in os.listdir(root):
         # file moet executable zijn
@@ -471,6 +472,9 @@ def do_plaincgi(name):
         test = os.stat(path).st_mode
         import stat
         if not test & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH):
+            continue
+        if not getdetails:  # we only want the pages / script names
+            parms[name] = []
             continue
         # en nu dan proberen de mogelijke aanroepen te bepalen
         with open(path) as _in:
@@ -512,14 +516,60 @@ def do_plaincgi(name):
                     break
     # helaas heb ik dan nog geen idee van het type / mogelijke waarden hiervan
     # laat staan in welke combinaties ze kunnen voorkomen
-    print(parms)
+    return parms
 
 
-def discover_fcgi(project):
+def build_combos(using_list):
+    combos = []
+    for arg in using_list:
+        combos.append((arg,))
+    for length in range(2, len(using_list)):
+        newcombos = [x for x in itertools.combinations(using_list, length)]
+        combos.extend(newcombos)
+    combos.append(using_list)
+    return combos
+
+
+def add_site(project, pagename):
+    if project in ('absentie', 'doctool'):
+        return "http://{}.lemoncurry.nl/{}".format(project, pagename)
+    if project == 'albums-cgi':
+        return "http://muziek.lemoncurry.nl/{}".format(project, pagename)
+    # project == 'magiokis'
+    for name in ('denk', 'dicht', 'vertel'):
+        if pagename.startswith(name):
+            return "http://{}.lemoncurry.nl/{}".format(name, pagename)
+    for name in ('lijst', 'songs', 'wijzig'):
+        if pagename.startswith(name):
+            return "http://songs.lemoncurry.nl/{}".format(pagename)
+    return "http://original.lemoncurry.nl/{}".format(pagename)
+
+
+def build_fcgi_urls(project, parmdict):
+    results = []
+    for page, args in parmdict.items():
+        using = set()
+        for item in args:
+            for char in ('"', "'"):
+                if item.startswith(char):
+                    using.add(item.strip(char))
+        combos = build_combos(list(using))
+        for parmlist in combos:
+            address = '/cgi-bin/{}?'.format(page)
+            results.append(address + '&'.join(['{}=<value>'.format(x) for x in parmlist]))
+    return results
+
+
+def discover_fcgi_urls(project, getdetails=False):
     if project == 'magiokis-php':
         result = do_magiokis_php()
     else:
-        result = do_plaincgi(project)
+        # for now getdetails will always be False
+        argdict = do_plaincgi(project, getdetails)
+        if getdetails:
+            result = build_fcgi_urls(project, argdict)
+        else:
+            result = ['/cgi-bin/' + x for x in argdict.keys()]
     return result
 
 
@@ -547,16 +597,33 @@ if __name__ == '__main__':
     elif project in repos.django_repos or project == "mydomains":
         data = discover_django_urls(project)
     elif project in repos.fcgi_repos:
-        data = discover_fcgi(project)
+        data = discover_fcgi_urls(project)
     else:
         data = []
     if data:
-        with open(project + '-urls.rst', 'w') as _out:
-            for x in data:
-                print(x, file=_out)
-                ## for y in data[x]:
-                    ## print('   ', y, file=_out)
-            ## print('   ', data[x], file=_out)
+        if project == 'magiokis':
+            with open('denk-urls.rst', 'w') as _denk, \
+                 open('dicht-urls.rst', 'w') as _dicht, \
+                 open('vertel-urls.rst', 'w') as _vertel, \
+                 open('songs-urls.rst', 'w') as _songs, \
+                 open('original-urls.rst', 'w') as _out:
+                for x in data:
+                    if x.startswith('/cgi-bin/denk'):
+                        print(x, file=_denk)
+                    elif x.startswith('/cgi-bin/dicht'):
+                        print(x, file=_dicht)
+                    elif x.startswith('/cgi-bin/vertel'):
+                        print(x, file=_vertel)
+                    elif x.startswith('/cgi-bin/songs') \
+                            or x.startswith('/cgi-bin/lijst') \
+                            or x.startswith('/cgi-bin/wijzig'):
+                        print(x, file=_songs)
+                    else:
+                        print(x, file=_out)
+        else:
+            with open(project + '-urls.rst', 'w') as _out:
+                for x in data:
+                    print(x, file=_out)
     else:
         print("not possible with this tool")
 
