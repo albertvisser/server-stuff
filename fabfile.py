@@ -689,9 +689,10 @@ def restart_gunicorn():
     start_gunicorn()
 
 
-def _serve(*names, **kwargs):
+def _serve(names, **kwargs):
     """manage all server managers
     """
+    print('in _serve:', names)
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
     funcs = {'django': (start_django, stop_django, ''),
@@ -730,17 +731,18 @@ def _serve(*names, **kwargs):
                 start_plone(name)
 
 
-def stop_server(names):
+def stop_server(*names):
     "stop local server"
     _serve(names, stop=True)
 
 
-def start_server(names):
+def start_server(*names):
     "start local server"
+    print('in start_server:', names)
     _serve(names, start=True)
 
 
-def restart_server(names):
+def restart_server(*names):
     "restart local server"
     _serve(names, stop=True, start=True)
 
