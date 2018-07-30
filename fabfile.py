@@ -58,7 +58,7 @@ django_project_path['magiokis'] += '-django'
 PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
 PLONES = ('plone',)
 extconf = {'nginx': (NGINX, True, '@.conf'),
-           'fastcgi': (NGINX, True, 'fcgiwrap.conf'),
+           'fcgiwrap': (NGINX, True, 'fcgiwrap.conf'),
            'php': (PHP, True, '@.ini'),
            'hgweb': (HGWEB, False, '@-config'),
            'trac-conf': (os.path.join(TRAC, 'conf'), False, 'trac.ini'),
@@ -692,7 +692,6 @@ def restart_gunicorn():
 def _serve(names, **kwargs):
     """manage all server managers
     """
-    print('in _serve:', names)
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
     funcs = {'django': (start_django, stop_django, ''),
