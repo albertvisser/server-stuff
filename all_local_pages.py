@@ -26,7 +26,7 @@ check_address = {'quick': {
                     'data.magiokis.nl': None,
                     # Drupal en andere frameworks hoeft van mij ook niet
                     'ragingdragon.lemoncurry.nl': None,
-                    'local.lemoncurry.nl': None,
+                    'local.magiokis.nl': None,
                     'plone.lemoncurry.nl': None,
                     'hg.lemoncurry.nl': None,
                     'trac.lemoncurry.nl': None,
@@ -49,9 +49,9 @@ check_address = {'quick': {
                     'albums.lemoncurry.nl': 'albums-urls.rst',
                     'django.magiokis.nl': 'magiokis-django-urls.rst',
                     # Cherrypy ook
-                    'cherrypy.magiokis.nl': 'magiokis-cherrypy-urls.rst',
+                    'cherrypy.magiokis.nl': 'magiokis-cherry-urls.rst',
                     'rst2html.lemoncurry.nl': 'rst2html-urls.rst',
-                    'rst2html_mongo.lemoncurry.nl': 'rst2html-mongo-urls.rst',
+                    'rst2html_mongo.lemoncurry.nl': 'rst2html-urls.rst',
                     'logviewer.lemoncurry.nl': 'logviewer-urls.rst', }, }
 
 
@@ -87,17 +87,13 @@ def parse_result(urllist):
     result = collections.defaultdict(list)
     prefixes = {}
     for location in sorted(urllist, key=sortlocs):
-        ## print('parsing', location)
         urls = urllist[location]
         location = location.replace('/', '.')
-        ## print(urls)
         start = urls.find('patterns(') + 9
         end = urls.rfind(')')
         urlpatterns = urls[start:end].split(',url(')
-        ## print(urlpatterns[1:])
         for urlpattern in urls[start:end].split(',url(')[1:]:
             "eerste element is verwijzing naar views module => negeren"
-            ## print(urlpattern)
             urlstuff = urlpattern.split(',')
             pattern = urlstuff[0].split("r'^", 1)[1]
             if pattern.startswith('admin'):
@@ -108,8 +104,6 @@ def parse_result(urllist):
             else:
                 url = prefixes.get(location, '') + pattern
                 result[location].append(url.rstrip("$'"))
-        ## for item in result[location]:
-            ## print(item)
     return result
 
 
@@ -121,6 +115,7 @@ def parse_part(urlpart):
     # (?P<option>ok) betekent op deze plek deze vaste waarde
     # (?P<trefw>\w+) betekent op deze plek een woord (spaties(s) niet toegestaan
     # (?P<trefw>(\w|\b)+) betekent op deze plek een frase (spatie(s) wel toegestaan
+    # (?P<msg>.+) betekent ...
     # (?P<sel>(\w|\s)+) s staat voor whitespace characters (meer dan spatie)
     # dit zijn denk ik de belangrijkste
     if urlpart.startswith('('):
@@ -134,7 +129,7 @@ def parse_part(urlpart):
             part = '<number>'
         elif part == '\w+': # characters
             part = '<word>'
-        elif part in (r'(\w|\b)+', r'(\b|\w)+'): # phrase   (?P<trefw>(\w|\b)+)
+        elif part in (r'(\w|\b)+', r'(\b|\w)+', '.+'): # phrase   (?P<trefw>(\w|\b)+)
             part = '<phrase>'
         elif part == '(\w|\s)+': # phrase                   (?P<sel>(\w|\s)+)
             part = '<message>'
