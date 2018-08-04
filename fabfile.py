@@ -12,6 +12,7 @@ includes:
 from __future__ import print_function
 
 import os
+import glob
 ## import sys
 import shutil
 import requests
@@ -132,7 +133,7 @@ def _modconf(name, backup=False, append=False):
         src = os.path.join(dest, fname)
         trg = os.path.join('backup', '-'.join((fname, today)))
         with lcd(HERE):
-            local('cp {} {}'.format(src,  trg))
+            local('cp {} {}'.format(src, trg))
 
     if append:
         tmp = fname + '~~'
@@ -258,6 +259,15 @@ def restart_php():
     local('sudo {}/php7.0-fpm restart'.format(INIT))
 
 
+def _report_result(proj, result):
+    """get output of start_server command and save to file(s)
+    """
+    with open('/tmp/server-{}-ok'.format(proj), 'w') as _o:
+        print(result.stdout, file=_o)
+    with open('/tmp/server-{}-err'.format(proj), 'w') as _o:
+        print(result.stderr, file=_o)
+
+
 def stop_hgweb():
     "stop local Mercurial web server"
     local('sudo kill `cat {}`'.format(hgweb_pid))
@@ -266,10 +276,12 @@ def stop_hgweb():
 def start_hgweb():
     "start local Mercurial web server using hgweb.fcgi"
     start = os.path.join(HGWEB, 'hgweb.fcgi')
-    local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start,
-                                                           hgweb_sock,
-                                                           hgweb_pid,
-                                                           'www-data'))
+    result = local('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start,
+                                                                    hgweb_sock,
+                                                                    hgweb_pid,
+                                                                    'www-data'),
+                   capture=True)
+    _report_result('hgweb', result)
     #gunicorn3 kan mercurial niet importeren; gunicorn2 slaat vast, als ik het niet als daemon
     # uitvoer zie ik
     #Traceback (most recent call last):
@@ -299,9 +311,8 @@ def start_trac():  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
     "start local trac server"
     with lcd(TRAC):
         result = local('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
-                       'tracwsgi:application'.format(trac_sock, trac_pid))
-        print(result.stdout)
-        print(result.stderr)
+                       'tracwsgi:application'.format(trac_sock, trac_pid), capture=True)
+        _report_result('trac', result)
 
 
 def restart_trac():
@@ -332,14 +343,13 @@ def start_django(*project):
     version history) or using Gunicorn (python 3)
     """
     if not project:
-        project = django_project_path.keys()
+        project = sorted(django_project_path.keys())
     for proj in project:
         pid, sock, path = _get_django_args(proj)
         with lcd(path):
             result = local('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
-                           '{}.wsgi:application'.format(sock, pid, proj))
-            print(result.stdout)
-            print(result.stderr)
+                           '{}.wsgi:application'.format(sock, pid, proj), capture=True)
+            _report_result(proj, result)
 
 
 def restart_django(*project):
@@ -448,8 +458,9 @@ def start_cherry(*project):
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(pad):
-            local('sudo /usr/sbin/cherryd3 '
-                  '-c {} -d -p {} -i {}'.format(conf, pid, prog))
+            result = local('sudo /usr/sbin/cherryd3 '
+                           '-c {} -d -p {} -i {}'.format(conf, pid, prog), capture=True)
+            _report_result(proj, result)
 
 
 def restart_cherry(*project):
@@ -560,7 +571,7 @@ def _check_sites(quick=True, sites=None):
                     with open(to_read) as _in:
                         to_check = [line.strip() for line in _in]
                     for test in to_check:
-                        page = '{}{}'.format(base,test)
+                        page = '{}{}'.format(base, test)
                         print('checking {}...'.format(page), end=' ')
                         ok = _check_page(page).status_code
                         if ok == 200:
@@ -592,7 +603,8 @@ def _plone(action, *sitenames):
         plonedir = os.path.join(HOME, '{}/zinstance'.format(sitename.title()))
         with lcd(plonedir):
             if action == 'start':
-                local('bin/plonectl start')
+                result = local('bin/plonectl start', capture=True)
+                _report_result("plone", result)
             elif action == 'stop':
                 local('bin/plonectl stop')
             elif action == 'buildout':
@@ -689,11 +701,35 @@ def restart_gunicorn():
     start_gunicorn()
 
 
+def _start_all_servers():
+    """try to start all wsgi servers
+    output is gathered in /tmp/server-{}-ok and -err. It should be discernible which one fails
+    and as such from where we need to try again
+    """
+    # all_django = sorted(django_project_path_keys())
+    # all_cherry = _get_cherry_parms()
+    # if os.path.exists('/tmp/server-trac-err'):
+    #     # check if something went wrong, otherwise:
+    #     for name in glob.glob('/tmp/server-*-*'):
+    #         os.remove(name)
+    # elif os.path.exists('/tmp/server-hgweb-err'):
+    #     names = names[-4:]
+    # elif os.path.exists('/tmp/server-{}-err'.format(all_django[-1])):
+    #     names = names[-3:]
+    # elif os.path.exists('/tmp/server-{}-mongo-err'.format(all_cherry[-1])):
+    #     names = names[-2:]
+    # elif os.path.exists('/tmp/server-plone-err'):
+    #     names = names[-1:]
+
+
 def _serve(names, **kwargs):
     """manage all server managers
     """
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
+    if start_server and not names:
+        _start_all_servers()
+        return
     funcs = {'django': (start_django, stop_django, ''),
              'cherry': (start_cherry, stop_cherry, ''),
              'plone': (start_plone, stop_plone, ''),
@@ -737,7 +773,6 @@ def stop_server(*names):
 
 def start_server(*names):
     "start local server"
-    print('in start_server:', names)
     _serve(names, start=True)
 
 
