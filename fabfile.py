@@ -262,10 +262,12 @@ def restart_php():
 def _report_result(proj, result):
     """get output of start_server command and save to file(s)
     """
+    test = os.umask(0000)
     with open('/tmp/server-{}-ok'.format(proj), 'w') as _o:
         print(result.stdout, file=_o)
     with open('/tmp/server-{}-err'.format(proj), 'w') as _o:
         print(result.stderr, file=_o)
+    os.umask(test)
 
 
 def stop_hgweb():
@@ -282,14 +284,14 @@ def start_hgweb():
                                                                     'www-data'),
                    capture=True)
     _report_result('hgweb', result)
-    #gunicorn3 kan mercurial niet importeren; gunicorn2 slaat vast, als ik het niet als daemon
+    # gunicorn3 kan mercurial niet importeren; gunicorn2 slaat vast, als ik het niet als daemon
     # uitvoer zie ik
-    #Traceback (most recent call last):
-    #File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 130, in handle
-    #    self.handle_request(listener, req, client, addr)
-    #File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 176, in handle_request
-    #    for item in respiter:
-    #TypeError: 'hgwebdir' object is not iterable
+    # Traceback (most recent call last):
+    # File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 130, in handle
+    #     self.handle_request(listener, req, client, addr)
+    # File "/usr/lib/python2.7/dist-packages/gunicorn/workers/sync.py", line 176, in handle_request
+    #     for item in respiter:
+    # TypeError: 'hgwebdir' object is not iterable
     ## "start local Mercurial web server using gunicorn for Python 3"
     ## with lcd(HGWEB):
         ## local('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
@@ -706,24 +708,25 @@ def _start_all_servers():
     output is gathered in /tmp/server-{}-ok and -err. It should be discernible which one fails
     and as such from where we need to try again
     """
-    # all_django = sorted(django_project_path_keys())
-    # all_cherry = _get_cherry_parms()
-    # if os.path.exists('/tmp/server-trac-err'):
-    #     # check if something went wrong, otherwise:
-    #     for name in glob.glob('/tmp/server-*-*'):
-    #         os.remove(name)
-    # elif os.path.exists('/tmp/server-hgweb-err'):
-    #     names = names[-4:]
-    # elif os.path.exists('/tmp/server-{}-err'.format(all_django[-1])):
-    #     names = names[-3:]
-    # elif os.path.exists('/tmp/server-{}-mongo-err'.format(all_cherry[-1])):
-    #     names = names[-2:]
-    # elif os.path.exists('/tmp/server-plone-err'):
-    #     names = names[-1:]
+    all_django = sorted(django_project_path.keys())
+    all_cherry = _get_cherry_parms()
+    all_servers = ['plone'] + all_django + list(all_cherry) + ['trac', 'hgweb']
+    started = os.path.exists('/tmp/server-{}-err'.format(all_servers[0]))
+    for ix, name in enumerate(all_servers):
+        if os.path.exists('/tmp/server-{}-err'.format(name)):
+            if ix == 0:
+                started = True
+            previous = name
+            continue
+        if ix > 1 and started:
+            print('restarting from {}'.format(previous))
+            restart_server(previous)
+        print('starting server {}'.format(name))
+        start_server(name)
 
 
 def _serve(names, **kwargs):
-    """manage all server managers
+    """manage all server managers with one command
     """
     stop_server = 'stop' in kwargs
     start_server = 'start' in kwargs
