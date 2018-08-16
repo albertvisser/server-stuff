@@ -270,9 +270,15 @@ def _report_result(proj, result):
     os.umask(test)
 
 
+def _remove_result(proj):
+    local('sudo rm /tmp/server-{}-ok'.format(proj))
+    local('sudo rm /tmp/server-{}-err'.format(proj))
+
+
 def stop_hgweb():
     "stop local Mercurial web server"
     local('sudo kill `cat {}`'.format(hgweb_pid))
+    _remove_result('hgweb')
 
 
 def start_hgweb():
@@ -307,6 +313,7 @@ def restart_hgweb():
 def stop_trac():
     "stop local trac server"
     local('sudo kill `cat {}`'.format(trac_pid))
+    _remove_result('trac')
 
 
 def start_trac():  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
@@ -338,6 +345,7 @@ def stop_django(*project):
         if os.path.exists(django_pid):
             local('sudo kill `cat {}`'.format(django_pid))
             local('sudo rm -f {}'.format(django_pid))
+            _remove_result(proj)
 
 
 def start_django(*project):
@@ -451,6 +459,7 @@ def stop_cherry(*project):
         if os.path.exists(pid):
             local('sudo kill -s SIGKILL `cat {}`'.format(pid))
             local('sudo rm -f {}'.format(pid))
+            _remove_result(proj)
 
 
 def start_cherry(*project):
@@ -609,6 +618,7 @@ def _plone(action, *sitenames):
                 _report_result("plone", result)
             elif action == 'stop':
                 local('bin/plonectl stop')
+                _remove_result("plone")
             elif action == 'buildout':
                 local('bin/buildout')
     if not sitenames:
@@ -742,6 +752,8 @@ def _serve(names, **kwargs):
              'nginx': (start_nginx, stop_nginx, restart_nginx),
              'php': (start_php, stop_php, restart_php),
              'ftp': (start_ftp, stop_ftp, restart_ftp)}
+    if not names:
+        names = ['plone', 'django', 'cherry', 'trac', 'hgweb']
     for name in names:
         if name in funcs:
             start, stop, restart = funcs[name]
