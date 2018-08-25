@@ -376,7 +376,7 @@ def restart_django(*project):
 
 
 def _fix_media_prefix(path):
-
+    """make sure this setting is how I want it"""
     find = 'ADMIN_MEDIA_PREFIX'
     prefix = "'/static/admin/'"
     settingsfile = os.path.join(path, 'settings.py')
@@ -431,14 +431,14 @@ def django_css(*project):
 
 
 def _get_cherry_parms(project=None):
-    allproj = ('rst2html', 'logviewer', 'magiokis-cherry', 'rst2html_mongo')
+    allproj = ('rst2html', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst2html_postgres')
     if not project:
         return allproj
     origproj = project
     pad = os.path.join(HOME, 'projects', project)
     if project == allproj[2]:
         project = project.split('-')[0]
-    elif project == allproj[3]:
+    elif project.startswith(allproj[0]):
         pad = os.path.join(HOME, 'projects', allproj[0])
     conf = '{}.conf'.format(project)
     prog = 'start_{}'.format(project)
