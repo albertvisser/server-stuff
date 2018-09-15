@@ -469,7 +469,7 @@ def start_cherry(*project):
     for proj in project:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with lcd(pad):
-            result = local('sudo /usr/sbin/cherryd3 '
+            result = local('sudo /usr/bin/cherryd3 '
                            '-c {} -d -p {} -i {}'.format(conf, pid, prog), capture=True)
             _report_result(proj, result)
 

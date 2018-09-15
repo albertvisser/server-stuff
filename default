@@ -51,23 +51,44 @@ server {
 	location /doc/ {
 		alias /usr/share/doc/;
 		autoindex on;
-		allow 127.0.0.1;
-		allow ::1;
-		deny all;
+		# allow 127.0.0.1;
+		# allow ::1;
+		# deny all;
+	}
+        # location /dc/cgi-bin/ {
+		# gzip off;
+		# alias /usr/lib;
+		# try_files      $uri =404;
+         	# fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+         	# include /etc/nginx/fastcgi_params;
+         	# fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+         	# fastcgi_param SCRIPT_FILENAME  $request_filename;
+        # }
+        location /dc/ {
+                alias /usr/share/doc-central/www/;
+                autoindex on;
+                # allow 127.0.0.1;
+                # allow ::1;
+                # deny all;
 	}
 
-	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+	# pass the PHP scripts to FastCGI server
 	#
 	location ~ \.php$ {
 		include snippets/fastcgi-php.conf;
 
-	#	# With php7.0-cgi alone:
+        #    # Filter out arbitrary code execution
+        #    location ~ \..*/.*\.php$ {return 404;}
+        #    include fastcgi_params;
+        #    fastcgi_index index.php;
+
+    	# With php7.0-fpm:
+    		fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+	# With php-cgi alone:
 	#	fastcgi_pass 127.0.0.1:9000;
-    # With php7.0-fpm:
-    fastcgi_pass unix:/run/php/php7.0-fpm.sock;
 	}
 
-	# deny access to .htaccess files, if Apache's document root
+	# deny access /to .htaccess files, if Apache's document root
 	# concurs with nginx's one
 	#
 	#location ~ /\.ht {
@@ -114,22 +135,7 @@ server {
           rewrite ^/* /phpmyadmin last;
    }
 
-    #location ~ \.php$ {
-    #    # Filter out arbitrary code execution
-    #    location ~ \..*/.*\.php$ {return 404;}
-#
-    #    include fastcgi_params;
-    #    # fastcgi_pass  unix:/tmp/php.socket;
-    #            fastcgi_pass unix:/run/php/php7.0-fpm.sock;
-    #    fastcgi_index index.php;
-    #}
 
-    # deny access to .htaccess files, if Apache's document root
-	# concurs with nginx's one
-	#
-	#location ~ /\.ht {
-	#	deny all;
-	#}
 }
 
 

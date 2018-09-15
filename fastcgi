@@ -105,6 +105,7 @@ server {
     error_log /var/log/nginx/muziek.lemoncurry-error.log error;
     access_log /var/log/nginx/muziek.lemoncurry-access.log;
     }
+
 server {
     server_name adr.lemoncurry.nl;
     root /home/albert/projects/pythoneer/adressen/html;
@@ -160,4 +161,25 @@ server {
         }
     error_log /var/log/nginx/doctool.lemoncurry-error.log error;
     access_log /var/log/nginx/doctool.lemoncurry-access.log;
+    }
+
+server {
+    server_name doc-central.lemoncurry.nl;
+    root /usr/share/doc-central/www/;
+    #script_alias /home/albert/www/doctool/cgi-bin/;
+    location /cgi-bin/ {
+        gzip off;
+        alias /usr/lib;
+        fastcgi_pass  unix:/var/run/fcgiwrap.socket;
+        include /etc/nginx/fastcgi_params;
+        #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        }
+    location /dc {
+	alias /;
+        }
+    location /doc/ {
+        alias /usr/share/doc/;
+	}
+    error_log /var/log/nginx/doc-central.lemoncurry-error.log error;
+    access_log /var/log/nginx/doc-central.lemoncurry-access.log;
     }
