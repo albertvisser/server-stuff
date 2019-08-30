@@ -13,6 +13,12 @@ server {
     access_log /var/log/nginx/oldlocal.magiokis-access.log ;
     }
 server {
+    server_name preview.magiokis.nl;
+    root /home/albert/www/magiokis;
+    error_log /var/log/nginx/preview.magiokis-error.log error;
+    access_log /var/log/nginx/preview.magiokis-access.log ;
+    }
+server {
     server_name lemoncurry.nl www.lemoncurry.nl;
     root /usr/share/nginx/html;
     #script_alias /usr/lib/cgi-bin/;
