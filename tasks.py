@@ -1,8 +1,9 @@
+"""General tasks that can be INVOKEd
+
+also creates namespaces from other tasks files
+"""
 import os
-import shutil
-import datetime
-import requests
-from config import INIT
+from config import INIT, PLONES, HERE, extconf
 from invoke import task, Collection
 import tasks_nginx
 import tasks_ftp
@@ -15,7 +16,6 @@ import tasks_cherrypy
 import tasks_plone
 import tasks_sites
 import tasks_shared as shared
-from all_local_pages import check_address
 
 all_django = sorted(tasks_django.get_projectnames())
 all_cherry = sorted(tasks_cherrypy.get_projectnames())
@@ -34,18 +34,20 @@ def addstartup(c, name):
 
 
 def get_parms(name):
+    "get extconf dictionary for parameters to use"
     if name in extconf:
         dest, needs_sudo, fname = extconf[name]
         fname = fname.replace('@', name)
-        frompath =  os.path.join(HERE, 'misc')
+        frompath = os.path.join(HERE, 'misc')
     return os.path.join(frompath, fname), dest, needs_sudo
+
 
 @task(help={'names': 'comma-separated list of filenames'})
 def modconf(c, names=None):
     "deploy modifications for configuration file(s); replace version"
     names = names.split(',') if names else []
     for conf in names:
-        path, dest, sudo = get_parms(name)
+        path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo)
 
 
@@ -54,7 +56,7 @@ def modconfb(c, names=None):
     "modconf: backup & replace version"
     names = names.split(',') if names else []
     for conf in names:
-        path, dest, sudo = get_parms(name)
+        path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo, backup=True)
 
 
@@ -63,14 +65,28 @@ def modconfa(c, names=None):
     "modconf: backup & append version"
     names = names.split(',') if names else []
     for conf in names:
-        path, dest, sudo = get_parms(name)
+        path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo, append=True)
+
+
+@task
+def compare(c):
+    "compare configuration files that can be changed from here"
+    locs = {}
+    for key, stuff in extconf.items():
+        path, _, fname = stuff
+        locs[fname.replace('@', key)] = path
+    print(locs)
+    path = os.path.join(HERE, 'misc')
+    for fname in os.listdir(path):
+        if fname in locs:
+            shared.do_compare(os.path.join(path, fname), os.path.join(locs[fname], fname))
 
 
 @task(help={'project': 'comma-separated list of server names'})
 def check_all(c, project=''):
     "assuming server is started when there is a pid file"
-    other_pid = dict(zip(all_other,[tasks_trac.trac_pid, tasks_hgweb.hgweb_pid]))  # , plone_pid]
+    other_pid = dict(zip(all_other, [tasks_trac.trac_pid, tasks_hgweb.hgweb_pid]))  # , plone_pid]
     if not project:
         project = all_django + all_cherry + all_other
     else:
@@ -159,7 +175,6 @@ def _serve(c, names, **kwargs):
         #         mnames[name].start(c)
 
 
-
 @task(help={'names': 'comma-separated list of filenames'})
 def stop(c, names=None):
     "stop local server"
@@ -177,6 +192,7 @@ def restart(c, names=None):
     "restart local server"
     _serve(c, names, stop=True, start=True)
 
+
 ns = Collection()
 ns.add_collection(tasks_nginx, name='nginx')
 ns.add_collection(tasks_ftp, name='ftp')
@@ -192,6 +208,7 @@ ns.add_task(addstartup)
 ns.add_task(modconf)
 ns.add_task(modconfa)
 ns.add_task(modconfb)
+ns.add_task(compare)
 server = Collection('server')
 server.add_task(check_all)
 server.add_task(stop)

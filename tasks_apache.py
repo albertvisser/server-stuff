@@ -6,6 +6,7 @@ from config import INIT, HERE, A_AVAIL, A_ENABL
 import tasks_shared as shared
 FROM = os.path.join(HERE, 'apache')
 
+
 @task
 def stop(c):
     "stop apache"
@@ -33,7 +34,6 @@ def addconf(c, names=None):
     names = names.split(',')
     for conf in names:
         shared.add_conf(c, conf, A_AVAIL, A_ENABL)
-
 
 
 @task(help={'name': 'name of file to edit'})
@@ -80,3 +80,11 @@ def rmconf(c, names=None):
     names = names.split(',')
     for conf in names:
         shared.remove_conf(c, conf, A_ENABL)
+
+
+@task
+def compare(c):
+    "compare apache configurations that can be changed from here"
+    # TODO: hier zitten ook niet-site-available configs tussen
+    for name in os.listdir(FROM):
+        shared.do_compare(os.path.join(FROM, name), os.path.join(A_AVAIL, name))

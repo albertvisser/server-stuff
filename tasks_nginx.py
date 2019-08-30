@@ -2,7 +2,6 @@
 """
 # TODO : gedeelte van modconf verplaatsen zodat dit nginx-specifiek  blijft
 import os
-import datetime
 from invoke import task
 from config import AVAIL, ENABL, HERE, INIT, intconf, extconf
 import tasks_shared as shared
@@ -141,3 +140,10 @@ def startx(c):
 def restart(c):
     "restart nginx"
     c.run('sudo killall -HUP nginx')
+
+
+@task
+def compare(c):
+    "compare nginx configurations that can be changed from here"
+    for name in os.listdir(FROM):
+        shared.do_compare(os.path.join(FROM, name), os.path.join(AVAIL, name))

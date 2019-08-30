@@ -1,6 +1,7 @@
 """shared routines for INVoke commands
 """
 import os
+import datetime
 
 
 def add_conf(c, name, avail, enabl):
@@ -46,8 +47,9 @@ def mod_conf(c, name, dest, needs_sudo=True, backup=False, append=False):
             c.run('mv -f {} {}'.format(tmp, fname))
 
 
-    def mod_conf(c, conf, dest):    # from apache
-        c.run('sudo cp {} {}'.format(conf, dest))
+def do_compare(local, remote):
+    "execute comparison"
+    print('comparing {} with {}'.format(local, remote))
 
 
 def report_result(proj, result):
@@ -62,5 +64,6 @@ def report_result(proj, result):
 
 
 def remove_result(c, proj):
+    "remove earlier created check files"
     c.run('sudo rm /tmp/server-{}-ok'.format(proj))
     c.run('sudo rm /tmp/server-{}-err'.format(proj))
