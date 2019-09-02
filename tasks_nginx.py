@@ -1,6 +1,5 @@
 """INVoke commands for (Nginx) server configs
 """
-# TODO : gedeelte van modconf verplaatsen zodat dit nginx-specifiek  blijft
 import os
 from invoke import task
 from config import AVAIL, ENABL, HERE, INIT, intconf, extconf
