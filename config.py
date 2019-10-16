@@ -31,14 +31,14 @@ for conf in os.listdir(confpath):
 # django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 # django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_sites}
 # django_project_path['magiokis'] += '-django'
-PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
+# PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
 PLONES = ('plone',)
 extconf = {'nginx': (NGINX, True, '@.conf'),
            'fcgiwrap': (NGINX, True, 'fcgiwrap.conf'),
            'php': (PHP, True, '@.ini'),
            'hgweb': (HGWEB, False, '@-config'),
            'trac-conf': (os.path.join(TRAC, 'conf'), False, 'trac.ini'),
-           'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
+           # 'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
            'hosts': ('/etc', True, '@'),
            'apache2': (APACHE, True, '@.conf'),
            'ports': (APACHE, True, '@.conf'),
