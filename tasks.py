@@ -69,18 +69,47 @@ def modconfa(c, names=None):
         shared.mod_conf(c, path, dest, needs_sudo=sudo, append=True)
 
 
-@task
-def compare(c):
-    "compare configuration files that can be changed from here"
+def _diffconf(c, gui=False):
+    "compare configuration files"
     locs = {}
     for key, stuff in extconf.items():
         path, _, fname = stuff
-        locs[fname.replace('@', key)] = path
-    print(locs)
+        fname = fname.replace('@', key)
+        if os.path.exists(os.path.join(path, fname)):
+            locs[fname] = path
+        else:
+            print('comparing {} skipped: does not exist in {}'.format(fname, path))
     path = os.path.join(HERE, 'misc')
     for fname in os.listdir(path):
         if fname in locs:
-            shared.do_compare(os.path.join(path, fname), os.path.join(locs[fname], fname))
+            if gui:
+                c.run('meld {} {}'.format(os.path.join(path, fname),
+                                          os.path.join(locs[fname], fname)))
+            else:
+                result = c.run('diff -s {} {}'.format(os.path.join(path, fname),
+                                          os.path.join(locs[fname], fname)),
+                               hide=True, warn=True)
+                # print(result.command)
+                if result.exited:
+                    outname = '/tmp/diff-{}'.format(fname)
+                    print('differences for {}, see {}'.format(fname, outname))
+                    with open(outname, 'w') as f:
+                        print(result.stdout, file=f)
+                else:
+                    print(result.stdout, end='')
+            # shared.do_compare(os.path.join(path, fname), os.path.join(locs[fname], fname))
+
+
+@task
+def compare(c):
+    "compare all configuration files that can be changed from here"
+    _diffconf(c)
+
+
+@task
+def compareg(c):
+    "compare all configuration files that can be changed from here, in gui"
+    _diffconf(c, gui=True)
 
 
 @task(help={'project': 'comma-separated list of server names'})
@@ -209,6 +238,7 @@ ns.add_task(modconf)
 ns.add_task(modconfa)
 ns.add_task(modconfb)
 ns.add_task(compare)
+ns.add_task(compareg)
 server = Collection('server')
 server.add_task(check_all)
 server.add_task(stop)

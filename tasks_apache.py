@@ -84,7 +84,11 @@ def rmconf(c, names=None):
 
 @task
 def compare(c):
-    "compare apache configurations that can be changed from here"
-    # TODO: hier zitten ook niet-site-available configs tussen
-    for name in os.listdir(FROM):
-        shared.do_compare(os.path.join(FROM, name), os.path.join(A_AVAIL, name))
+    "compare all Apache configurations that can be changed from here"
+    c.run('diff -s {} {} '.format(FROM, A_AVAIL))
+
+
+@task
+def compareg(c):
+    "compare all Apache configurations that can be changed from here, in gui"
+    c.run('meld {} {} '.format(FROM, A_AVAIL))

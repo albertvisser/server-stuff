@@ -20,7 +20,7 @@ def _diffconf(c, name, gui=False):
         c.run('meld {} {}'.format(os.path.join(dest, fname),
                                   os.path.join(FROM, fname)))
     else:
-        c.run('diff {} {}'.format(os.path.join(dest, fname),
+        c.run('diff -s {} {}'.format(os.path.join(dest, fname),
                                   os.path.join(FROM, fname)))
 
 
@@ -143,6 +143,11 @@ def restart(c):
 
 @task
 def compare(c):
-    "compare nginx configurations that can be changed from here"
-    for name in os.listdir(FROM):
-        shared.do_compare(os.path.join(FROM, name), os.path.join(AVAIL, name))
+    "compare all nginx configurations that can be changed from here"
+    c.run('diff -s {} {}'.format(FROM, AVAIL))
+
+
+@task
+def compareg(c):
+    "compare all nginx configurations that can be changed from here, in gui"
+    c.run('meld {} {}'.format(FROM, AVAIL))
