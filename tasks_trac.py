@@ -30,6 +30,6 @@ def start(c):  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
 @task
 def restart(c):
     "restart local trac server"
-    stop_trac()
-    start_trac()
+    stop(c)
+    start(c)
 
