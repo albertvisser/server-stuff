@@ -10,6 +10,7 @@
 127.0.0.1     albums.lemoncurry.nl
 127.0.0.1     myprojects.lemoncurry.nl
 127.0.0.1     hgweb.lemoncurry.nl
+127.0.0.1     gitweb.lemoncurry.nl
 127.0.0.1     trac.lemoncurry.nl
 127.0.0.1     rst2html.lemoncurry.nl
 127.0.0.1     rst2html-mongo.lemoncurry.nl
