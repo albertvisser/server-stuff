@@ -51,3 +51,9 @@ server {
     error_log /var/log/nginx/bitbucket_mongo.lemoncurry-error.log error;
     access_log /var/log/nginx/bitbucket_mongo.lemoncurry-access.log ;
     }
+server {
+    server_name myprojects-docs.lemoncurry.nl;
+    root /home/albert/www/myprojects-sphinx;
+    error_log /var/log/nginx/myprojects-docs.lemoncurry-error.log error;
+    access_log /var/log/nginx/myprojects-docs.lemoncurry-access.log ;
+    }

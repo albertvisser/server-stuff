@@ -22,6 +22,7 @@
 127.0.0.1     bitbucket.lemoncurry.nl
 127.0.0.1     bitbucket-mongo.lemoncurry.nl
 127.0.0.1     bitbucket-pg.lemoncurry.nl
+127.0.0.1     myprojects-docs.lemoncurry.nl
 127.0.0.1     plone.lemoncurry.nl
 127.0.0.1     ragingdragon.lemoncurry.nl
 127.0.0.1     doc-central.lemoncurry.nl
