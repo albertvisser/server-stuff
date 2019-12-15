@@ -22,7 +22,6 @@ all_cherry = sorted(tasks_cherrypy.get_projectnames())
 all_servers = ['plone'] + all_django + list(all_cherry) + ['trac', 'hgweb']
 all_other = ['trac', 'hgweb']  # , 'plone']
 
-
 @task(help={'name': 'name of the new init file'})
 def addstartup(c, name):
     """add an init file to the system startup sequence
@@ -40,6 +39,15 @@ def get_parms(name):
         fname = fname.replace('@', name)
         frompath = os.path.join(HERE, 'misc')
     return os.path.join(frompath, fname), dest, needs_sudo
+
+
+@task(help={'names': 'comma-separated list of filenames'})
+def editconf(c, names):
+    "edit a file related to a configuration"
+    names = names.split(',') if names else []
+    for conf in names:
+        path = get_parms(conf)[0]
+        c.run("SciTE {} &".format(path))
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -234,6 +242,7 @@ ns.add_collection(tasks_cherrypy, name='cherrypy')
 ns.add_collection(tasks_plone, name='plone')
 ns.add_collection(tasks_sites, name='sites')
 ns.add_task(addstartup)
+ns.add_task(editconf)
 ns.add_task(modconf)
 ns.add_task(modconfa)
 ns.add_task(modconfb)
