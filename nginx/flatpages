@@ -57,3 +57,9 @@ server {
     error_log /var/log/nginx/myprojects-docs.lemoncurry-error.log error;
     access_log /var/log/nginx/myprojects-docs.lemoncurry-access.log ;
     }
+server {
+    server_name reflist-demo.lemoncurry.nl;
+    root /home/albert/www/reflist-demo;
+    error_log /var/log/nginx/reflist-demo.lemoncurry-error.log error;
+    access_log /var/log/nginx/reflist-demo.lemoncurry-access.log ;
+    }
