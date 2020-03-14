@@ -29,6 +29,8 @@ def mod_conf(c, name, dest, needs_sudo=True, backup=False, append=False):
         src = os.path.join(dest, fname)
         trg = os.path.join('backup', '-'.join((fname, today)))
         with c.cd(frompath):
+            if not os.path.exists(os.path.dirname(trg)):
+                c.run('mkdir -m 777 {}'.format((os.path.dirname(trg))))
             c.run('cp {} {}'.format(src, trg))
 
     if append:
