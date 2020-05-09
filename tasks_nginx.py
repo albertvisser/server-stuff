@@ -2,7 +2,7 @@
 """
 import os
 from invoke import task
-from config import AVAIL, ENABL, HERE, INIT, intconf, extconf
+from config import AVAIL, ENABL, HERE, INIT, EDITORCMD, intconf, extconf
 import tasks_shared as shared
 
 FROM = os.path.join(HERE, 'nginx')
@@ -103,7 +103,8 @@ def list(c):
 @task(help={'name': 'name of file to edit'})
 def editconf(c, name):
     "edit a file related to the server configuration"
-    c.run("SciTE {} &".format(os.path.join(FROM, name)))
+    # c.run("SciTE {} &".format(os.path.join(FROM, name)))
+    c.run(EDITORCMD.format(os.path.join(FROM, name)))
 
 
 @task(help={'names': 'comma-separated list of filenames'})

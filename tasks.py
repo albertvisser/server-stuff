@@ -3,7 +3,7 @@
 also creates namespaces from other tasks files
 """
 import os
-from config import INIT, PLONES, HERE, extconf
+from config import INIT, PLONES, HERE, EDITORCMD, extconf
 from invoke import task, Collection
 import tasks_nginx
 import tasks_ftp
@@ -47,8 +47,8 @@ def editconf(c, names):
     names = names.split(',') if names else []
     for conf in names:
         path = get_parms(conf)[0]
-        c.run("SciTE {} &".format(path))
-
+        # c.run("SciTE {} &".format(path))
+        c.run(EDITORCMD.format(path))
 
 @task(help={'names': 'comma-separated list of filenames'})
 def modconf(c, names=None):
@@ -221,6 +221,7 @@ def stop(c, names=None):
 @task(help={'names': 'comma-separated list of filenames'})
 def start(c, names=None):
     "start local server"
+    print(names)
     _serve(c, names, start=True)
 
 

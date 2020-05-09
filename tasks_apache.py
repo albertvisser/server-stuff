@@ -2,7 +2,7 @@
 """
 import os.path
 from invoke import task
-from config import INIT, HERE, A_AVAIL, A_ENABL
+from config import INIT, HERE, A_AVAIL, A_ENABL, EDITORCMD
 import tasks_shared as shared
 FROM = os.path.join(HERE, 'apache')
 
@@ -39,7 +39,8 @@ def addconf(c, names=None):
 @task(help={'name': 'name of file to edit'})
 def editconf(c, name):
     "edit a file related to the server configuration"
-    c.run("SciTE {} &".format(os.path.join(FROM, name)))
+    # c.run("SciTE {} &".format(os.path.join(FROM, name)))
+    c.run(EDITORCMD.format(os.path.join(FROM, name)))
 
 
 @task(help={'names': 'comma-separated list of filenames'})
