@@ -10,3 +10,17 @@
 # bits.
 #
 # By default this script does nothing.
+
+# `Invoke` under Python2 throws some surprises, so we run the commands directly:
+# start trac
+cd /home/albert/lemontrac
+sudo /usr/bin/gunicorn -D -b unix:/var/run/lemontrac.sock -p /var/run/lemontrac.pid tracwsgi:application > /tmp/server-trac-ok >2 /tmp/server-trac-err
+# start rst2html
+cd /home/albert/projects/rst2html
+sudo /usr/bin/cherryd3 -c rst2html.conf -d -i start_rst2html -p /var/run/rst2html.pid > /tmp/server-rst2html-ok >2 /tmp/server-rst2html-err
+sudo /usr/bin/cherryd3 -c rst2html_mongo.conf -d -i start_rst2html_mongo -p /var/run/rst2html_mongo.pid > /tmp/server-rst2html_mongo-ok >2 /tmp/server-rst2html_mongo-err
+sudo /usr/bin/cherryd3 -c rst2html_postgres.conf -d -i start_rst2html_postgres -p /var/run/rst2html_postgres.pid > /tmp/server-rst2html_postgres-ok >2 /tmp/server-rst2html_postgres-err
+# start logviewer
+cd /home/albert/projects/logviewer
+sudo /usr/bin/cherryd3 -c logviewer.conf -d -i start_logviewer -p /var/run/logviewer.pid > /tmp/server-logviewer-ok >2 /tmp/server-logviewer-err
+exit 0
