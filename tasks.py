@@ -39,6 +39,8 @@ def get_parms(name):
         dest, needs_sudo, fname = extconf[name]
         fname = fname.replace('@', name)
         frompath = os.path.join(HERE, 'misc')
+    else:
+        raise ValueError('Unknown config `{}`'.format(name))
     return os.path.join(frompath, fname), dest, needs_sudo
 
 
