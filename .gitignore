@@ -7,3 +7,6 @@ __pycache__/
 logs/
 *.swp
 *.swo
+
+# data
+*backup/
