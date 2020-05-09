@@ -11,6 +11,7 @@ import tasks_php
 import tasks_apache
 import tasks_trac
 import tasks_hgweb
+import tasks_gitweb
 import tasks_django
 import tasks_cherrypy
 import tasks_plone
@@ -238,6 +239,7 @@ ns.add_collection(tasks_php, name='php')
 ns.add_collection(tasks_apache, name='apache')
 ns.add_collection(tasks_trac, name='trac')
 ns.add_collection(tasks_hgweb, name='hgweb')
+ns.add_collection(tasks_gitweb, name='gitweb')
 ns.add_collection(tasks_django, name='django')
 ns.add_collection(tasks_cherrypy, name='cherrypy')
 ns.add_collection(tasks_plone, name='plone')
