@@ -21,13 +21,15 @@ TRAC = os.path.join(HOME, 'lemontrac')
 # trac_sock = os.path.join(runpath, '{}.sock'.format(project))
 confpath = os.path.join(HERE, 'nginx')
 intconf = collections.defaultdict(list)
-for conf in os.listdir(confpath):
-    with open(os.path.join(confpath, conf)) as _in:
+for entry in os.scandir(confpath):  # for conf in os.listdir(confpath):
+    if not entry.is_file():
+        continue
+    with open(entry.path) as _in:  # with open(os.path.join(confpath, conf)) as _in:
         for line in _in:
             if line.strip().startswith('server_name'):
                 test = line.split('server_name', 1)
                 name = test[1].split(';')[0].strip()
-                intconf[conf].append(name)
+                intconf[entry.name].append(name)   # intconf[conf].append(name)
 # django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 # django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_sites}
 # django_project_path['magiokis'] += '-django'
