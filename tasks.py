@@ -53,6 +53,16 @@ def editconf(c, names):
         # c.run("SciTE {} &".format(path))
         c.run(EDITORCMD.format(path))
 
+
+@task
+def listconf(c):
+    """list "other" configuration files"""
+    print('deployable non-webserver configuration files:')
+    for name, data in sorted(extconf.items()):
+        path, needs_sudo, filename = data
+        print(': '.join((name, os.path.join(path, filename.replace('@', name)))))
+
+
 @task(help={'names': 'comma-separated list of filenames'})
 def modconf(c, names=None):
     "deploy modifications for configuration file(s); replace version"
@@ -224,7 +234,6 @@ def stop(c, names=None):
 @task(help={'names': 'comma-separated list of filenames'})
 def start(c, names=None):
     "start local server"
-    print(names)
     _serve(c, names, start=True)
 
 
@@ -247,6 +256,7 @@ ns.add_collection(tasks_cherrypy, name='cherrypy')
 ns.add_collection(tasks_plone, name='plone')
 ns.add_collection(tasks_sites, name='sites')
 ns.add_task(addstartup)
+ns.add_task(listconf)
 ns.add_task(editconf)
 ns.add_task(modconf)
 ns.add_task(modconfa)
