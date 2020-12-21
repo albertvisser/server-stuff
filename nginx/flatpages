@@ -63,3 +63,15 @@ server {
     error_log /var/log/nginx/reflist-demo.lemoncurry-error.log error;
     access_log /var/log/nginx/reflist-demo.lemoncurry-access.log ;
     }
+server {
+    server_name jvs420.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/jvs420;
+    error_log /var/log/nginx/jvs420.lemoncurry-error.log error;
+    access_log /var/log/nginx/jvs420.lemoncurry-access.log ;
+    }
+server {
+    server_name jvs610.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/jvs610;
+    error_log /var/log/nginx/jvs610.lemoncurry-error.log error;
+    access_log /var/log/nginx/jvs610.lemoncurry-access.log ;
+    }
