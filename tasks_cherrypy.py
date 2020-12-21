@@ -5,7 +5,7 @@ from invoke import task
 from config import HOME, runpath
 from tasks_shared import report_result, remove_result
 
-allproj = ('rst2html', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst2html_postgres')
+allproj = ('rst2html_fs', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst2html_postgres')
 
 
 def _get_cherry_parms(project=None):
@@ -15,8 +15,8 @@ def _get_cherry_parms(project=None):
     pad = os.path.join(HOME, 'projects', project)
     if project == allproj[2]:
         project = project.split('-')[0]
-    elif project.startswith(allproj[0]):
-        pad = os.path.join(HOME, 'projects', allproj[0])
+    elif project.startswith(allproj[0].split('_')[0]):
+        pad = os.path.join(HOME, 'projects', allproj[0].split('_')[0])
     conf = '{}.conf'.format(project)
     prog = 'start_{}'.format(project)
     pid = os.path.join(runpath, '{}.pid'.format(project))
