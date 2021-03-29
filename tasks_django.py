@@ -64,8 +64,8 @@ def restart(c, project=None):
     else:
         project = project.split(',')
     for proj in project:
-        stop_django(proj)
-        start_django(proj)
+        stop(c, proj)
+        start(c, proj)
 
 
 @task
