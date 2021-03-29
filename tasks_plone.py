@@ -26,30 +26,30 @@ def _plone(c, action, sitenames):
         _doit(name, action)
 
 
-@task(help={'sitenames': 'comma-separated list of server names'})
-def start(c, sitenames=''):
+@task(help={'names': 'comma-separated list of server names'})
+def start(c, names=''):
     "start Plone default instance"
-    _plone(c, 'start', sitenames)
+    _plone(c, 'start', names)
 
 
-@task(help={'sitenames': 'comma-separated list of server names'})
-def stop(c, sitenames=''):
+@task(help={'names': 'comma-separated list of server names'})
+def stop(c, names=''):
     "stop Plone default instance"
-    _plone(c, 'stop', sitenames)
+    _plone(c, 'stop', names)
 
 
-@task(help={'sitenames': 'comma-separated list of server names'})
-def restart(c, sitenames=''):
+@task(help={'names': 'comma-separated list of server names'})
+def restart(c, names=''):
     "restart Plone default instance"
-    stop_plone(c, sitenames)
-    start_plone(c, sitenames)
+    stop_plone(c, names)
+    start_plone(c, names)
 
 
 @task(help={'sitenames': 'comma-separated list of server names'})
-def buildout(c, sitenames=''):
+def buildout(c, names=''):
     """run buildout on Plone instance
 
     to be used in this combo (Invoke version):
         fabsrv modconf plone-buildout plone.buildout plone.restart
     """
-    _plone('buildout', sitenames)
+    _plone('buildout', names)

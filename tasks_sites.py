@@ -126,7 +126,7 @@ def check_all_pages(c):
     check_sites(quick=False)
 
 
-@task
+@task(help={'names': 'comma-separated list of server names'})
 def check_project(c, names):
     "check if pages for specific projects are up"
     sites = []

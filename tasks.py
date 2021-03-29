@@ -133,16 +133,16 @@ def compareg(c):
     _diffconf(c, gui=True)
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def check_all(c, project=''):
+@task(help={'names': 'comma-separated list of server names'})
+def check_all(c, names=''):
     "assuming server is started when there is a pid file"
     other_pid = dict(zip(all_other, [tasks_trac.trac_pid, tasks_hgweb.hgweb_pid]))  # , plone_pid]
-    if not project:
-        project = all_django + all_cherry + all_other
+    if not names:
+        names = all_django + all_cherry + all_other
     else:
-        project = project.split(',')
+        names = names.split(',')
     all_clear = True
-    for proj in project:
+    for proj in names:
         if proj in all_django:
             pid = tasks_django.get_pid(proj)
         elif proj in all_cherry:
@@ -154,7 +154,7 @@ def check_all(c, project=''):
         if os.path.exists(pid):
             print("{}: found pid file, server probably started".format(proj))
             continue
-        print("{}: no pid file, starting server probably failed".format(proj))
+        print("{}: no pid file, server not started or starting failed".format(proj))
         all_clear = False
     if all_clear:
         print("all local servers ok")

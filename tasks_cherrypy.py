@@ -35,14 +35,14 @@ def get_pid(project):
     return _get_cherry_parms(project)[3]
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def stop(c, project=None):
+@task(help={'names': 'comma-separated list of server names'})
+def stop(c, names=None):
     "stop indicated cherrypy server(s)"
-    if not project:
-        project = _get_cherry_parms()
+    if not names:
+        names = _get_cherry_parms()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
             c.run('sudo kill -s SIGKILL `cat {}`'.format(pid))
@@ -50,14 +50,14 @@ def stop(c, project=None):
             remove_result(c, proj)
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def start(c, project=None):
+@task(help={'names': 'comma-separated list of server names'})
+def start(c, names=None):
     "start indicated cherrypy server(s) (through cherryd)"
-    if not project:
-        project = _get_cherry_parms()
+    if not names:
+        names = _get_cherry_parms()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with c.cd(pad):
             result = c.run('sudo /usr/bin/cherryd3 '
@@ -65,14 +65,14 @@ def start(c, project=None):
             report_result(proj, result)
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def restart(c, project=None):
+@task(help={'names': 'comma-separated list of server names'})
+def restart(c, names=None):
     "restart cherrypy site (arg:project)"
-    if not project:
-        project = _get_cherry_parms()
+    if not names:
+        names = _get_cherry_parms()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         stop(c, proj)
         start(c, proj)
 

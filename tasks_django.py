@@ -24,14 +24,14 @@ def get_pid(project):
     return _get_django_args(project)[0]
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def stop(c, project=''):
+@task(help={'names': 'comma-separated list of server names'})
+def stop(c, names=''):
     "stop indicated Django server(s)"
-    if not project:
-        project = django_project_path.keys()
+    if not names:
+        names = django_project_path.keys()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         django_pid = _get_django_args(proj)[0]
         if os.path.exists(django_pid):
             c.run('sudo kill `cat {}`'.format(django_pid))
@@ -39,16 +39,16 @@ def stop(c, project=''):
             remove_result(c, proj)
 
 
-@task(help={'project': 'comma-separated list of server names'})
-def start(c, project=None):
+@task(help={'names': 'comma-separated list of server names'})
+def start(c, names=None):
     """start indicated Django server(s) using manage.py
     (Python 2 used fastcgi, see version history; Python uses Gunicorn)
     """
-    if project is None:
-        project = sorted(django_project_path.keys())
+    if names is None:
+        names = sorted(django_project_path.keys())
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         pid, sock, path = _get_django_args(proj)
         with c.cd(path):
             result = c.run('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
@@ -59,11 +59,11 @@ def start(c, project=None):
 @task(help={'project': 'comma-separated list of server names'})
 def restart(c, project=None):
     "restart django indicated server(s)"
-    if project is None:
-        project = django_project_path.keys()
+    if names is None:
+        names = django_project_path.keys()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         stop(c, proj)
         start(c, proj)
 
@@ -107,13 +107,13 @@ def _fix_media_prefix(path):
 
 
 @task(help={'project': 'comma-separated list of server names'})
-def link_admin_css(c, project=None):
+def link_admin_css(c, names=None):
     "add symlink to admin CSS for Django project"
-    if project is None:
-        project = django_project_path.keys()
+    if names is None:
+        names = django_project_path.keys()
     else:
-        project = project.split(',')
-    for proj in project:
+        names = names.split(',')
+    for proj in names:
         pid, sock, path = _get_django_args(project)
         skip = False
         # maak indien nog niet aanwezig directory static onder site root

@@ -108,15 +108,15 @@ def editconf(c, name):
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def list_domains(c, args=None):
+def list_domains(c, names=None):
     "list of virtual domains per Nginx configuration"
     allconfs = intconf.keys()
-    if not args:
-        args = allconfs
+    if not names:
+        names = allconfs
     else:
-        args = args.split(',')
+        names = names.split(',')
 
-    for conf in args:
+    for conf in names:
         if conf in allconfs:
             sites = intconf[conf]
             print('domains for config "{}": {}'.format(conf, ', '.join(sites)))
