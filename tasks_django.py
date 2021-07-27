@@ -57,7 +57,7 @@ def start(c, names=None):
 
 
 @task(help={'project': 'comma-separated list of server names'})
-def restart(c, project=None):
+def restart(c, names=None):
     "restart django indicated server(s)"
     if names is None:
         names = django_project_path.keys()
