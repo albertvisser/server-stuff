@@ -33,3 +33,14 @@ def restart(c):
     stop(c)
     start(c)
 
+
+@task
+def editconf(c):
+    "alias"
+    c.run("fabsrv editconf trac")
+
+
+@task
+def modconf(c):
+    "alias"
+    c.run("fabsrv modconf -n trac")
