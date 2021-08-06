@@ -1,6 +1,6 @@
 server {
     server_name php.magiokis.nl;
-    root /home/albert/projects/magiokis-php;
+    root /home/albert/projects/.frozen/magiokis-php;
     #script_alias /home/albert/www/cgi-bin/magiokis/;
     error_log /var/log/nginx/php.magiokis-error.log error;
     access_log /var/log/nginx/php.magiokis-access.log ;

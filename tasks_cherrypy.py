@@ -15,6 +15,7 @@ def _get_cherry_parms(project=None):
     pad = os.path.join(HOME, 'projects', project)
     if project == allproj[2]:
         project = project.split('-')[0]
+        pad = pad.replace('projects', 'projects/.frozen')
     elif project.startswith(allproj[0].split('_')[0]):
         pad = os.path.join(HOME, 'projects', allproj[0].split('_')[0])
     conf = '{}.conf'.format(project)

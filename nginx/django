@@ -6,11 +6,11 @@ server {
     error_log /var/log/nginx/django.magiokis-error.log error;
     access_log /var/log/nginx/django.magiokis-access.log ;
     location /media {
-        root   /home/albert/projects/magiokis-django/;
+        root   /home/albert/projects/.frozen/magiokis-django/;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
         {
-        root /home/albert/projects/magiokis-django;
+        root /home/albert/projects/.frozen/magiokis-django;
         expires 30d;
         break;
         }
