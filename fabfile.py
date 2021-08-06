@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """collection of shortcut functions concerning deployment
 of my local ngnix stuff
 includes:
@@ -9,7 +8,6 @@ includes:
 - start/stop/restart django server(s) (manage.py runfcgi)
 - start/stop/restart cherrypy server(s) (cherryd)
 """
-from __future__ import print_function
 
 import os
 import glob
