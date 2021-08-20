@@ -61,7 +61,8 @@ def start(c, names=None):
     for proj in names:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with c.cd(pad):
-            result = c.run('sudo /usr/bin/cherryd3 '
+            # result = c.run('sudo /usr/bin/cherryd3 '
+            result = c.run('sudo /usr/local/bin/cherryd '
                            '-c {} -d -p {} -i {}'.format(conf, pid, prog))
             report_result(proj, result)
 

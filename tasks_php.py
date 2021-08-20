@@ -3,7 +3,7 @@
 from invoke import task
 from config import INIT, PHP
 
-PHPX = 'php7.0-fpm'
+PHPX = 'php7.4-fpm'
 
 @task
 def stop(c):
