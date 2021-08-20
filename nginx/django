@@ -8,7 +8,7 @@ server {
     location /media {
         root   /home/albert/projects/.frozen/magiokis-django/;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/.frozen/magiokis-django;
         expires 30d;
@@ -43,7 +43,7 @@ server {
     location /media {
         root   /home/albert/projects/actiereg/;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/actiereg;
         expires 30d;
@@ -78,7 +78,7 @@ server {
     location /media {
         root   /home/albert/projects/myprojects/;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/myprojects;
         expires 30d;
@@ -113,7 +113,7 @@ server {
     location /media {
         root   /home/albert/projects/mydomains;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/mydomains;
         expires 30d;
@@ -153,7 +153,7 @@ server {
     location /media {
         root   /home/albert/projects/myapps;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/myapps;
         expires 30d;
@@ -194,7 +194,7 @@ server {
     location /media {
         root   /home/albert/projects/albums;
         }
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js)$
+    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
         root /home/albert/projects/albums;
         expires 30d;
