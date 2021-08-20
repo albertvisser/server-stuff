@@ -110,10 +110,10 @@ server {
 
 server {
     server_name muziek.lemoncurry.nl;
-    root /home/albert/projects/albums-cgi/html;
+    root /home/albert/projects/.frozen/albums-cgi/html;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/albums-cgi/;
+        alias /home/albert/projects/.frozen/albums-cgi/;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
         #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
@@ -128,7 +128,7 @@ server {
     #script_alias /home/albert/www/absentie/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/absentie;
+        alias /home/albert/projects/.frozen/absentie;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
         #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
@@ -138,11 +138,11 @@ server {
     }
 server {
     server_name doctool.lemoncurry.nl;
-    root /home/albert/projects/doctool/html;
+    root /home/albert/projects/.frozen/doctool/html;
     #script_alias /home/albert/www/doctool/cgi-bin/;
     location /cgi-bin/ {
         gzip off;
-        alias /home/albert/projects/doctool;
+        alias /home/albert/projects/.frozen/doctool;
         fastcgi_pass  unix:/var/run/fcgiwrap.socket;
         include /etc/nginx/fastcgi_params;
         #fastcgi_param SCRIPT_FILENAME  $document_root$fastcgi_script_name;
