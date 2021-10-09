@@ -22,6 +22,9 @@ all_django = sorted(tasks_django.get_projectnames())
 all_cherry = sorted(tasks_cherrypy.get_projectnames())
 all_servers = ['plone'] + all_django + list(all_cherry) + ['trac', 'hgweb']
 all_other = ['trac', 'hgweb']  # , 'plone']
+all_names = {'django': tasks_django, 'cherrypy': tasks_cherrypy, 'plone': tasks_plone,
+             'trac': tasks_trac, 'hgweb': tasks_hgweb, 'apache': tasks_apache,
+             'nginx': tasks_nginx, 'php': tasks_php, 'ftp': tasks_ftp}
 
 @task(help={'name': 'name of the new init file'})
 def addstartup(c, name):
@@ -31,17 +34,6 @@ def addstartup(c, name):
     """
     c.run('sudo chmod +x {}/{}'.format(INIT, name))     # make sure it's executable
     c.run('sudo update-rc.d {} defaults'.format(name))  # add to defaults
-
-
-def get_parms(name):
-    "get extconf dictionary for parameters to use"
-    if name in extconf:
-        dest, needs_sudo, fname = extconf[name]
-        fname = fname.replace('@', name)
-        frompath = os.path.join(HERE, 'misc')
-    else:
-        raise ValueError('Unknown config `{}`'.format(name))
-    return os.path.join(frompath, fname), dest, needs_sudo
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -90,6 +82,29 @@ def modconfa(c, names=None):
         shared.mod_conf(c, path, dest, needs_sudo=sudo, append=True)
 
 
+def get_parms(name):
+    "get extconf dictionary for parameters to use"
+    if name in extconf:
+        dest, needs_sudo, fname = extconf[name]
+        fname = fname.replace('@', name)
+        frompath = os.path.join(HERE, 'misc')
+    else:
+        raise ValueError('Unknown config `{}`'.format(name))
+    return os.path.join(frompath, fname), dest, needs_sudo
+
+
+@task
+def compare(c):
+    "compare all configuration files that can be changed from here"
+    _diffconf(c)
+
+
+@task
+def compareg(c):
+    "compare all configuration files that can be changed from here, in gui"
+    _diffconf(c, gui=True)
+
+
 def _diffconf(c, gui=False):
     "compare configuration files"
     locs = {}
@@ -121,18 +136,6 @@ def _diffconf(c, gui=False):
             # shared.do_compare(os.path.join(path, fname), os.path.join(locs[fname], fname))
 
 
-@task
-def compare(c):
-    "compare all configuration files that can be changed from here"
-    _diffconf(c)
-
-
-@task
-def compareg(c):
-    "compare all configuration files that can be changed from here, in gui"
-    _diffconf(c, gui=True)
-
-
 @task(help={'names': 'comma-separated list of server names'})
 def check_all(c, names=''):
     "assuming server is started when there is a pid file"
@@ -160,6 +163,60 @@ def check_all(c, names=''):
         print("all local servers ok")
 
 
+@task(help={'names': 'comma-separated list of filenames'})
+def stop(c, names=None):
+    "stop local server"
+    _serve(c, names, stop=True)
+
+
+@task(help={'names': 'comma-separated list of filenames'})
+def start(c, names=None):
+    "start local server"
+    _serve(c, names, start=True)
+
+
+@task(help={'names': 'comma-separated list of filenames'})
+def restart(c, names=None):
+    "restart local server"
+    _serve(c, names, stop=True, start=True)
+
+
+def _serve(c, names, **kwargs):
+    """manage all server managers with one command
+    """
+    stop_server = 'stop' in kwargs
+    start_server = 'start' in kwargs
+    if start_server and not names:
+        _start_all(c)
+        return
+    if not names:
+        names = ['plone', 'django', 'cherrypy']  # , 'trac', 'hgweb']
+    else:
+        names = names.split(',')
+    for name in names:
+        if name in all_names:
+            if name == 'django':
+                for name in all_django:
+                    _serve_django(c, name, stop_server, start_server)
+            elif name == 'cherrypy':
+                for name in all_cherry:
+                    _serve_cherry(c, name, stop_server, start_server)
+            elif name == 'plone':
+                for name in PLONES:
+                    _serve_plone(c, name, stop_server, start_server)
+            elif stop_server and start_server and restart:
+                all_names[name].restart(c)
+                return
+        elif name in all_django:
+            _serve_django(c, name, stop_server, start_server)
+        elif name in all_cherry:
+            _serve_cherry(c, name, stop_server, start_server)
+        elif name in PLONES:
+            _serve_plone(c, name, stop_server, start_server)
+        else:
+            print('unknown server name')
+
+
 def _start_all(c):
     """try to start all wsgi servers
     output is gathered in /tmp/server-{}-ok and -err. It should be discernible which one fails
@@ -179,68 +236,26 @@ def _start_all(c):
         start(c, name)
 
 
-def _serve(c, names, **kwargs):
-    """manage all server managers with one command
-    """
-    stop_server = 'stop' in kwargs
-    start_server = 'start' in kwargs
-    if start_server and not names:
-        _start_all(c)
-        return
-    mnames = {'django': tasks_django, 'cherry': tasks_cherrypy, 'plone': tasks_plone,
-              'trac': tasks_trac, 'hgweb': tasks_hgweb, 'apache': tasks_apache,
-              'nginx': tasks_nginx, 'php': tasks_php, 'ftp': tasks_ftp}
-    if not names:
-        names = ['plone', 'django', 'cherry', 'trac', 'hgweb']
-    else:
-        names = names.split(',')
-    for name in names:
-        if name in mnames:
-            if stop_server and start_server and restart:
-                mnames[name].restart(c)
-                return
-            if stop_server:
-                mnames[name].stop(c)
-            if start_server:
-                mnames[name].start(c)
-        elif name in all_django:
-            if stop_server:
-                mnames['django'].stop(c, name)
-            if start_server:
-                mnames['django'].start(c, name)
-        elif name in all_cherry:
-            if stop_server:
-                mnames['cherry'].stop(c, name)
-            if start_server:
-                mnames['cherry'].start(c, name)
-        elif name in PLONES:
-            if stop_server:
-                mnames['plone'].stop(c, name)
-            if start_server:
-                mnames['plone'].start(c, name)
-        # else:  # geen andere mogelijkheden als wat al in mnames zit
-        #     if stop_server:
-        #         mnames[name].stop(c)
-        #     if start_server:
-        #         mnames[name].start(c)
+def _serve_django(c, name, stop_server, start_server):
+    "start/stop django wsgi server"
+    start_stop(c, name, stop_server, start_server, 'django')
 
 
-@task(help={'names': 'comma-separated list of filenames'})
-def stop(c, names=None):
-    "stop local server"
-    _serve(c, names, stop=True)
+def _serve_cherry(c, name, stop_server, start_server):
+    "start/stop cherrypy wsgi server"
+    start_stop(c, name, stop_server, start_server, 'cherrypy')
 
 
-@task(help={'names': 'comma-separated list of filenames'})
-def start(c, names=None):
-    "start local server"
-    _serve(c, names, start=True)
+def _serve_plone(c, name, stop_server, start_server):
+    "start/stop Plone instance"
+    start_stop(c, name, stop_server, start_server, 'plone')
 
 
-@task(help={'names': 'comma-separated list of filenames'})
-def restart(c, names=None):
-    "restart local server"
-    _serve(c, names, stop=True, start=True)
+def start_stop(c, name, stop_server, start_server, typename):
+    if stop_server:
+        all_names[typename].stop(c, name)
+    if start_server:
+        all_names[typename].start(c, name)
 
 
 ns = Collection()
