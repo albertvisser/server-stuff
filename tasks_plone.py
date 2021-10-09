@@ -41,8 +41,8 @@ def stop(c, names=''):
 @task(help={'names': 'comma-separated list of server names'})
 def restart(c, names=''):
     "restart Plone default instance"
-    stop_plone(c, names)
-    start_plone(c, names)
+    stop(c, names)
+    start(c, names)
 
 
 @task(help={'sitenames': 'comma-separated list of server names'})
@@ -50,6 +50,6 @@ def buildout(c, names=''):
     """run buildout on Plone instance
 
     to be used in this combo (Invoke version):
-        fabsrv modconf plone-buildout plone.buildout plone.restart
+        fabsrv modconf plone-conf plone.buildout plone.restart
     """
-    _plone('buildout', names)
+    _plone(c, 'buildout', names)

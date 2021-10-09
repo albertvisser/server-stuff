@@ -102,7 +102,7 @@ server {
                 try_files $uri =404;
                 root /usr/share/;
                 # fastcgi_pass  unix:/tmp/php.socket;
-                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock;
                 fastcgi_index index.php;
                 fastcgi_param SCRIPT_FILENAME $request_filename;
                 include /etc/nginx/fastcgi_params;
@@ -122,7 +122,7 @@ server {
                 try_files $uri =404;
                 root /usr/share/;
                 # fastcgi_pass  unix:/tmp/php.socket;
-                fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock;
                 fastcgi_index index.php;
                 fastcgi_param SCRIPT_FILENAME $request_filename;
                 include /etc/nginx/fastcgi_params;

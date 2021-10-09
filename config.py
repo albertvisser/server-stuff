@@ -5,7 +5,7 @@ import collections
 
 HERE = os.path.dirname(__file__)
 INIT, NGINX, APACHE = '/etc/init.d', '/etc/nginx', '/etc/apache2'
-PHP = '/etc/php/7.0/fpm/'
+PHP = '/etc/php/7.4/fpm/'
 AVL, NBL = 'sites-available', 'sites-enabled'
 AVAIL = os.path.join(NGINX, AVL)
 ENABL = os.path.join(NGINX, NBL)
@@ -33,23 +33,24 @@ for entry in os.scandir(confpath):  # for conf in os.listdir(confpath):
 # django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 # django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_sites}
 # django_project_path['magiokis'] += '-django'
-# PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
+PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
 PLONES = ('plone',)
 extconf = {'nginx': (NGINX, True, '@.conf'),
            'fcgiwrap': (NGINX, True, 'fcgiwrap.conf'),
            'php': (PHP, True, '@.ini'),
-           'hgweb': (HGWEB, False, '@-config'),
-           'trac': (os.path.join(TRAC, 'conf'), True, 'trac.ini'),
-           # 'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
+           # 'hgweb': (HGWEB, False, '@-config'),
+           # 'trac': (os.path.join(TRAC, 'conf'), True, 'trac.ini'),
+           'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
            'hosts': ('/etc', True, '@'),
            'apache2': (APACHE, True, '@.conf'),
            'ports': (APACHE, True, '@.conf'),
-           ## 'php-fcgi': (INIT, True, '@'),
-           'rc.local': ('/etc', True, '@'),
-           'hgweb-srv': (HGWEB, False, 'hgweb.fcgi'),
-           ## 'hgweb.cgi': (HGWEB, False, '@'),
-           ## 'hgweb.wsgi': (HGWEB, False, '@'),
-           'trac-srv': (TRAC, False, 'tracwsgi.py')}
+           # 'php-fcgi': (INIT, True, '@'),
+           # 'rc.local': ('/etc', True, '@'),
+           # 'hgweb-srv': (HGWEB, False, 'hgweb.fcgi'),
+           # 'hgweb.cgi': (HGWEB, False, '@'),
+           # 'hgweb.wsgi': (HGWEB, False, '@'),
+           # 'trac-srv': (TRAC, False, 'tracwsgi.py')
+           }
 for plone in PLONES:
     extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
         plone.title())), False, 'buildout.cfg')
