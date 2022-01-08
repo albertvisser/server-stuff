@@ -55,4 +55,4 @@ for plone in PLONES:
     extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
         plone.title())), False, 'buildout.cfg')
 # EDITORCMD = 'SciIE {} &'
-EDITORCMD = "gnome-terminal --profile='Code Editor Shell' -- vi {} &"
+EDITORCMD = "gnome-terminal --profile='Code Editor Shell' -- vim {} &"

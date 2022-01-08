@@ -53,12 +53,12 @@ def start(c, names=None):
     for proj in names:
         pid, sock, path = _get_django_args(proj)
         with c.cd(path):
-            result = c.run('sudo /usr/bin/gunicorn3 -D -b unix:{} -p {} '
+            result = c.run('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
                            '{}.wsgi:application'.format(sock, pid, proj))
             report_result(proj, result)
 
 
-@task(help={'project': 'comma-separated list of server names'})
+@task(help={'names': 'comma-separated list of server names'})
 def restart(c, names=None):
     "restart django indicated server(s)"
     if names is None:
@@ -108,7 +108,7 @@ def _fix_media_prefix(path):
             _out.write('{}\n{} = {}{}'.format(head, find, prefix, tail))
 
 
-@task(help={'project': 'comma-separated list of server names'})
+@task(help={'names': 'comma-separated list of server names'})
 def link_admin_css(c, names=None):
     "add symlink to admin CSS for Django project"
     if names is None:

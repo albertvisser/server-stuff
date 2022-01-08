@@ -127,19 +127,22 @@ def list_domains(c, names=None):
 @task
 def stop(c):
     "stop nginx"
-    c.run('sudo {}/nginx stop'.format(INIT))
+    # c.run('sudo {}/nginx stop'.format(INIT))
+    c.run('sudo systemctl stop nginx.service')
 
 
 @task
-def startx(c):
+def start(c):
     "start nginx"
-    c.run('sudo {}/nginx start'.format(INIT))
+    # c.run('sudo {}/nginx start'.format(INIT))
+    c.run('sudo systemctl start nginx.service')
 
 
 @task
 def restart(c):
     "restart nginx"
-    c.run('sudo killall -HUP nginx')
+    # c.run('sudo killall -HUP nginx')
+    c.run('sudo systemctl restart nginx.service')
 
 
 @task

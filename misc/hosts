@@ -1,10 +1,14 @@
+# overgenomen uit distro versie
+127.0.0.1  localhost
+127.0.1.1  Pyinthesky
+::1        localhost ip6-localhost ip6-loopback
+ff02::1    ip6-allnodes
+ff02::2    ip6-allrouters
 
-192.168.2.1     router
-192.168.6.1     huis
+192.168.178.1     router
 
-127.0.0.1	    PyintheSky
-127.0.0.1	    lemoncurry
-127.0.0.1	    lemoncurry.nl
+127.0.0.1     lemoncurry
+127.0.0.1     lemoncurry.nl
 127.0.0.1     www.lemoncurry.nl
 127.0.0.1     actiereg.lemoncurry.nl
 127.0.0.1     albums.lemoncurry.nl
@@ -26,6 +30,7 @@
 127.0.0.1     plone.lemoncurry.nl
 127.0.0.1     ragingdragon.lemoncurry.nl
 127.0.0.1     doc-central.lemoncurry.nl
+127.0.0.1     phppgadmin.lemoncurry.nl
 127.0.0.1     reflist-demo.lemoncurry.nl
 127.0.0.1     jvs420.lemoncurry.nl
 127.0.0.1     jvs610.lemoncurry.nl

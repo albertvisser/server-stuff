@@ -45,7 +45,7 @@ def restart(c, names=''):
     start(c, names)
 
 
-@task(help={'sitenames': 'comma-separated list of server names'})
+@task(help={'names': 'comma-separated list of server names'})
 def buildout(c, names=''):
     """run buildout on Plone instance
 
