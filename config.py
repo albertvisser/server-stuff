@@ -35,9 +35,11 @@ for entry in os.scandir(confpath):  # for conf in os.listdir(confpath):
 # django_project_path['magiokis'] += '-django'
 PLONEDIR = os.path.join(HOME, 'Plone', 'zinstance')
 PLONES = ('plone',)
+# mapping van config naam op tuple van doeldirectory, sudo_nodig, vervangpatroon voor filenaam
 extconf = {'nginx': (NGINX, True, '@.conf'),
-           'fcgiwrap': (NGINX, True, 'fcgiwrap.conf'),
+           'fcgiwrap': (NGINX, True, '@.conf'),
            'php': (PHP, True, '@.ini'),
+           'gitweb': ('/etc', True, '@.conf'),
            # 'hgweb': (HGWEB, False, '@-config'),
            # 'trac': (os.path.join(TRAC, 'conf'), True, 'trac.ini'),
            'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
