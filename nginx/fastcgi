@@ -26,7 +26,7 @@ server {
         fastcgi_pass unix:/var/run/fcgiwrap.sock;
         }
     location / {
-        root /usr/share/gitweb/;
+        root /usr/share/gitweb;
         index gitweb.cgi;
         }
     }
