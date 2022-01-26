@@ -20,8 +20,9 @@ import tasks_shared as shared
 
 all_django = sorted(tasks_django.get_projectnames())
 all_cherry = sorted(tasks_cherrypy.get_projectnames())
-all_servers = ['plone'] + all_django + list(all_cherry) + ['trac', 'hgweb']
-all_other = ['trac', 'hgweb']  # , 'plone']
+all_rst2html = [x for x in all_cherry if x.startswith('rst2html')]
+all_other = ['trac', 'hgweb']
+all_servers = ['plone'] + all_django + list(all_cherry)  #  + all_other
 all_names = {'django': tasks_django, 'cherrypy': tasks_cherrypy, 'plone': tasks_plone,
              'trac': tasks_trac, 'hgweb': tasks_hgweb, 'apache': tasks_apache,
              'nginx': tasks_nginx, 'php': tasks_php, 'ftp': tasks_ftp}
@@ -213,6 +214,9 @@ def _serve(c, names, **kwargs):
             _serve_cherry(c, name, stop_server, start_server)
         elif name in PLONES:
             _serve_plone(c, name, stop_server, start_server)
+        elif name == 'rst2html':
+            for name in all_rst2html:
+                _serve_cherry(c, name, stop_server, start_server)
         else:
             print('unknown server name')
 
