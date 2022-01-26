@@ -7,7 +7,8 @@ server {
     }
 server {
     server_name oldlocal.magiokis.nl;
-    root /home/albert/www/magiokis_vv/site;
+    # root /home/albert/www/magiokis_vv/site;
+    root /home/albert/projects/rst2html/rst2html-data/magiokis-old;
     #script_alias /home/albert/www/cgi-bin/magiokis-vv/;
     error_log /var/log/nginx/oldlocal.magiokis-error.log error;
     access_log /var/log/nginx/oldlocal.magiokis-access.log ;
@@ -74,4 +75,10 @@ server {
     root /home/albert/projects/rst2html/rst2html-data/jvs610;
     error_log /var/log/nginx/jvs610.lemoncurry-error.log error;
     access_log /var/log/nginx/jvs610.lemoncurry-access.log ;
+    }
+server {
+    server_name magiokis-old.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/magiokis-old;
+    error_log /var/log/nginx/magiokis-old.lemoncurry-error.log error;
+    access_log /var/log/nginx/magiokis-old.lemoncurry-access.log ;
     }
