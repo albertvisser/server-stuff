@@ -31,6 +31,23 @@ server {
         }
     }
 server {
+    listen                80;
+    server_name           cgit.lemoncurry.nl;
+    error_log /var/log/nginx/cgit.lemoncurry-error.log error;
+    access_log /var/log/nginx/cgit.lemoncurry-access.log ;
+    root                  /usr/share/webapps/cgit;
+    try_files             $uri @cgit;
+
+    location @cgit {
+      include             fastcgi_params;
+      fastcgi_param       SCRIPT_FILENAME $document_root/cgit.cgi;
+      fastcgi_param       PATH_INFO       $uri;
+      fastcgi_param       QUERY_STRING    $args;
+      fastcgi_param       HTTP_HOST       $server_name;
+      fastcgi_pass        unix:/run/fcgiwrap.sock;
+    }
+}
+server {
     server_name original.magiokis.nl;
     root /home/albert/projects/.frozen/magiokis/html;
     location / {

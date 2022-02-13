@@ -15,6 +15,7 @@ ff02::2    ip6-allrouters
 127.0.0.1     myprojects.lemoncurry.nl
 127.0.0.1     hgweb.lemoncurry.nl
 127.0.0.1     gitweb.lemoncurry.nl
+127.0.0.1     cgit.lemoncurry.nl
 127.0.0.1     trac.lemoncurry.nl
 127.0.0.1     rst2html.lemoncurry.nl
 127.0.0.1     rst2html-mongo.lemoncurry.nl
