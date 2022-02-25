@@ -42,6 +42,7 @@ server {
     access_log /var/log/nginx/actiereg.lemoncurry-access.log ;
     location /media {
         root   /home/albert/projects/actiereg/;
+        break;
         }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
@@ -75,12 +76,9 @@ server {
     server_name myprojects.lemoncurry.nl;
     error_log /var/log/nginx/myprojects.lemoncurry-error.log error;
     access_log /var/log/nginx/myprojects.lemoncurry-access.log ;
-    location /media {
-        root   /home/albert/projects/myprojects/;
-        }
     location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
         {
-        root /home/albert/projects/myprojects;
+        root /home/albert/projects/myprojects/files;
         expires 30d;
         break;
         }
