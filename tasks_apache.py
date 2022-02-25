@@ -86,10 +86,10 @@ def rmconf(c, names=None):
 @task
 def compare(c):
     "compare all Apache configurations that can be changed from here"
-    c.run('diff -s {} {} '.format(FROM, A_AVAIL))
+    c.run('diff -s {} {}'.format(FROM, A_AVAIL))
 
 
 @task
 def compareg(c):
     "compare all Apache configurations that can be changed from here, in gui"
-    c.run('meld {} {} '.format(FROM, A_AVAIL))
+    c.run('meld {} {}'.format(FROM, A_AVAIL))

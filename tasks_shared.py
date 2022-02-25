@@ -14,7 +14,7 @@ def add_conf(c, name, avail, enabl):
 def remove_conf(c, name, enabl):
     "disable configuration by removing symlink"
     newname = os.path.join(enabl, name)
-    c.run(' sudo rm {}'.format(newname))
+    c.run('sudo rm {}'.format(newname))
 
 
 def mod_conf(c, name, dest, needs_sudo=True, backup=False, append=False):
