@@ -8,34 +8,6 @@ from tasks_shared import report_result, remove_result
 allproj = ('rst2html_fs', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst2html_postgres')
 
 
-def _get_cherry_parms(project=None):
-    if not project:
-        return allproj
-    origproj = project
-    pad = os.path.join(HOME, 'projects', project)
-    if project == allproj[2]:
-        project = project.split('-')[0]
-        pad = pad.replace('projects', 'projects/.frozen')
-    elif project.startswith(allproj[0].split('_')[0]):
-        pad = os.path.join(HOME, 'projects', allproj[0].split('_')[0])
-    conf = '{}.conf'.format(project)
-    prog = 'start_{}'.format(project)
-    pid = os.path.join(runpath, '{}.pid'.format(project))
-    sock = os.path.join(runpath, '{}.sock'.format(project))
-    if origproj == allproj[2]:
-        pid = os.path.join(runpath, '{}c.pid'.format(project))
-        sock = os.path.join(runpath, '{}c.sock'.format(project))
-    return conf, pad, prog, pid, sock
-
-
-def get_projectnames():
-    return allproj
-
-
-def get_pid(project):
-    return _get_cherry_parms(project)[3]
-
-
 @task(help={'names': 'comma-separated list of server names'})
 def stop(c, names=None):
     "stop indicated cherrypy server(s)"
@@ -83,3 +55,31 @@ def restart(c, names=None):
 def list_servers(c):
     "list of cherrypy server names"
     print("Available CherryPy projects: " + ", ".join(_get_cherry_parms()))
+
+
+def _get_cherry_parms(project=None):
+    if not project:
+        return allproj
+    origproj = project
+    pad = os.path.join(HOME, 'projects', project)
+    if project == allproj[2]:
+        project = project.split('-')[0]
+        pad = pad.replace('projects', 'projects/.frozen')
+    elif project.startswith(allproj[0].split('_')[0]):
+        pad = os.path.join(HOME, 'projects', allproj[0].split('_')[0])
+    conf = '{}.conf'.format(project)
+    prog = 'start_{}'.format(project)
+    pid = os.path.join(runpath, '{}.pid'.format(project))
+    sock = os.path.join(runpath, '{}.sock'.format(project))
+    if origproj == allproj[2]:
+        pid = os.path.join(runpath, '{}c.pid'.format(project))
+        sock = os.path.join(runpath, '{}c.sock'.format(project))
+    return conf, pad, prog, pid, sock
+
+
+def get_projectnames():
+    return allproj
+
+
+def get_pid(project):
+    return _get_cherry_parms(project)[3]

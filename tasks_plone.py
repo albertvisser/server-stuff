@@ -7,8 +7,12 @@ import os.path
 
 
 def _plone(c, action, sitenames):
-    def _doit(sitename, action):
-        plonedir = os.path.join(HOME, '{}/zinstance'.format(sitename.title()))
+    if not sitenames:
+        sitenames = PLONES
+    else:
+        sitenames = sitenames.split(',')
+    for name in sitenames:
+        plonedir = os.path.join(HOME, '{}/zinstance'.format(name.title()))
         with c.cd(plonedir):
             if action == 'start':
                 result = c.run('bin/plonectl start')
@@ -18,12 +22,6 @@ def _plone(c, action, sitenames):
                 remove_result(c, "plone")
             elif action == 'buildout':
                 c.run('bin/buildout')
-    if not sitenames:
-        sitenames = PLONES
-    else:
-        sitenames = sitenames.split(',')
-    for name in sitenames:
-        _doit(name, action)
 
 
 @task(help={'names': 'comma-separated list of server names'})

@@ -43,5 +43,5 @@ def start(c):
 @task
 def restart(c):
     "restart local Mercurial web server"
-    stop_hgweb()
-    start_hgweb()
+    stop(c)
+    start(c)
