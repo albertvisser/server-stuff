@@ -82,6 +82,23 @@ def test_list_servers(monkeypatch, capsys):
 def test_get_parms(monkeypatch, capsys):
     monkeypatch.setattr(tasks_cherrypy, 'allproj', 'gargl')
     assert tasks_cherrypy._get_cherry_parms() == 'gargl'
+    monkeypatch.setattr(tasks_cherrypy, 'allproj', ['name_test', 'other', 'project-2'])
+    assert tasks_cherrypy._get_cherry_parms('name_stuff') == ('name_stuff.conf',
+                                                              '/home/albert/projects/name',
+                                                              'start_name_stuff',
+                                                              '/var/run/name_stuff.pid',
+                                                              '/var/run/name_stuff.sock')
+    assert tasks_cherrypy._get_cherry_parms('other') == ('other.conf',
+                                                         '/home/albert/projects/other',
+                                                         'start_other',
+                                                         '/var/run/other.pid',
+                                                         '/var/run/other.sock')
+    assert tasks_cherrypy._get_cherry_parms('project-2') == ('project.conf',
+                                                             '/home/albert/projects/.frozen/project-2',
+                                                             'start_project',
+                                                             '/var/run/projectc.pid',
+                                                             '/var/run/projectc.sock')
+
 
 
 def test_get_projectnames(monkeypatch):
