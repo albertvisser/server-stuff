@@ -9,7 +9,7 @@ Nginx configs:
 ..............
 
 ``default``
-    a copy of the config file that came with the installation, with some stuff added
+    a copy of the config file that came with the installation, with some stuff added - moved into `nginx.config` after changing to Manjaro Linux
 
 At first the others were organized per virtual domain (lemoncurry, pythoneer and magiokis) but I decided orgamnizing per implementation/framework type would be more logical
 
@@ -24,8 +24,6 @@ so these are now obsolete:
 ``mercurial``
     config for serving my local Mercurial repositories
 
-``others``
-    currently only containing a copy of the previous (flat HTML) version of a Joomla site I maintained but that no longer exists
 as well as these:
 
 ``trac_via_tracd``
@@ -40,23 +38,23 @@ and these are the ones currently in use:
 ``django``
     config for the subdomains that contain Django sites
 ``drupal``
-    configuration for local sites driven by Drupal
+    configuration for local sites driven by Drupal - obsolete after I stopped using Drupal
 ``fastcgi``
-    config for the sites served using traditional cgi, including my locakl mercurial
-    server
+    config for the sites served using traditional cgi
 ``flatpages``
     config for local non-dynamic sites (html/css/js only)
+``others``
+    currently only containing a copy of the previous (flat HTML) version of a Joomla site I maintained but that no longer exists
 ``plone``
-    configuration for local Plone instance
+    configuration for local Plone instance(s)
 ``php-sites``
-    config for the one php site I built
-
+    config for phppgadmin and the one php site I built
 ``trac``
-    config for my local Trac site, served via Gunicorn
+    config for my local Trac site, served via Gunicorn - unused because I can't use Trac (no Python 3) 
 
 Apache configs:
 ...............
-Some of the few things I salvaged from my old installation. Roughly the same ones as I use for Nginx, collected in a subdirectory called `apache2` and managable through routines in the fabfile.
+Some of the few things I salvaged from my old installation. Roughly the same ones as I use for Nginx, collected in a subdirectory called `apache2` and manageable through routines in the fabfile.
 
 
 Other configs:
@@ -73,12 +71,18 @@ configs that are not in user-editable directories (e.g. in /etc) or only here
     base configuration for Apache
 ``ports.conf``
     port configuration for Apache serving on port 81
+``php.ini``
+    configuration for php
 ``hgweb.config``
     configuration for local mercurial web server
 ``trac.ini``
     configuration for trac server
 ``buildout.cfg`` (plone-conf)
     configuration for plone (not under vc)
+``gitweb.conf``
+    configuration for the git server showing my "central" repositories
+``cgitrc``
+    configuration for the git server showing my development repositories
 
 Scripts:
 ........
