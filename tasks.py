@@ -205,6 +205,8 @@ def _serve(c, names, **kwargs):
                 for name in PLONES:
                     _serve_plone(c, name, stop_server, start_server)
             elif stop_server and start_server and restart:
+                # tijdelijk (?) om te zien of dit gebruikt wordt
+                print('attention: restarting via _serve')
                 all_names[name].restart(c)
                 return
         elif name in all_django:
@@ -225,6 +227,7 @@ def _start_all(c):
     output is gathered in /tmp/server-{}-ok and -err. It should be discernible which one fails
     and as such from where we need to try again
     """
+    # FIXME: of dit werkt is maar de vraag omdat zowel het err als het ok file aangemaakt worden
     started = os.path.exists('/tmp/server-{}-err'.format(all_servers[0]))
     for ix, name in enumerate(all_servers):
         if os.path.exists('/tmp/server-{}-err'.format(name)):
@@ -232,9 +235,10 @@ def _start_all(c):
                 started = True
             previous = name
             continue
-        if ix > 1 and started:
+        if ix > 0 and started:
             print('restarting from {}'.format(previous))
             restart(c, previous)
+            started = False
         print('starting server {}'.format(name))
         start(c, name)
 

@@ -1,4 +1,6 @@
+import os
 import pytest
+import types
 from invoke import MockContext
 import tasks
 
@@ -100,13 +102,73 @@ def test_compareg(monkeypatch, capsys):
     assert capsys.readouterr().out == "MockContext {'gui': True}\n"
 
 
-def _test_diffconf(monkeypatch, capsys):
-    pass
+def test_diffconf(monkeypatch, capsys):
+    def mock_run_2(self, *args, **kwargs):
+        print(*args)
+        return types.SimpleNamespace(exited=True, stdout='differences')
+    def mock_run_3(self, *args, **kwargs):
+        print(*args)
+        return types.SimpleNamespace(exited=False, stdout='differences')
+    monkeypatch.setattr(tasks, 'HERE', '/tmp/server-stuff-test')
+    os.mkdir('/tmp/server-stuff-test')
+    os.mkdir('/tmp/server-stuff-test/to')
+    os.mkdir('/tmp/server-stuff-test/misc')
+    monkeypatch.setattr(tasks, 'extconf', {'name': ('/tmp/server-stuff-test/to', True, '@')})
+    monkeypatch.setattr(MockContext, 'run', mock_run)
+    c = MockContext()
+    tasks._diffconf(c)
+    assert capsys.readouterr().out == ('comparing name skipped: '
+                                       'does not exist in /tmp/server-stuff-test/to\n')
+    with open('/tmp/server-stuff-test/to/name', 'w') as f:
+        f.write('')
+    with open('/tmp/server-stuff-test/misc/name', 'w') as f:
+        f.write('')
+    tasks._diffconf(c, gui=True)
+    assert capsys.readouterr().out == ('meld /tmp/server-stuff-test/misc/name'
+                                       ' /tmp/server-stuff-test/to/name\n')
+    monkeypatch.setattr(MockContext, 'run', mock_run_2)
+    c = MockContext()
+    tasks._diffconf(c)
+    assert capsys.readouterr().out == ('diff -s /tmp/server-stuff-test/misc/name'
+                                       ' /tmp/server-stuff-test/to/name\n'
+                                       'differences for name, see /tmp/diff-name\n')
+    monkeypatch.setattr(MockContext, 'run', mock_run_3)
+    c = MockContext()
+    tasks._diffconf(c)
+    assert capsys.readouterr().out == ('diff -s /tmp/server-stuff-test/misc/name'
+                                       ' /tmp/server-stuff-test/to/name\n'
+                                       'differences')
+    os.remove('/tmp/server-stuff-test/misc/name')
+    os.remove('/tmp/server-stuff-test/to/name')
+    os.rmdir('/tmp/server-stuff-test/to')
+    os.rmdir('/tmp/server-stuff-test/misc')
+    os.rmdir('/tmp/server-stuff-test')
 
 
-def _test_check_all(monkeypatch, capsys):
-    pass
-
+def test_check_all(monkeypatch, capsys):
+    def mock_get_pid(arg):
+        return '{}_pid'.format(arg)
+    def mock_exists(*args):
+        return True
+    monkeypatch.setattr(tasks.tasks_django, 'get_pid', mock_get_pid)
+    monkeypatch.setattr(tasks, 'all_django', ['django'])
+    monkeypatch.setattr(tasks, 'all_cherry', ['cherry'])
+    monkeypatch.setattr(tasks, 'all_other', ['other'])
+    monkeypatch.setattr(os.path, 'exists', lambda x: False)
+    # monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
+    c = MockContext()
+    tasks.check_all(c)
+    assert capsys.readouterr().out == ('django: no pid file, server not started or starting failed\n'
+                                       'cherry: no pid file, server not started or starting failed\n'
+                                       'other: no pid file, server not started or starting failed\n')
+    monkeypatch.setattr(os.path, 'exists', lambda x: True)
+    tasks.check_all(c)
+    assert capsys.readouterr().out == ('django: found pid file, server probably started\n'
+                                       'cherry: found pid file, server probably started\n'
+                                       'other: found pid file, server probably started\n'
+                                       'all local servers ok\n')
+    tasks.check_all(c, 'name')
+    assert capsys.readouterr().out == 'all local servers ok\n'
 
 def test_start(monkeypatch, capsys):
     def mock_serve(*args, **kwargs):
@@ -144,12 +206,87 @@ def test_restart(monkeypatch, capsys):
     assert capsys.readouterr().out == "MockContext None {'stop': True, 'start': True}\n"
 
 
-def _test_serve(monkeypatch, capsys):
-    pass
+def test_serve(monkeypatch, capsys):
+    def mock_start_all(*args):
+        print('call start_all() with args:', *args)
+    def mock_restart(*args):
+        print('call restart() with args:', *args)
+    def mock_serve_django(*args):
+        print('call serve_django() with args:', *args)
+    def mock_serve_cherry(*args):
+        print('call serve_cherry() with args:', *args)
+    def mock_serve_plone(*args):
+        print('call serve_plone() with args:', *args)
+    monkeypatch.setattr(tasks, 'all_names', ['django', 'cherrypy', 'plone', 'name'])
+    monkeypatch.setattr(tasks, '_start_all', mock_start_all)
+    monkeypatch.setattr(tasks, 'all_django', ['django_server'])
+    monkeypatch.setattr(tasks, '_serve_django', mock_serve_django)
+    monkeypatch.setattr(tasks, 'all_cherry', ['cherry_server'])
+    monkeypatch.setattr(tasks, '_serve_cherry', mock_serve_cherry)
+    monkeypatch.setattr(tasks, 'PLONES', ['plone_server'])
+    monkeypatch.setattr(tasks, '_serve_plone', mock_serve_plone)
+    monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
+    c = MockContext()
+    tasks._serve(c, '', start=True)
+    assert capsys.readouterr().out == 'call start_all() with args: MockContext\n'
+    tasks._serve(c, 'django,cherrypy,plone', start=True, stop=True)
+    assert capsys.readouterr().out == (
+            'call serve_django() with args: MockContext django_server True True\n'
+            'call serve_cherry() with args: MockContext cherry_server True True\n'
+            'call serve_plone() with args: MockContext plone_server True True\n')
+    tasks._serve(c, 'django_server', start=True, stop=True)
+    assert capsys.readouterr().out == (
+            'call serve_django() with args: MockContext django_server True True\n')
+    tasks._serve(c, 'cherry_server', start=True, stop=True)
+    assert capsys.readouterr().out == (
+            'call serve_cherry() with args: MockContext cherry_server True True\n')
+    tasks._serve(c, 'plone_server', start=True, stop=True)
+    assert capsys.readouterr().out == (
+            'call serve_plone() with args: MockContext plone_server True True\n')
+    monkeypatch.setattr(tasks, 'all_rst2html', ['srv1', 'srv2'])
+    tasks._serve(c, 'rst2html', start=True, stop=True)
+    assert capsys.readouterr().out == (
+            'call serve_cherry() with args: MockContext srv1 True True\n'
+            'call serve_cherry() with args: MockContext srv2 True True\n')
+    monkeypatch.setattr(tasks, 'all_names', {'name': tasks.tasks_php})
+    tasks._serve(c, '', stop=True)
+    assert capsys.readouterr().out == 'unknown server name\nunknown server name\nunknown server name\n'
+    monkeypatch.setattr(tasks.tasks_php, 'restart', mock_restart)
+    tasks._serve(c, 'name', start=True, stop=True)
+    assert capsys.readouterr().out == ('attention: restarting via _serve\n'
+                                       'call restart() with args: MockContext\n')
 
 
-def _test_start_all(monkeypatch, capsys):
-    pass
+def test_start_all(monkeypatch, capsys):
+    def mock_start(c, *args):
+        print('called start() with args', args)
+    def mock_restart(c, *args):
+        print('called restart() with args', args)
+    monkeypatch.setattr(tasks, 'all_servers', ['srv1', 'srv2', 'srv3'])
+    monkeypatch.setattr(tasks, 'start', mock_start)
+    monkeypatch.setattr(tasks, 'restart', mock_restart)
+    try:
+        os.remove('/tmp/server-srv1-err')
+        os.remove('/tmp/server-srv2-err')
+    except FileNotFoundError:
+        pass
+    monkeypatch.setattr(MockContext, 'run', mock_run)
+    c = MockContext()
+    tasks._start_all(c)
+    assert capsys.readouterr().out == ("starting server srv1\ncalled start() with args ('srv1',)\n"
+                                       "starting server srv2\ncalled start() with args ('srv2',)\n"
+                                       "starting server srv3\ncalled start() with args ('srv3',)\n")
+    with open('/tmp/server-srv1-err', 'w') as f:
+        f.write('')
+    tasks._start_all(c)
+    assert capsys.readouterr().out == ("restarting from srv1\ncalled restart() with args ('srv1',)\n"
+                                       "starting server srv2\ncalled start() with args ('srv2',)\n"
+                                       "starting server srv3\ncalled start() with args ('srv3',)\n")
+    with open('/tmp/server-srv2-err', 'w') as f:
+        f.write('')
+    tasks._start_all(c)
+    assert capsys.readouterr().out == ("restarting from srv2\ncalled restart() with args ('srv2',)\n"
+                                       "starting server srv3\ncalled start() with args ('srv3',)\n")
 
 
 def test_serve_django(monkeypatch, capsys):
