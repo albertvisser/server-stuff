@@ -76,7 +76,14 @@ server {
     server_name myprojects.lemoncurry.nl;
     error_log /var/log/nginx/myprojects.lemoncurry-error.log error;
     access_log /var/log/nginx/myprojects.lemoncurry-access.log ;
-    location ~* ^.+\.(html|jpg|jpeg|gif|png|ico|css|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|js|svg)$
+    # html css en js niet bij de uploads
+    location ~* ^.+\.(html|css|js)$
+        {
+        root /home/albert/projects/myprojects;
+        expires 30d;
+        break;
+        }
+    location ~* ^.+\.(jpg|jpeg|gif|png|ico|zip|tgz|gz|rar|bz2|doc|xls|exe|pdf|ppt|txt|tar|mid|midi|wav|bmp|rtf|svg)$
         {
         root /home/albert/projects/myprojects/files;
         expires 30d;
