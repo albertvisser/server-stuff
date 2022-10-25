@@ -10,19 +10,19 @@ FROM = os.path.join(HERE, 'apache')
 @task
 def stop(c):
     "stop apache"
-    c.run('sudo {}/apache2 stop'.format(INIT))
+    c.run(f'sudo {INIT}/apache2 stop')
 
 
 @task
 def start(c):
     "start apache"
-    c.run('sudo {}/apache2 start'.format(INIT))
+    c.run(f'sudo {INIT}/apache2 start')
 
 
 @task
 def restart(c):
     "restart apache"
-    c.run('sudo {}/apache2 restart'.format(INIT))
+    c.run(f'sudo {INIT}/apache2 restart')
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -86,10 +86,10 @@ def rmconf(c, names=None):
 @task
 def compare(c):
     "compare all Apache configurations that can be changed from here"
-    c.run('diff -s {} {}'.format(FROM, A_AVAIL))
+    c.run(f'diff -s {FROM} {A_AVAIL}')
 
 
 @task
 def compareg(c):
     "compare all Apache configurations that can be changed from here, in gui"
-    c.run('meld {} {}'.format(FROM, A_AVAIL))
+    c.run(f'meld {FROM} {A_AVAIL}')

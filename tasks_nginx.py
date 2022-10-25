@@ -2,7 +2,7 @@
 """
 import os
 from invoke import task
-from config import AVAIL, ENABL, HERE, INIT, EDITORCMD, intconf, extconf
+from config import AVAIL, ENABL, HERE, EDITORCMD, intconf, extconf
 import tasks_shared as shared
 
 FROM = os.path.join(HERE, 'nginx')
@@ -16,12 +16,9 @@ def _diffconf(c, name, gui=False):
             fname = name + fname[1:]
     else:
         dest, fname = AVAIL, name
-    if gui:
-        c.run('meld {} {}'.format(os.path.join(dest, fname),
-                                  os.path.join(FROM, fname)))
-    else:
-        c.run('diff -s {} {}'.format(os.path.join(dest, fname),
-                                  os.path.join(FROM, fname)))
+    old, new = os.path.join(dest, fname), os.path.join(FROM, fname)
+    cmd = 'meld' if gui else 'diff -s'
+    c.run(f'{cmd} {old} {new}')
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -38,7 +35,7 @@ def rmconf(c, names=None):
     "disable Nginx configuration for one or more file names"
     names = names.split(',') if names else []
     for conf in names:
-        shared.remove_conf(c, conf.strip(), AVAIL, ENABL)
+        shared.remove_conf(c, conf.strip(), ENABL)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -118,10 +115,10 @@ def list_domains(c, names=None):
 
     for conf in names:
         if conf in allconfs:
-            sites = intconf[conf]
-            print('domains for config "{}": {}'.format(conf, ', '.join(sites)))
+            sites = ', '.join(intconf[conf])
+            print(f'domains for config "{conf}": {sites}')
         else:
-            print('unknown config "{}"'.format(conf))
+            print(f'unknown config "{conf}"')
 
 
 @task
@@ -148,10 +145,10 @@ def restart(c):
 @task
 def compare(c):
     "compare all nginx configurations that can be changed from here"
-    c.run('diff -s {} {}'.format(FROM, AVAIL))
+    c.run(f'diff -s {FROM} {AVAIL}')
 
 
 @task
 def compareg(c):
     "compare all nginx configurations that can be changed from here, in gui"
-    c.run('meld {} {}'.format(FROM, AVAIL))
+    c.run(f'meld {FROM} {AVAIL}')

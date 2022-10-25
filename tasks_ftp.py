@@ -19,5 +19,3 @@ def stop(c):
 def restart(c):
     "restart vsftpd"
     c.run('sudo restart vsftpd')
-
-

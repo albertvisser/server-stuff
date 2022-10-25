@@ -40,11 +40,10 @@ def test_rmconf(monkeypatch, capsys):
     monkeypatch.setattr(tasks_nginx.shared, 'remove_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
-    tasks_nginx.AVAIL = 'avail'
     tasks_nginx.ENABL = 'enabl'
     tasks_nginx.rmconf(c, 'this ,that')
-    assert capsys.readouterr().out == ('call shared function with args Mock this avail enabl {}\n'
-                                       'call shared function with args Mock that avail enabl {}\n')
+    assert capsys.readouterr().out == ('call shared function with args Mock this enabl {}\n'
+                                       'call shared function with args Mock that enabl {}\n')
 
 
 def test_modconf(monkeypatch, capsys):

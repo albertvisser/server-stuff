@@ -1,7 +1,7 @@
 """INVoke commands related to Django server administration
 """
 import os
-import shutil
+# import shutil
 from invoke import task
 from config import HOME, runpath
 from tasks_shared import report_result, remove_result
@@ -22,8 +22,8 @@ def stop(c, names=''):
     for proj in names:
         django_pid = _get_django_args(proj)[0]
         if os.path.exists(django_pid):
-            c.run('sudo kill `cat {}`'.format(django_pid))
-            c.run('sudo rm -f {}'.format(django_pid))
+            c.run(f'sudo kill `cat {django_pid}`')
+            c.run(f'sudo rm -f {django_pid}')
             remove_result(c, proj)
 
 
@@ -39,8 +39,8 @@ def start(c, names=None):
     for proj in names:
         pid, sock, path = _get_django_args(proj)
         with c.cd(path):
-            result = c.run('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
-                           '{}.wsgi:application'.format(sock, pid, proj))
+            result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{sock} -p {pid} '
+                           f'{proj}.wsgi:application')
             report_result(proj, result)
 
 
@@ -63,6 +63,7 @@ def list_servers(c):
 
 
 def get_django_admin_loc(c):
+    "return location of django-admin program"
     django_loc = c.run('python -c "import django; print(django.__path__)"', hide=True)
     django_admin_loc = os.path.join(django_loc, 'contrib/admin/static/admin')
     return django_admin_loc
@@ -76,7 +77,7 @@ def link_admin_css(c, names=None, force=False):
     else:
         names = names.split(',')
     for project in names:
-        pid, sock, path = _get_django_args(project)
+        path = _get_django_args(project)[2]
         skip = False
         # maak indien nog niet aanwezig directory static onder site root
         test = os.path.join(path, 'static')
@@ -91,18 +92,21 @@ def link_admin_css(c, names=None, force=False):
             os.mkdir(test)
         if force or not skip:
             with c.cd(test):
-                c.run('ln -s {}'.format(get_django_admin_loc(c)))
+                c.run(f'ln -s {get_django_admin_loc(c)}')
 
 
 def _get_django_args(project):
-    return (os.path.join(runpath, '{}.pid'.format(project)),
-            os.path.join(runpath, '{}.sock'.format(project)),
+    "return process id, socket name and file path for a project"
+    return (os.path.join(runpath, f'{project}.pid'),
+            os.path.join(runpath, f'{project}.sock'),
             django_project_path[project])
 
 
 def get_projectnames():
+    "return all django project names"
     return django_project_path.keys()
 
 
 def get_pid(project):
+    "return process id for django project server"
     return _get_django_args(project)[0]

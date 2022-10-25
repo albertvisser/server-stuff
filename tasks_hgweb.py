@@ -2,7 +2,7 @@
 """
 import os.path
 from invoke import task
-from config import HOME, HGWEB, runpath
+from config import HGWEB, runpath
 from tasks_shared import report_result, remove_result
 
 hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
@@ -12,19 +12,16 @@ hgweb_sock = os.path.join(runpath, 'hgwebdir.sock')
 @task
 def stop(c):
     "stop local Mercurial web server"
-    c.run('sudo kill `cat {}`'.format(hgweb_pid))
-    c.run('sudo rm -f {}'.format(hgweb_pid))
+    c.run(f'sudo kill `cat {hgweb_pid}`')
+    c.run(f'sudo rm -f {hgweb_pid}')
     remove_result(c, 'hgweb')
 
 
 @task
 def start(c):
     "start local Mercurial web server using hgweb.fcgi"
-    start = os.path.join(HGWEB, 'hgweb.fcgi')
-    result = c.run('sudo spawn-fcgi -f {} -s {} -P {} -u {}'.format(start,
-                                                                    hgweb_sock,
-                                                                    hgweb_pid,
-                                                                    'www-data'))
+    startdir = os.path.join(HGWEB, 'hgweb.fcgi')
+    result = c.run(f'sudo spawn-fcgi -f {startdir} -s {hgweb_sock} -P {hgweb_pid} -u {"www-data"}')
     report_result('hgweb', result)
     # gunicorn3 kan mercurial niet importeren; gunicorn2 slaat vast, als ik het niet als daemon
     # uitvoer zie ik

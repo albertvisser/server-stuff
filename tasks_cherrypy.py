@@ -18,8 +18,8 @@ def stop(c, names=None):
     for proj in names:
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
-            c.run('sudo kill -s SIGKILL `cat {}`'.format(pid))
-            c.run('sudo rm -f {}'.format(pid))
+            c.run(f'sudo kill -s SIGKILL `cat {pid}`')
+            c.run(f'sudo rm -f {pid}')
             remove_result(c, proj)
 
 
@@ -34,8 +34,7 @@ def start(c, names=None):
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with c.cd(pad):
             # result = c.run('sudo /usr/bin/cherryd3 '
-            result = c.run('sudo /usr/bin/cherryd '
-                           '-c {} -d -p {} -i {}'.format(conf, pid, prog))
+            result = c.run(f'sudo /usr/bin/cherryd -c {conf} -d -p {pid} -i {prog}')
             report_result(proj, result)
 
 
@@ -65,21 +64,23 @@ def _get_cherry_parms(project=None):
     if project == allproj[2]:
         project = project.split('-')[0]
         pad = pad.replace('projects', 'projects/.frozen')
-    elif project.startswith(allproj[0].split('_')[0]):
-        pad = os.path.join(HOME, 'projects', allproj[0].split('_')[0])
-    conf = '{}.conf'.format(project)
-    prog = 'start_{}'.format(project)
-    pid = os.path.join(runpath, '{}.pid'.format(project))
-    sock = os.path.join(runpath, '{}.sock'.format(project))
+    elif project.startswith(allproj[0].split('_', 1)[0]):
+        pad = os.path.join(HOME, 'projects', allproj[0].split('_', 1)[0])
+    conf = f'{project}.conf'
+    prog = f'start_{project}'
+    pid = os.path.join(runpath, f'{project}.pid')
+    sock = os.path.join(runpath, f'{project}.sock')
     if origproj == allproj[2]:
-        pid = os.path.join(runpath, '{}c.pid'.format(project))
-        sock = os.path.join(runpath, '{}c.sock'.format(project))
+        pid = os.path.join(runpath, f'{project}c.pid')
+        sock = os.path.join(runpath, f'{project}c.sock')
     return conf, pad, prog, pid, sock
 
 
 def get_projectnames():
+    "return all cherrypy project names"
     return allproj
 
 
 def get_pid(project):
+    "return the process id used for a project server"
     return _get_cherry_parms(project)[3]

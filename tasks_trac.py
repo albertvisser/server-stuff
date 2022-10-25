@@ -2,19 +2,19 @@
 """
 import os.path
 from invoke import task
-from config import HOME, TRAC, runpath
+from config import TRAC, runpath
 from tasks_shared import report_result, remove_result
 
 project = os.path.basename(TRAC)
-trac_pid = os.path.join(runpath, '{}.pid'.format(project))
-trac_sock = os.path.join(runpath, '{}.sock'.format(project))
+trac_pid = os.path.join(runpath, '{project}.pid')
+trac_sock = os.path.join(runpath, '{project}.sock')
 
 
 @task
 def stop(c):
     "stop local trac server"
-    c.run('sudo kill `cat {}`'.format(trac_pid))
-    c.run('sudo rm -f {}'.format(trac_pid))
+    c.run(f'sudo kill `cat {trac_pid}`')
+    c.run(f'sudo rm -f {trac_pid}')
     remove_result(c, 'trac')
 
 
@@ -22,8 +22,8 @@ def stop(c):
 def start(c):  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
     "start local trac server"
     with c.cd(TRAC):
-        result = c.run('sudo /usr/bin/gunicorn -D -b unix:{} -p {} '
-                       'tracwsgi:application'.format(trac_sock, trac_pid))
+        result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{trac_sock} -p {trac_pid} '
+                       'tracwsgi:application')
         report_result('trac', result)
 
 

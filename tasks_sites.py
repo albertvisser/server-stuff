@@ -30,7 +30,7 @@ def check_all(c):
 @task(help={'names': 'comma-separated list of server names'})
 def check_pages(c, names):
     "full check if the named local sites are working"
-    check_sites(quick=False, sites=[x for x in names.split(',')])
+    check_sites(quick=False, sites=list(names.split(',')))
 
 
 @task
@@ -49,7 +49,7 @@ def check_project(c, names):
         elif name.startswith('magiokis'):
             sites += [name.split('-')[1] + '.magiokis.nl']
         elif name == 'rst2html':
-            sites += ['{}{}.lemoncurry.nl'.format(name, x) for x in ('', '-mongo', '-pg')]
+            sites += [f'{name}{x}.lemoncurry.nl' for x in ('', '-mongo', '-pg')]
         else:
             sites += [name + '.lemoncurry.nl']
     check_sites(quick=False, sites=sites)
@@ -69,10 +69,10 @@ def check_sites(up_only=False, quick=True, sites=None):
     if sites:
         sitenames = [name for name in sites if name in sitenames]
     for base in sitenames:
-        print('checking {}... '.format(base), end='')
+        print(f'checking {base}... ', end='')
         ok = check_frontpage(base)
         if ok != 200:
-            print('error {}'.format(ok))
+            print(f'error {ok}')
             continue
         if up_only:
             print('ok')
@@ -83,7 +83,7 @@ def check_sites(up_only=False, quick=True, sites=None):
                 test = base + check_address['quick'][base]
                 ok = check_page(test).status_code
                 if ok != 200:
-                    print('    error {} on {}'.format(ok, test))
+                    print(f'    error {ok} on {test}')
             continue
         print('frontpage ok', end='')
         to_check = []
@@ -92,25 +92,24 @@ def check_sites(up_only=False, quick=True, sites=None):
                 print(', no further checking necessary')
                 continue
             print()
-            to_read = os.path.join('~', 'nginx-config', 'check-pages',
-                                   check_address['full'][base])
+            to_read = os.path.join('~', 'nginx-config', 'check-pages', check_address['full'][base])
             to_read = os.path.expanduser(to_read)
             if os.path.exists(to_read):
                 with open(to_read) as _in:
                     to_check = [line.strip() for line in _in]
                 for test in to_check:
-                    page = '{}{}'.format(base, test)
-                    print('    checking {}...'.format(page), end=' ')
+                    page = f'{base}{test}'
+                    print(f'    checking {page}...', end=' ')
                     ok = check_page(page).status_code
                     if ok == 200:
                         print('ok')
                     else:
-                        print('error {}'.format(ok))  # test))
+                        print(f'error {ok}')  # test))
             else:
-                print('    check-pages file missing for {}'.format(base))
+                print(f'    check-pages file missing for {base}')
         else:
             print()
-            print('    check_address entry missing for {}'.format(base))
+            print(f'    check_address entry missing for {base}')
 
 
 def check_page(address):

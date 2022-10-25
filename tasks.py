@@ -21,10 +21,11 @@ all_django = sorted(tasks_django.get_projectnames())
 all_cherry = sorted(tasks_cherrypy.get_projectnames())
 all_rst2html = [x for x in all_cherry if x.startswith('rst2html')]
 all_other = ['trac', 'hgweb']
-all_servers = ['plone'] + all_django + list(all_cherry)  #  + all_other
+all_servers = ['plone'] + all_django + list(all_cherry)  # + all_other
 all_names = {'django': tasks_django, 'cherrypy': tasks_cherrypy, 'plone': tasks_plone,
              'trac': tasks_trac, 'hgweb': tasks_hgweb, 'apache': tasks_apache,
              'nginx': tasks_nginx, 'php': tasks_php, 'ftp': tasks_ftp}
+
 
 @task(help={'name': 'name of the new init file'})
 def addstartup(c, name):
@@ -32,8 +33,8 @@ def addstartup(c, name):
 
     don't forget to register in the extconf dict with INIT as destination
     """
-    c.run('sudo chmod +x {}/{}'.format(INIT, name))     # make sure it's executable
-    c.run('sudo update-rc.d {} defaults'.format(name))  # add to defaults
+    c.run(f'sudo chmod +x {INIT}/{name}')     # make sure it's executable
+    c.run(f'sudo update-rc.d {name} defaults')  # add to defaults
 
 
 @task(help={'names': 'comma-separated list of filenames'})
@@ -89,7 +90,7 @@ def get_parms(name):
         fname = fname.replace('@', name)
         frompath = os.path.join(HERE, 'misc')
     else:
-        raise ValueError('Unknown config `{}`'.format(name))
+        raise ValueError(f'Unknown config `{name}`')
     return os.path.join(frompath, fname), dest, needs_sudo
 
 
@@ -114,21 +115,19 @@ def _diffconf(c, gui=False):
         if os.path.exists(os.path.join(path, fname)):
             locs[fname] = path
         else:
-            print('comparing {} skipped: does not exist in {}'.format(fname, path))
+            print(f'comparing {fname} skipped: does not exist in {path}')
     path = os.path.join(HERE, 'misc')
     for fname in os.listdir(path):
         if fname in locs:
+            old, new = os.path.join(path, fname), os.path.join(locs[fname], fname)
             if gui:
-                c.run('meld {} {}'.format(os.path.join(path, fname),
-                                          os.path.join(locs[fname], fname)))
+                c.run(f'meld {old} {new}')
             else:
-                result = c.run('diff -s {} {}'.format(os.path.join(path, fname),
-                                          os.path.join(locs[fname], fname)),
-                               hide=True, warn=True)
+                result = c.run(f'diff -s {old} {new}', hide=True, warn=True)
                 # print(result.command)
                 if result.exited:
-                    outname = '/tmp/diff-{}'.format(fname)
-                    print('differences for {}, see {}'.format(fname, outname))
+                    outname = f'/tmp/diff-{fname}'
+                    print(f'differences for {fname}, see {outname}')
                     with open(outname, 'w') as f:
                         print(result.stdout, file=f)
                 else:
@@ -155,9 +154,9 @@ def check_all(c, names=''):
         else:
             continue
         if os.path.exists(pid):
-            print("{}: found pid file, server probably started".format(proj))
+            print(f"{proj}: found pid file, server probably started")
             continue
-        print("{}: no pid file, server not started or starting failed".format(proj))
+        print(f"{proj}: no pid file, server not started or starting failed")
         all_clear = False
     if all_clear:
         print("all local servers ok")
@@ -228,18 +227,18 @@ def _start_all(c):
     and as such from where we need to try again
     """
     # FIXME: of dit werkt is maar de vraag omdat zowel het err als het ok file aangemaakt worden
-    started = os.path.exists('/tmp/server-{}-err'.format(all_servers[0]))
+    started = os.path.exists(f'/tmp/server-{all_servers[0]}-err')
     for ix, name in enumerate(all_servers):
-        if os.path.exists('/tmp/server-{}-err'.format(name)):
+        if os.path.exists(f'/tmp/server-{name}-err'):
             if ix == 0:
                 started = True
             previous = name
             continue
         if ix > 0 and started:
-            print('restarting from {}'.format(previous))
+            print(f'restarting from {previous}')
             restart(c, previous)
             started = False
-        print('starting server {}'.format(name))
+        print(f'starting server {name}')
         start(c, name)
 
 
@@ -259,6 +258,7 @@ def _serve_plone(c, name, stop_server, start_server):
 
 
 def start_stop(c, name, stop_server, start_server, typename):
+    "check flags to determine what to do"
     if stop_server:
         all_names[typename].stop(c, name)
     if start_server:

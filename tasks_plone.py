@@ -12,7 +12,7 @@ def _plone(c, action, sitenames):
     else:
         sitenames = sitenames.split(',')
     for name in sitenames:
-        plonedir = os.path.join(HOME, '{}/zinstance'.format(name.title()))
+        plonedir = os.path.join(HOME, f'{name.title()}/zinstance')
         with c.cd(plonedir):
             if action == 'start':
                 result = c.run('bin/plonectl start')

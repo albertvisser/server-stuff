@@ -1,9 +1,9 @@
 """INVoke commands related to php server administration
 """
 from invoke import task
-from config import INIT, PHP
 
 PHPX = 'php7.4-fpm'
+
 
 @task
 def stop(c):
