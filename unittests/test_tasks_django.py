@@ -9,7 +9,7 @@ def mock_run(self, *args, **kwargs):
 
 
 def mock_get_parms(*args):
-    return 'pid', 'sock', '/tmp/proj'
+    return 'pid', 'sock', ''
 
 
 def test_start(monkeypatch, capsys):
@@ -88,7 +88,9 @@ def test_get_django_admin_loc(monkeypatch, capsys):
     assert tasks_django.get_django_admin_loc(c) == 'start/contrib/admin/static/admin'
 
 
-def test_link_admin_css(monkeypatch, capsys):
+def test_link_admin_css(monkeypatch, capsys, tmp_path):
+    def mock_get_parms(*args):
+        return 'pid', 'sock', str(tmp_path / 'proj')
     # def mock_run(self, *args, **kwargs):
     #     print(*args, 'in', self.cwd)
     monkeypatch.setattr(tasks_django, 'get_django_admin_loc', lambda x: 'start')
@@ -97,23 +99,21 @@ def test_link_admin_css(monkeypatch, capsys):
                                                               'stuff': {}})
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
-    if not os.path.exists('/tmp/proj'):
-        os.mkdir('/tmp/proj')
+    projdir = tmp_path / 'proj'
+    projdir.mkdir()
     tasks_django.link_admin_css(c)
     assert capsys.readouterr().out == 'ln -s start {}\nln -s start {}\n'
     tasks_django.link_admin_css(c, 'name')
     assert capsys.readouterr().out == 'ln -s start {}\n'
-    with open('/tmp/proj/static/admin', 'w') as f:
-        f.write('')
+    (projdir / 'static/admin').touch()
     tasks_django.link_admin_css(c, 'name')
     assert capsys.readouterr().out == ''
-    os.remove('/tmp/proj/static/admin')
-    os.rmdir('/tmp/proj/static')
+    (projdir / 'static/admin').unlink()
+    (projdir / 'static').rmdir()
     tasks_django.link_admin_css(c, 'name')
     assert capsys.readouterr().out == 'ln -s start {}\n'
-    os.rmdir('/tmp/proj/static')
-    with open('/tmp/proj/static', 'w') as f:
-        f.write('')
+    (projdir / 'static').rmdir()
+    (projdir / 'static').touch()
     tasks_django.link_admin_css(c, 'name')
     assert capsys.readouterr().out == 'ln -s start {}\n'
 

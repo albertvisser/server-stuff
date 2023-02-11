@@ -121,11 +121,10 @@ def test_check_frontpage(monkeypatch, capsys):
     assert tasks_sites.check_frontpage('tracsite') == 200
 
 
-def test_get_sitenames(monkeypatch, capsys):
+def test_get_sitenames(monkeypatch, capsys, tmp_path):
     filedata = ('xxx  lennoncurry\nxxx  lemoncurry.nl\nxx test.magiokis.nl\n'
                 '# deze regel niet laten zien\nxxx  jansen')
-    testfile = '/tmp/hoststest'
-    with open(testfile, 'w') as out:
-        out.write(filedata)
+    testfile = tmp_path / 'hoststest'
+    testfile.write_text(filedata)
     tasks_sites.HOSTS = testfile
     assert tasks_sites.get_sitenames() == ['lemoncurry.nl', 'test.magiokis.nl']

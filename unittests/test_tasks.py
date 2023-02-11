@@ -102,47 +102,39 @@ def test_compareg(monkeypatch, capsys):
     assert capsys.readouterr().out == "MockContext {'gui': True}\n"
 
 
-def test_diffconf(monkeypatch, capsys):
+def test_diffconf(monkeypatch, capsys, tmp_path):
     def mock_run_2(self, *args, **kwargs):
         print(*args)
         return types.SimpleNamespace(exited=True, stdout='differences')
     def mock_run_3(self, *args, **kwargs):
         print(*args)
         return types.SimpleNamespace(exited=False, stdout='differences')
-    monkeypatch.setattr(tasks, 'HERE', '/tmp/server-stuff-test')
-    os.mkdir('/tmp/server-stuff-test')
-    os.mkdir('/tmp/server-stuff-test/to')
-    os.mkdir('/tmp/server-stuff-test/misc')
-    monkeypatch.setattr(tasks, 'extconf', {'name': ('/tmp/server-stuff-test/to', True, '@')})
+    testpath = tmp_path / 'server-stuff-test'
+    monkeypatch.setattr(tasks, 'HERE', str(testpath))
+    testpath.mkdir()
+    destpath = testpath / 'to'
+    destpath.mkdir()
+    miscpath = testpath / 'misc'
+    miscpath.mkdir()
+    monkeypatch.setattr(tasks, 'extconf', {'name': (f'{destpath}', True, '@')})
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == ('comparing name skipped: '
-                                       'does not exist in /tmp/server-stuff-test/to\n')
-    with open('/tmp/server-stuff-test/to/name', 'w') as f:
-        f.write('')
-    with open('/tmp/server-stuff-test/misc/name', 'w') as f:
-        f.write('')
+    assert capsys.readouterr().out == (f'comparing name skipped: does not exist in {destpath}\n')
+    (destpath / 'name').write_text('')
+    (miscpath / 'name').write_text('')
     tasks._diffconf(c, gui=True)
-    assert capsys.readouterr().out == ('meld /tmp/server-stuff-test/misc/name'
-                                       ' /tmp/server-stuff-test/to/name\n')
+    assert capsys.readouterr().out == f'meld {miscpath}/name {destpath}/name\n'
     monkeypatch.setattr(MockContext, 'run', mock_run_2)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == ('diff -s /tmp/server-stuff-test/misc/name'
-                                       ' /tmp/server-stuff-test/to/name\n'
+    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
                                        'differences for name, see /tmp/diff-name\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_3)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == ('diff -s /tmp/server-stuff-test/misc/name'
-                                       ' /tmp/server-stuff-test/to/name\n'
+    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
                                        'differences')
-    os.remove('/tmp/server-stuff-test/misc/name')
-    os.remove('/tmp/server-stuff-test/to/name')
-    os.rmdir('/tmp/server-stuff-test/to')
-    os.rmdir('/tmp/server-stuff-test/misc')
-    os.rmdir('/tmp/server-stuff-test')
 
 
 def test_check_all(monkeypatch, capsys):
@@ -169,6 +161,7 @@ def test_check_all(monkeypatch, capsys):
                                        'all local servers ok\n')
     tasks.check_all(c, 'name')
     assert capsys.readouterr().out == 'all local servers ok\n'
+
 
 def test_start(monkeypatch, capsys):
     def mock_serve(*args, **kwargs):
