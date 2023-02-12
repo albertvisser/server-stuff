@@ -1,0 +1,30 @@
+[testdir]
+unittests
+
+[testscripts]
+apache: test_tasks_apache.py
+cherry: test_tasks_cherrypy.py
+django: test_tasks_django.py
+ftp:    test_tasks_ftp.py
+hg:     test_tasks_hgweb.py
+nginx:  test_tasks_nginx.py
+php:    test_tasks_php.py
+plone:  test_tasks_plone.py
+tasks:  test_tasks.py
+shared: test_tasks_shared.py
+sites:  test_tasks_sites.py
+trac:   test_tasks_trac.py
+
+[testees]
+apache: tasks_apache.py
+cherry: tasks_cherrypy.py
+django: tasks_django.py
+ftp:    tasks_ftp.py
+hg:     tasks_hgweb.py
+nginx:  tasks_nginx.py
+php:    tasks_php.py
+plone:  tasks_plone.py
+tasks:  tasks.py
+shared: tasks_shared.py
+sites:  tasks_sites.py
+trac:   tasks_trac.py
