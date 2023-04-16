@@ -6,8 +6,8 @@ from config import TRAC, runpath
 from tasks_shared import report_result, remove_result
 
 project = os.path.basename(TRAC)
-trac_pid = os.path.join(runpath, '{project}.pid')
-trac_sock = os.path.join(runpath, '{project}.sock')
+trac_pid = os.path.join(runpath, f'{project}.pid')
+trac_sock = os.path.join(runpath, f'{project}.sock')
 
 
 @task
@@ -19,7 +19,7 @@ def stop(c):
 
 
 @task
-def start(c):  # Note: uses gunicorn for Python 2 (2017-10: still needs to)
+def start(c):
     "start local trac server"
     with c.cd(TRAC):
         result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{trac_sock} -p {trac_pid} '
