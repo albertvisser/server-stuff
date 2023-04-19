@@ -25,6 +25,13 @@ all_servers = ['plone'] + all_django + list(all_cherry)  # + all_other
 all_names = {'django': tasks_django, 'cherrypy': tasks_cherrypy, 'plone': tasks_plone,
              'trac': tasks_trac, 'hgweb': tasks_hgweb, 'apache': tasks_apache,
              'nginx': tasks_nginx, 'php': tasks_php, 'ftp': tasks_ftp}
+servertypes = {'django': {'names': all_django, 'handler': tasks_django},
+               'cherrypy': {'names': list(all_cherry), 'handler': tasks_cherrypy},
+               'rst2html': {'names': all_rst2html, 'handler': tasks_cherrypy},
+               # 'plone': {'names': PLONES, 'handler': tasks_plone},
+               'trac': {'names': ['trac'], 'handler': tasks_trac},
+               # 'hgweb': {'names': ['hgweb'], 'handler': tasks_hgweb}
+               }
 
 
 @task(help={'name': 'name of the new init file'})
@@ -165,104 +172,66 @@ def check_all(c, names=''):
 @task(help={'names': 'comma-separated list of filenames'})
 def stop(c, names=None):
     "stop local server"
-    _serve(c, names, stop=True)
+    _serve(c, names, stop_server=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
 def start(c, names=None):
     "start local server"
-    _serve(c, names, start=True)
+    _serve(c, names, start_server=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
 def restart(c, names=None):
     "restart local server"
-    _serve(c, names, stop=True, start=True)
+    _serve(c, names, stop_server=True, start_server=True)
 
 
-def _serve(c, names, **kwargs):
+def _serve(c, names, stop_server=False, start_server=False):
     """manage all server managers with one command
     """
-    stop_server = 'stop' in kwargs
-    start_server = 'start' in kwargs
-    if start_server and not names:
-        _start_all(c)
-        return
     if not names:
-        names = ['plone', 'django', 'cherrypy']  # , 'trac', 'hgweb']
+        names = list(servertypes)
+        names.remove('rst2html')  # remove duplicates
     else:
         names = names.split(',')
     for name in names:
-        if name in all_names:
-            if name == 'django':
-                for name in all_django:
-                    _serve_django(c, name, stop_server, start_server)
-            elif name == 'cherrypy':
-                for name in all_cherry:
-                    _serve_cherry(c, name, stop_server, start_server)
-            elif name == 'plone':
-                for name in PLONES:
-                    _serve_plone(c, name, stop_server, start_server)
-            elif stop_server and start_server and restart:
-                # tijdelijk (?) om te zien of dit gebruikt wordt
-                print('attention: restarting via _serve')
-                all_names[name].restart(c)
-                return
-        elif name in all_django:
-            _serve_django(c, name, stop_server, start_server)
-        elif name in all_cherry:
-            _serve_cherry(c, name, stop_server, start_server)
-        elif name in PLONES:
-            _serve_plone(c, name, stop_server, start_server)
-        elif name == 'rst2html':
-            for name in all_rst2html:
-                _serve_cherry(c, name, stop_server, start_server)
-        else:
-            print('unknown server name')
-
-
-def _start_all(c):
-    """try to start all wsgi servers
-    output is gathered in /tmp/server-{}-ok and -err. It should be discernible which one fails
-    and as such from where we need to try again
-    """
-    # FIXME: of dit werkt is maar de vraag omdat zowel het err als het ok file aangemaakt worden
-    started = os.path.exists(f'/tmp/server-{all_servers[0]}-err')
-    for ix, name in enumerate(all_servers):
-        if os.path.exists(f'/tmp/server-{name}-err'):
-            if ix == 0:
-                started = True
-            previous = name
+        typename, is_group = determine_servertype(name)
+        if not typename:
+            print(f'unknown server name `{name}`')
             continue
-        if ix > 0 and started:
-            print(f'restarting from {previous}')
-            restart(c, previous)
-            started = False
-        print(f'starting server {name}')
-        start(c, name)
+        if is_group:
+            for servername in servertypes[typename]['names']:
+                start_stop(c, servername, stop_server, start_server, typename)
+        else:
+            start_stop(c, name, stop_server, start_server, typename)
 
 
-def _serve_django(c, name, stop_server, start_server):
-    "start/stop django wsgi server"
-    start_stop(c, name, stop_server, start_server, 'django')
-
-
-def _serve_cherry(c, name, stop_server, start_server):
-    "start/stop cherrypy wsgi server"
-    start_stop(c, name, stop_server, start_server, 'cherrypy')
-
-
-def _serve_plone(c, name, stop_server, start_server):
-    "start/stop Plone instance"
-    start_stop(c, name, stop_server, start_server, 'plone')
+def determine_servertype(name):
+    "Find type of server and if you want the group or a specific one"
+    is_group = True
+    if name in servertypes:
+        return name, is_group
+    is_group = False
+    for typename, data in servertypes.items():
+        if name in data['names']:
+            return typename, is_group
+    return '', is_group
 
 
 def start_stop(c, name, stop_server, start_server, typename):
     "check flags to determine what to do"
+    name_needed = len(servertypes[typename]['names']) > 1
     if stop_server:
-        all_names[typename].stop(c, name)
+        if name_needed:
+            all_names[typename].stop(c, name)
+        else:
+            all_names[typename].stop(c)
     if start_server:
-        all_names[typename].start(c, name)
+        if name_needed:
+            all_names[typename].start(c, name)
+        else:
+            all_names[typename].start(c)
 
 
 ns = Collection()
