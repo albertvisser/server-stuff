@@ -224,14 +224,14 @@ def start_stop(c, name, stop_server, start_server, typename):
     name_needed = len(servertypes[typename]['names']) > 1
     if stop_server:
         if name_needed:
-            all_names[typename].stop(c, name)
+            servertypes[typename]['handler'].stop(c, name)
         else:
-            all_names[typename].stop(c)
+            servertypes[typename]['handler'].stop(c)
     if start_server:
         if name_needed:
-            all_names[typename].start(c, name)
+            servertypes[typename]['handler'].start(c, name)
         else:
-            all_names[typename].start(c)
+            servertypes[typename]['handler'].start(c)
 
 
 ns = Collection()
