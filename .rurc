@@ -2,6 +2,7 @@
 unittests
 
 [testscripts]
+conf:   test_config.py
 apache: test_tasks_apache.py
 cherry: test_tasks_cherrypy.py
 django: test_tasks_django.py
@@ -16,6 +17,7 @@ sites:  test_tasks_sites.py
 trac:   test_tasks_trac.py
 
 [testees]
+conf:   config.py
 apache: tasks_apache.py
 cherry: tasks_cherrypy.py
 django: tasks_django.py
