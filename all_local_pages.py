@@ -106,7 +106,8 @@ def parse_result(urllist):
 
 
 def parse_part(urlpart):
-    # TODO  uitwerken:
+    """deze routine probeert een deel van de urlconfs om te zetten naar een indicator voor wat daar
+    voor in de plaats noet komen in een werkelijke url
     # (?P<option>(nieuw|add)) betekent twee urls maken
     #   een met de waarde xxx en een met yyy op deze plek
     # (?P<tekst>\d+) betekent dat op deze plek een nummer
@@ -116,10 +117,11 @@ def parse_part(urlpart):
     # (?P<msg>.+) betekent ...
     # (?P<sel>(\w|\s)+) s staat voor whitespace characters (meer dan spatie)
     # dit zijn denk ik de belangrijkste
+    """
     if urlpart.startswith('('):
-        part = urlpart[1:-1] # remove parentheses
+        part = urlpart[1:-1]  # remove parentheses
         if part.startswith('?P<'):
-            part = part.split('>', 1)[1] # we don't care about the group name here
+            part = part.split('>', 1)[1]  # we don't care about the group name here
         else:
             return ['unexpected url part: <{}>'.format(urlpart)]
         # special cases:
@@ -127,18 +129,18 @@ def parse_part(urlpart):
             part = '<number>'
         elif part == '\w+': # characters
             part = '<word>'
-        elif part in (r'(\w|\b)+', r'(\b|\w)+', '.+'): # phrase   (?P<trefw>(\w|\b)+)
+        elif part in (r'(\w|\b)+', r'(\b|\w)+', '.+'):  # phrase   (?P<trefw>(\w|\b)+)
             part = '<phrase>'
-        elif part == '(\w|\s)+': # phrase                   (?P<sel>(\w|\s)+)
+        elif part == '(\w|\s)+':  # phrase                   (?P<sel>(\w|\s)+)
             part = '<message>'
-        elif '|' in part: # alternatives
-            part = part[1:-1] # remove parentheses
+        elif '|' in part:  # alternatives
+            part = part[1:-1]  # remove parentheses
             return part.split('|')
         else:
             part = part
         return [part]
     elif urlpart.startswith('\\'):
-        return ['unexpected url part: <{}>'.format(urlpart)] # TODO do I need to handle this?
+        return ['unexpected url part: <{}>'.format(urlpart)]  # niet nodig bij een correcte urlconf
     else:
         return [urlpart]
 
@@ -147,7 +149,7 @@ def build_urllist(project, result):
     """platslaan, sorteren en domein voorvoegen
     tevens regexp analyseren en echte urls bouwen
     """
-    ## data = sorted([x for x in (y for y in result.values())])
+    # data = sorted([x for x in (y for y in result.values())])
     unsorted = []
     # platslaan
     for x in result.values():
@@ -155,7 +157,7 @@ def build_urllist(project, result):
     # sorteren en regexp analyseren
     analyzed = []
     for x in sorted(unsorted):
-        parts = x.split('/')                #per urldeel een string
+        parts = x.split('/')                # per urldeel een string
         ready = []                          # list of lists
         for part in parts:                  # voor elk urldeel:
             newparts = parse_part(part)     # zet urldeel om naar 1 of meer strings
@@ -170,10 +172,10 @@ def build_urllist(project, result):
         analyzed.extend(ready)
     result = analyzed
     # domein  voorvoegen - alleen / is voldoende
-    ## if project == 'magiokis-django':
-        ## result = ['django.magiokis.nl/{}'.format(x) for x in analyzed]
-    ## else:
-        ## result = ['{}.lemoncurry.nl/{}'.format(project, x) for x in analyzed]
+    # if project == 'magiokis-django':
+        # result = ['django.magiokis.nl/{}'.format(x) for x in analyzed]
+    # else:
+        # result = ['{}.lemoncurry.nl/{}'.format(project, x) for x in analyzed]
     result = ['/{}'.format(x) for x in analyzed]
     return result
 

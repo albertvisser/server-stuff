@@ -11,6 +11,7 @@ AVAIL = os.path.join(NGINX, AVL)
 ENABL = os.path.join(NGINX, NBL)
 A_AVAIL = os.path.join(APACHE, AVL)
 A_ENABL = os.path.join(APACHE, NBL)
+sysctlpath = '/etc/systemd/system'
 runpath, HOME = '/var/run', '/home/albert'
 HGWEB = os.path.join(HOME, 'www', 'hgweb')
 # hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
@@ -51,7 +52,7 @@ extconf = {'nginx': (NGINX, True, '@.conf'),
            'cgit': ('/etc', True, '@rc'),
            'cgitrepos': ('/etc', True, '@'),
            # 'hgweb': (HGWEB, False, '@-config'),
-           # 'trac': (os.path.join(TRAC, 'conf'), True, 'trac.ini'),
+           'trac': (os.path.join(TRAC, 'conf'), True, 'trac.ini'),
            'plone-conf': (PLONEDIR, False, 'buildout.cfg'),
            'hosts': ('/etc', True, '@'),
            'apache2': (APACHE, True, '@.conf'),
@@ -62,6 +63,7 @@ extconf = {'nginx': (NGINX, True, '@.conf'),
            # 'hgweb.cgi': (HGWEB, False, '@'),
            # 'hgweb.wsgi': (HGWEB, False, '@'),
            # 'trac-srv': (TRAC, False, 'tracwsgi.py')
+           'lemontrac': (sysctlpath, True, 'lemontrac.service'),
            }
 for plone in PLONES:
     extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
