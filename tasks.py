@@ -3,6 +3,7 @@
 also creates namespaces from other tasks files
 """
 import os
+import tempfile
 from config import INIT, PLONES, HERE, EDITORCMD, extconf
 from invoke import task, Collection
 import tasks_nginx
@@ -115,18 +116,28 @@ def compareg(c):
 
 def _diffconf(c, gui=False):
     "compare configuration files"
-    locs = {}
+    locs, sudo_needed = {}, {}
     for key, stuff in extconf.items():
-        path, _, fname = stuff
+        path, needs_sudo, fname = stuff
         fname = fname.replace('@', key)
+        sudo_needed[fname] = needs_sudo
         if os.path.exists(os.path.join(path, fname)):
             locs[fname] = path
         else:
             print(f'comparing {fname} skipped: does not exist in {path}')
     path = os.path.join(HERE, 'misc')
+    if sudo_needed:
+        tempdir = tempfile.mkdtemp()
     for fname in os.listdir(path):
         if fname in locs:
             old, new = os.path.join(path, fname), os.path.join(locs[fname], fname)
+            orig = new
+            if sudo_needed[fname]:
+                tmpfile = os.path.join(tempdir, fname)
+                # no-preserve zorgt ervoor dat het gekopieerde file niet readonly blijft
+                c.run(f'sudo cp --no-preserve=mode {new} {tmpfile}')
+                new = tmpfile
+            # shared.do_compare(old, new, gui)
             if gui:
                 c.run(f'meld {old} {new}')
             else:
@@ -138,8 +149,10 @@ def _diffconf(c, gui=False):
                     with open(outname, 'w') as f:
                         print(result.stdout, file=f)
                 else:
-                    print(result.stdout, end='')
-            # shared.do_compare(os.path.join(path, fname), os.path.join(locs[fname], fname))
+                    out = result.stdout
+                    if orig != new:
+                        out = out.replace(new, orig)
+                    print(out, end='')
 
 
 @task(help={'names': 'comma-separated list of server names'})

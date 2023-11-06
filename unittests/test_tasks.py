@@ -105,36 +105,51 @@ def test_compareg(monkeypatch, capsys):
 def test_diffconf(monkeypatch, capsys, tmp_path):
     def mock_run_2(self, *args, **kwargs):
         print(*args)
-        return types.SimpleNamespace(exited=True, stdout='differences')
+        return types.SimpleNamespace(exited=True, stdout='xxx\n')
     def mock_run_3(self, *args, **kwargs):
         print(*args)
-        return types.SimpleNamespace(exited=False, stdout='differences')
+        parts = args[0].split(' ')
+        return types.SimpleNamespace(exited=False, stdout=f'{parts[2]} {parts[3]}\n')
     testpath = tmp_path / 'server-stuff-test'
     monkeypatch.setattr(tasks, 'HERE', str(testpath))
     testpath.mkdir()
-    destpath = testpath / 'to'
+    destpath = testpath / 'remote'
     destpath.mkdir()
-    miscpath = testpath / 'misc'
+    miscpath = testpath / 'misc'  # local version (`misc` is hardcoded)
     miscpath.mkdir()
-    monkeypatch.setattr(tasks, 'extconf', {'name': (f'{destpath}', True, '@')})
+    monkeypatch.setattr(tasks, 'extconf', {'name': (f'{destpath}', False, '@'),
+                                           'nam2': (f'{destpath}', True, '@')})
+    tempdir = '/temp_path'
+    monkeypatch.setattr(tasks.tempfile, 'mkdtemp', lambda *x: tempdir)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == (f'comparing name skipped: does not exist in {destpath}\n')
+    assert capsys.readouterr().out == (f'comparing name skipped: does not exist in {destpath}\n'
+                                       f'comparing nam2 skipped: does not exist in {destpath}\n')
     (destpath / 'name').write_text('')
+    (destpath / 'nam2').write_text('')
     (miscpath / 'name').write_text('')
+    (miscpath / 'nam2').write_text('')
     tasks._diffconf(c, gui=True)
-    assert capsys.readouterr().out == f'meld {miscpath}/name {destpath}/name\n'
+    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+                                       f'meld {miscpath}/nam2 {tempdir}/nam2\n'
+                                       f'meld {miscpath}/name {destpath}/name\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_2)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
+    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+                                       f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
+                                       'differences for nam2, see /tmp/diff-nam2\n'
+                                       f'diff -s {miscpath}/name {destpath}/name\n'
                                        'differences for name, see /tmp/diff-name\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_3)
     c = MockContext()
     tasks._diffconf(c)
-    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
-                                       'differences')
+    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+                                       f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
+                                       f'{miscpath}/nam2 {destpath}/nam2\n'
+                                       f'diff -s {miscpath}/name {destpath}/name\n'
+                                       f'{miscpath}/name {destpath}/name\n')
 
 
 def test_check_all(monkeypatch, capsys):
