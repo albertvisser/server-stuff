@@ -102,22 +102,26 @@ def get_parms(name):
     return os.path.join(frompath, fname), dest, needs_sudo
 
 
-@task
-def compare(c):
+@task(help={'names': 'comma-separated list of filenames'})
+def compare(c, names=None):
     "compare all configuration files that can be changed from here"
-    _diffconf(c)
+    names = names.split(',') if names else list(extconf)
+    _diffconf(c, names)
 
 
-@task
-def compareg(c):
+@task(help={'names': 'comma-separated list of filenames'})
+def compareg(c, names=None):
     "compare all configuration files that can be changed from here, in gui"
-    _diffconf(c, gui=True)
+    names = names.split(',') if names else list(extconf)
+    _diffconf(c, names, gui=True)
 
 
-def _diffconf(c, gui=False):
+def _diffconf(c, names, gui=False):
     "compare configuration files"
     locs, sudo_needed = {}, {}
     for key, stuff in extconf.items():
+        if key not in names:
+            continue
         path, needs_sudo, fname = stuff
         fname = fname.replace('@', key)
         sudo_needed[fname] = needs_sudo
