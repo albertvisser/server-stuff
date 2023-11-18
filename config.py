@@ -70,3 +70,52 @@ for plone in PLONES:
         plone.title())), False, 'buildout.cfg')
 # EDITORCMD = 'SciIE {} &'
 EDITORCMD = "gnome-terminal --profile='Code Editor Shell' -- vim {} &"
+
+# voor tasks_sites.py (controle pagina's van webapps)
+check_address = {'quick': {
+                    'original.magiokis.nl': '/cgi-bin/mainscript.py',
+                    'php.magiokis.nl': '/magiokis.php?section=OW&subsection=Home',
+                    'cherrypy.magiokis.nl': '/ow/',
+                    'songs.magiokis.nl': '/cgi-bin/lijstsongs.py',
+                    'denk.magiokis.nl': '/cgi-bin/denk_select.py',
+                    'dicht.magiokis.nl': '/cgi-bin/dicht_select.py',
+                    'vertel.magiokis.nl': '/cgi-bin/vertel_select.py', },
+                 'full': {
+                    # platte html hoeft wat mij betreft niet meer dan index pagina
+                    'lemoncurry': None,
+                    'lemoncurry.nl': None,
+                    'www.lemoncurry.nl': None,
+                    'rstblog.lemoncurry.nl': None,
+                    'bitbucket.lemoncurry.nl': None,
+                    'bitbucket_mongo.lemoncurry.nl': None,
+                    'oldlocal.magiokis.nl': None,
+                    'data.magiokis.nl': None,
+                    # Drupal en andere frameworks hoeft van mij ook niet
+                    'ragingdragon.lemoncurry.nl': None,
+                    'local.magiokis.nl': None,
+                    'plone.lemoncurry.nl': None,
+                    'hg.lemoncurry.nl': None,
+                    'trac.lemoncurry.nl': None,
+                    # platte CGI wel
+                    'muziek.lemoncurry.nl': 'albums-cgi-urls.rst',
+                    'absentie.lemoncurry.nl': 'absentie-urls.rst',
+                    'doctool.lemoncurry.nl': 'doctool-urls.rst',
+                    'original.magiokis.nl': 'original-urls.rst',
+                    'songs.magiokis.nl': 'songs-urls.rst',
+                    'denk.magiokis.nl': 'denk-urls.rst',
+                    'dicht.magiokis.nl': 'dicht-urls.rst',
+                    'vertel.magiokis.nl': 'vertel-urls.rst',
+                    # php-cgi ook
+                    'php.magiokis.nl': 'magiokis-php-urls.rst',
+                    # Django wel
+                    'mydomains.lemoncurry.nl': 'mydomains-urls.rst',
+                    'myapps.lemoncurry.nl': 'myapps-urls.rst',
+                    'myprojects.lemoncurry.nl': 'myprojects-urls.rst',
+                    'actiereg.lemoncurry.nl': 'actiereg-urls.rst',
+                    'albums.lemoncurry.nl': 'albums-urls.rst',
+                    'django.magiokis.nl': 'magiokis-django-urls.rst',
+                    # Cherrypy ook
+                    'cherrypy.magiokis.nl': 'magiokis-cherry-urls.rst',
+                    'rst2html.lemoncurry.nl': 'rst2html-urls.rst',
+                    'rst2html_mongo.lemoncurry.nl': 'rst2html-urls.rst',
+                    'logviewer.lemoncurry.nl': 'logviewer-urls.rst', }, }

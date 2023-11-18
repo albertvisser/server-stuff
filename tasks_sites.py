@@ -3,7 +3,7 @@
 import os.path
 import requests
 from invoke import task
-from all_local_pages import check_address
+from config import check_address
 HOSTS = '/etc/hosts'
 
 
