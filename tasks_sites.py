@@ -16,9 +16,9 @@ def list_domains(c):
 
 
 @task
-def check_up(c):
+def check_up(c, names=None):
     "quick (frontpage only) check if all local sites are working"
-    check_sites(up_only=True)
+    check_sites(up_only=True, sites=names)
 
 
 @task
@@ -40,8 +40,19 @@ def check_all_pages(c):
 
 
 @task(help={'names': 'comma-separated list of server names'})
+def check_project_up(c, names):
+    "check if (frontpages for) specific projects are up"
+    check_sites(up_only=True, sites=names2sites(names))
+
+
+@task(help={'names': 'comma-separated list of server names'})
 def check_project(c, names):
     "check if pages for specific projects are up"
+    check_sites(quick=False, sites=names2sites(names))
+
+
+def names2sites(names):
+    "convert project name to site url"
     sites = []
     for name in names.split(','):
         if name == 'magiokis':
@@ -50,9 +61,9 @@ def check_project(c, names):
             sites += [name.split('-')[1] + '.magiokis.nl']
         elif name == 'rst2html':
             sites += [f'{name}{x}.lemoncurry.nl' for x in ('', '-mongo', '-pg')]
-        else:
+        elif name:
             sites += [name + '.lemoncurry.nl']
-    check_sites(quick=False, sites=sites)
+    return sites
 
 
 def check_sites(up_only=False, quick=True, sites=None):
@@ -115,17 +126,13 @@ def check_sites(up_only=False, quick=True, sites=None):
 def check_page(address):
     """call up a specific page to inspect the result
     """
-    return requests.get('http://' + address)
+    return requests.get('http://' + address, timeout=2)  # wait 2s for response; too long for local?
 
 
 def check_frontpage(sitename):
     """simply call the domain to see what response we get back
     """
-    r = check_page(sitename)
-    if sitename.startswith('trac'):
-        if r.status_code == 401:  # not authenticated is enough for an answer here
-            return 200
-    return r.status_code
+    return check_page(sitename).status_code
 
 
 def get_sitenames():
