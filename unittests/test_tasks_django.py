@@ -1,5 +1,4 @@
 import os
-import pytest
 import types
 from invoke import MockContext
 import tasks_django as testee

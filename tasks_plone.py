@@ -9,10 +9,7 @@ import os.path
 
 
 def _plone(c, action, sitenames):
-    if not sitenames:
-        sitenames = PLONES
-    else:
-        sitenames = sitenames.split(',')
+    sitenames = sitenames.split(',') if sitenames else PLONES
     for name in sitenames:
         plonedir = os.path.join(HOME, f'{name.title()}/zinstance')
         with c.cd(plonedir):

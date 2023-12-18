@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 """gunicorn variant
-
-Oct. 2017: still needs Python 2.7
 """
 import sys
 import os

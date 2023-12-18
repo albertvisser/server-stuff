@@ -1,7 +1,5 @@
-import os
 import types
 import pathlib
-import pytest
 from invoke import MockContext
 import tasks_shared
 
@@ -31,7 +29,7 @@ def test_mod_conf(monkeypatch, capsys):
         def strftime(*args):
             return 'today'
     def mock_run(self, *args):
-        print('execute in {}'.format(self.cwd))
+        print(f'execute in {self.cwd}')
         print(*args)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
@@ -78,4 +76,4 @@ def test_remove_result(monkeypatch, capsys):
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_shared.remove_result(c, 'testproj')
-    assert capsys.readouterr().out == 'sudo rm -f {}\nsudo rm -f {}\n'.format(path1, path2)
+    assert capsys.readouterr().out == f'sudo rm -f {path1}\nsudo rm -f {path2}\n'

@@ -1,4 +1,3 @@
-import pytest
 from invoke import MockContext
 import tasks_plone
 
@@ -17,8 +16,13 @@ def test_start(monkeypatch, capsys):
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
     tasks_plone.start(c, 'plone')
-    assert capsys.readouterr().out == 'called _plone with args MockContext start plone\n'
-
+    assert capsys.readouterr().out == (
+            "sudo docker run --name plone6-backend -e SITE=Plone -e CORS_ALLOW_ORIGIN='*'"
+            " -d -p 8085:8085 plone/plone-backend:6.0 in \n"
+            "sudo docker run --name plone6-frontend --link plone6-backend:backend"
+            " -e RAZZLE_API_PATH=http://localhost:8085/Plone"
+            " -e RAZZLE_INTERNAL_API_PATH=http://backend:8085/Plone"
+            " -d -p 8090:8090 plone/plone-frontend:latest in \n")
 
 def test_stop(monkeypatch, capsys):
     monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
@@ -26,7 +30,9 @@ def test_stop(monkeypatch, capsys):
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
     tasks_plone.stop(c, 'plone')
-    assert capsys.readouterr().out == 'called _plone with args MockContext stop plone\n'
+    assert capsys.readouterr().out == (
+            'sudo docker stop plone6-frontend && sudo docker rm plone6-frontend in \n'
+            'sudo docker stop plone6-backend && sudo docker rm plone6-backend in \n')
 
 
 def test_restart(monkeypatch, capsys):

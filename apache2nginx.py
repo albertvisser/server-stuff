@@ -2,14 +2,11 @@
 """
 import sys
 import os
-INLOC = '/home/albert/van_backup/etc/apache2/sites-available'
-OUTLOC = '/home/albert/nginx-config'
-USAGE = """\
-usage: [python] apache2nginx.py <basename>
-
-takes a file in {}
-and converts it to a same-named file in {}
-""".format(INLOC, OUTLOC)
+INLOC = '/etc/apache2/sites-available'
+OUTLOC = os.path.expanduser('~/nginx-config/nginx')
+USAGE = ("usage: [python] apache2nginx.py <basename>\n\n"
+         "takes a file in {INLOC}\n"
+         "and converts it to a same-named file in {OUTLOC})\n")
 
 
 def zetom(infile, outfile):
@@ -22,7 +19,7 @@ def zetom(infile, outfile):
             elif line == '<VirtualHost *:80>\n':
                 _out.write('server {\n')
             elif words[0] == 'ServerName':
-                _out.write('    server_name {};\n'.format(words[1]))
+                _out.write('    server_name {words[1]};\n')
             elif words[0] == 'DocumentRoot':
                 _out.write('    root {};\n'.format(words[1].strip('"')))
             elif words[0] == 'ScriptAlias':
@@ -39,7 +36,7 @@ def zetom(infile, outfile):
                 _out.write(line)
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
+    if len(sys.argv) == len([INLOC, OUTLOC]):
         infile = os.path.join(INLOC, sys.argv[1])
         outfile = os.path.join(OUTLOC, sys.argv[1])
         zetom(infile, outfile)

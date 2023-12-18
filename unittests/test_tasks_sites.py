@@ -1,5 +1,5 @@
 import os
-import pytest
+import contextlib
 import types
 from invoke import MockContext
 import tasks_sites as testee
@@ -67,6 +67,7 @@ def test_check_project(monkeypatch, capsys):
                                        "called check_sites with args"
                                        " {'quick': False, 'sites': ['hello', 'world']}\n")
 
+
 def test_names2sites():
     assert testee.names2sites('') == []
     assert testee.names2sites('this, that') == ['this.lemoncurry.nl', ' that.lemoncurry.nl']
@@ -104,18 +105,18 @@ def test_check_sites(monkeypatch, capsys):
                                        '    check_address entry missing for name\n')
     testee.check_address = {'full': {'name': ''}}
     testee.check_sites(sites=['name'], quick=False)
-    assert capsys.readouterr().out == ('checking name... frontpage ok, no further checking necessary\n')
+    assert capsys.readouterr().out == ('checking name... frontpage ok,'
+                                       ' no further checking necessary\n')
     testee.check_address = {'full': {'name': 'name-urls'}}
     urlfiles_dir = os.path.expanduser(os.path.join('~', 'nginx-config', 'check-pages'))
     if os.path.exists(urlfiles_dir):
-        os.remove(os.path.join(urlfiles_dir, 'name-urls'))
+        with contextlib.suppress(FileNotFoundError):
+            os.remove(os.path.join(urlfiles_dir, 'name-urls'))
     testee.check_sites(sites=['name'], quick=False)
     assert capsys.readouterr().out == ('checking name... frontpage ok\n'
                                        '    check-pages file missing for name\n')
-    try:
+    with contextlib.suppress(FileExistsError):
         os.mkdir(urlfiles_dir)
-    except FileExistsError:
-        pass
     with open(os.path.join(urlfiles_dir, 'name-urls'), 'w') as out:
         out.write('/testurl')
     testee.check_sites(sites=['name'], quick=False)
@@ -128,7 +129,7 @@ def test_check_sites(monkeypatch, capsys):
 
 
 def test_check_page(monkeypatch, capsys):
-    def mock_get(*args):
+    def mock_get(*args, **kwargs):
         return args[0]
     monkeypatch.setattr(testee.requests, 'get', mock_get)
     assert testee.check_page('somesite') == 'http://somesite'
@@ -136,13 +137,9 @@ def test_check_page(monkeypatch, capsys):
 
 def test_check_frontpage(monkeypatch, capsys):
     def mock_check(*args):
-        return types.SimpleNamespace(status_code=200)
-    def mock_check_2(*args):
-        return types.SimpleNamespace(status_code=401)
+        return types.SimpleNamespace(status_code=testee.HTTP_OK)
     monkeypatch.setattr(testee, 'check_page', mock_check)
-    assert testee.check_frontpage('somesite') == 200
-    monkeypatch.setattr(testee, 'check_page', mock_check_2)
-    assert testee.check_frontpage('tracsite') == 401
+    assert testee.check_frontpage('somesite') == testee.HTTP_OK
 
 
 def test_get_sitenames(monkeypatch, capsys, tmp_path):

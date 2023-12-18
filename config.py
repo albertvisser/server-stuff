@@ -66,8 +66,8 @@ extconf = {'nginx': (NGINX, True, '@.conf'),
            'lemontrac': (sysctlpath, True, 'lemontrac.service'),
            }
 for plone in PLONES:
-    extconf['{}-buildout'.format(plone)] = (os.path.join(HOME, '{}/zinstance'.format(
-        plone.title())), False, 'buildout.cfg')
+    extconf[f'{plone}-buildout'] = (os.path.join(HOME, f'{plone.title()}/zinstance'),
+                                    False, 'buildout.cfg')
 # EDITORCMD = 'SciIE {} &'
 EDITORCMD = "gnome-terminal --profile='Code Editor Shell' -- vim {} &"
 

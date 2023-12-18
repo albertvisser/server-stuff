@@ -20,14 +20,15 @@ def remove_conf(c, name, enabl):
 def mod_conf(c, name, dest, needs_sudo=True, backup=False, append=False):
     "copy configuration after editing"
     # name = full filename
-    if append: backup = True
+    if append:
+        backup = True
     if backup:
         today = datetime.datetime.today().strftime('%Y%m%d%H%M%S')
     frompath, fname = os.path.split(name)
 
     if backup:
         src = os.path.join(dest, fname)
-        trg = os.path.join('backup', '-'.join((fname, today)))
+        trg = os.path.join('backup', f'{fname}-{today}')
         with c.cd(frompath):
             if not os.path.exists(os.path.join(frompath, os.path.dirname(trg))):
                 c.run(f'mkdir -m 777 {os.path.dirname(trg)}')

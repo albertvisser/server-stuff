@@ -11,10 +11,7 @@ allproj = ('rst2html_fs', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst
 @task(help={'names': 'comma-separated list of server names'})
 def stop(c, names=None):
     "stop indicated cherrypy server(s)"
-    if not names:
-        names = _get_cherry_parms()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else allproj  # _get_cherry_parms()
     for proj in names:
         pid = _get_cherry_parms(proj)[3]
         if os.path.exists(pid):
@@ -26,10 +23,7 @@ def stop(c, names=None):
 @task(help={'names': 'comma-separated list of server names'})
 def start(c, names=None):
     "start indicated cherrypy server(s) (through cherryd)"
-    if not names:
-        names = _get_cherry_parms()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else allproj  # _get_cherry_parms()
     for proj in names:
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with c.cd(pad):
@@ -41,10 +35,7 @@ def start(c, names=None):
 @task(help={'names': 'comma-separated list of server names'})
 def restart(c, names=None):
     "restart cherrypy site (arg:project)"
-    if not names:
-        names = _get_cherry_parms()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else allproj  # _get_cherry_parms()
     for proj in names:
         stop(c, proj)
         start(c, proj)
@@ -53,12 +44,10 @@ def restart(c, names=None):
 @task
 def list_servers(c):
     "list of cherrypy server names"
-    print("Available CherryPy projects: " + ", ".join(_get_cherry_parms()))
+    print("Available CherryPy projects: " + ", ".join(allproj))
 
 
-def _get_cherry_parms(project=None):
-    if not project:
-        return allproj
+def _get_cherry_parms(project):
     origproj = project
     pad = os.path.join(HOME, 'projects', project)
     if project == allproj[2]:

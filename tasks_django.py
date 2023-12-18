@@ -16,10 +16,7 @@ django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_site
 @task(help={'names': 'comma-separated list of server names'})
 def stop(c, names=''):
     "stop indicated Django server(s)"
-    if not names:
-        names = django_project_path.keys()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else django_project_path.keys()
     for proj in names:
         django_pid = _get_django_args(proj)[0]
         if os.path.exists(django_pid):
@@ -33,10 +30,7 @@ def start(c, names=None):
     """start indicated Django server(s) using manage.py
     (Python 2 used fastcgi, see version history; Python uses Gunicorn)
     """
-    if names is None:
-        names = sorted(django_project_path.keys())
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else django_project_path.keys()
     for proj in names:
         pid, sock, path = _get_django_args(proj)
         with c.cd(path):
@@ -48,10 +42,7 @@ def start(c, names=None):
 @task(help={'names': 'comma-separated list of server names'})
 def restart(c, names=None):
     "restart django indicated server(s)"
-    if names is None:
-        names = django_project_path.keys()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else django_project_path.keys()
     for proj in names:
         stop(c, proj)
         start(c, proj)
@@ -74,10 +65,7 @@ def get_django_admin_loc(c):
 @task(help={'names': 'comma-separated list of server names'})
 def link_admin_css(c, names=None, force=False):
     "add symlink to admin CSS for Django project"
-    if names is None:
-        names = django_project_path.keys()
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else django_project_path.keys()
     dest = get_django_admin_loc(c)
     for project in names:
         path = _get_django_args(project)[2]
@@ -90,9 +78,8 @@ def link_admin_css(c, names=None, force=False):
                 if force:
                     os.remove(os.path.join(staticdir, 'admin'))
                     skip = False
-            else:
-                if not os.path.isdir(staticdir):
-                    os.remove(staticdir)
+            elif not os.path.isdir(staticdir):
+                os.remove(staticdir)
         else:
             os.mkdir(staticdir)
         if not skip:
@@ -104,7 +91,7 @@ def link_admin_css(c, names=None, force=False):
 def check_admin_links(c):
     "After a Python or Django upgrade, check if sumlinks to admin css need to be upgraded also"
     admin_loc = get_django_admin_loc(c)
-    for project in django_project_path.keys():
+    for project in django_project_path:
         print(f'For project {project}:')
         recreate = False
         path = _get_django_args(project)[2]

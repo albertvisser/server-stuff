@@ -158,7 +158,7 @@ def test_diffconf(monkeypatch, capsys, tmp_path):
 
 def test_check_all(monkeypatch, capsys):
     def mock_get_pid(arg):
-        return '{}_pid'.format(arg)
+        return f'{arg}_pid'
     def mock_exists(*args):
         return True
     monkeypatch.setattr(testee.tasks_django, 'get_pid', mock_get_pid)

@@ -1,4 +1,3 @@
-import pytest
 from invoke import MockContext
 import tasks_apache
 

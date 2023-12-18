@@ -5,7 +5,7 @@ import requests
 from invoke import task
 from config import check_address
 HOSTS = '/etc/hosts'
-
+HTTP_OK = 200
 
 @task
 def list_domains(c):
@@ -82,7 +82,7 @@ def check_sites(up_only=False, quick=True, sites=None):
     for base in sitenames:
         print(f'checking {base}... ', end='')
         ok = check_frontpage(base)
-        if ok != 200:
+        if ok != HTTP_OK:
             print(f'error {ok}')
             continue
         if up_only:
@@ -93,7 +93,7 @@ def check_sites(up_only=False, quick=True, sites=None):
             if base in check_address['quick']:
                 test = base + check_address['quick'][base]
                 ok = check_page(test).status_code
-                if ok != 200:
+                if ok != HTTP_OK:
                     print(f'    error {ok} on {test}')
             continue
         print('frontpage ok', end='')
@@ -112,7 +112,7 @@ def check_sites(up_only=False, quick=True, sites=None):
                     page = f'{base}{test}'
                     print(f'    checking {page}...', end=' ')
                     ok = check_page(page).status_code
-                    if ok == 200:
+                    if ok == HTTP_OK:
                         print('ok')
                     else:
                         print(f'error {ok}')  # test))

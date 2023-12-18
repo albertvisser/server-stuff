@@ -108,10 +108,7 @@ def editconf(c, name):
 def list_domains(c, names=None):
     "list of virtual domains per Nginx configuration"
     allconfs = intconf.keys()
-    if not names:
-        names = allconfs
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else allconfs
 
     for conf in names:
         if conf in allconfs:

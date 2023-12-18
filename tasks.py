@@ -4,7 +4,7 @@ also creates namespaces from other tasks files
 """
 import os
 import tempfile
-from config import INIT, PLONES, HERE, EDITORCMD, extconf
+from config import INIT, HERE, EDITORCMD, extconf  # , PLONES
 from invoke import task, Collection
 import tasks_nginx
 import tasks_ftp
@@ -163,10 +163,7 @@ def _diffconf(c, names, gui=False):
 def check_all(c, names=''):
     "assuming server is started when there is a pid file"
     other_pid = dict(zip(all_other, [tasks_trac.trac_pid, tasks_hgweb.hgweb_pid]))  # , plone_pid]
-    if not names:
-        names = all_django + all_cherry + all_other
-    else:
-        names = names.split(',')
+    names = names.split(',') if names else all_django + all_cherry + all_other
     all_clear = True
     for proj in names:
         if proj in all_django:
