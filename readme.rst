@@ -1,9 +1,67 @@
 Nginx-config
 ============
 
-When I transferred my system from Ubuntu to Linux Mint I also decided to trade in Lighttpd for Nginx. It took me quite some time to get to grips with it and I found myself building and copying and rearranging config files all of the time. I'd read some about Fabric, a Python package to facilitate that kind of stuff, read it again and decided to give it a try - and it turned out very satisfactory indeed.
+Here are several scripts and files I use in maintaining my local server programs and web applications.
+Managing it all is done using a series of Invoke scripts that are started with the command `fabsrv` from my scripts directory - the name remains unchanged from the time I used Fabric for this - and is a shortcut for the invocation `inv --search-root ~/nginx-config $@` ($@ contains all the parameters provided to fabsrv).
+This way with `fabsrv --list`  or `fabsrv --help <command>` you can get help info in the standard way invoke defines it.
 
-Besides the actual Nginx configuration files (or rather: includes) I collected some other configurations here so they are centralized and version controlled as well. And of course the script to manage it all is here.
+**tasks.py**
+  Besides being the main entry point, this file contains management commands for specific settings
+  files not related to server configuration. They are defined in the `misc` section in `config.py`
+  and collected in the `misc` subdirectory.
+
+**tasks_nginx.py**
+  This file contains functions for managing Nginx as well as the virtual domains I defined for it.
+  They are organized bij application/framework type and collected in the `nginx` subdirectory.
+
+**tasks_apache.py**
+  This file contains functions for managing Apache as well as the virtual domains I defined for it.
+  They are organized bij application/framework type and collected in the `apache` subdirectory.
+  Since I don't currently use Apache, they are probably outdated and may not work.
+
+**tasks_php.py**
+  This file mainly contains functions for starting and stopping php, which I rarely do.
+  I don't much like PHP as a language.
+
+**tasks_ftp.py**
+  This file was built specifically for *vsftp*, in my Drupal days, for testing ftp uploads to local
+  domains I think. I don't have a local ftp server running I think, so it's probably outdated.
+
+**tasks_django.py**
+  This file comtains functions for managing Django wsgi servers as well as some utilities specific
+  for working with Django
+
+**tasks_cherrypy.py**
+  This file comtains functions for managing CherryPy wsgi servers
+
+**tasks_trac.py**
+  This files contains functions for starting and stopping my local trac server, and some shortcuts
+  for maintaining the configuration
+
+**tasks_hgweb.py**
+  Gitweb works over fastcgi, but Mercurial - being Python - had its own wsgi server. 
+  So I needed a separate module to manage it.
+ 
+**tasks_plone.py**
+  This file contains functions for starting and stopping and managing the configuration for Plone
+  (a CMS built in Python)
+  
+**tasks_shared.py**
+**tasks_sites.py**
+
+Other scripts
+.............
+
+``rc.local``
+    the standard Linux user startup script, adapted to start my personal servers at bootup
+    not used in my current Manjaro setup
+``php-fcgi``
+    startup script for PHP - not needed anymore?
+``hgweb.fcgi``
+    startup script for local mercurial server - not used anymore
+``apache2nginx.py``
+    a script I wrote to partly convert Apache config files to Nginx
+
 
 Nginx configs:
 ..............
@@ -11,27 +69,9 @@ Nginx configs:
 ``default``
     a copy of the config file that came with the installation, with some stuff added - moved into `nginx.config` after changing to Manjaro Linux
 
-At first the others were organized per virtual domain (lemoncurry, pythoneer and magiokis) but I decided orgamnizing per implementation/framework type would be more logical
+At first the others were organized per virtual domain (lemoncurry, pythoneer and magiokis) but I decided organizing per implementation/framework type would be more logical
 
-so these are now obsolete:
-
-``lemoncurry``
-    configuration for various subdomains on my home server
-``magiokis``
-    another one, for another series of those domains
-``pythoneer``
-    and another one
-``mercurial``
-    config for serving my local Mercurial repositories
-
-as well as these:
-
-``trac_via_tracd``
-    older config running tracd over port 9001 instead of over a socket
-``joomla``
-    configuration for local Joomla sites (no longer in use)
-
-and these are the ones currently in use:
+So I ended up with these configurations:
 
 ``cherrypy``
     config for the subdomains powered by CherryPy
@@ -77,38 +117,18 @@ configs that are not in user-editable directories (e.g. in /etc) or only here
     configuration for local mercurial web server
 ``trac.ini``
     configuration for trac server
-``buildout.cfg`` (plone-conf)
-    configuration for plone (not under vc)
 ``gitweb.conf``
     configuration for the git server showing my "central" repositories
 ``cgitrc``
     configuration for the git server showing my development repositories
 
-Scripts:
-........
-
-``rc.local``
-    the standard Linux user startup script, adapted to start my personal servers at bootup
-``php-fcgi``
-    startup script for PHP
-``hgweb.cgi`` ``hgweb.fcgi`` ``hgweb.wsgi``
-    startup script for local mercurial server
-``trac.fcgi``
-    alternate startup script for running trac over gunicorn (not under vc)
-``fabfile.py``
-    script containing the utility functions to manage the above, as in
-    copy the files to the correct locations,
-    (re)start the corresponding servers
-    etc.
-``apache2nginx.py``
-    a script I wrote to partly convert Apache config files to Nginx
 
 Requirements
 ============
 
 - a Linux/Unix-based system
 - Nginx (or Apache for the Apache stuff)
-- Python, Fabric
+- Python, ~~Fabric~~ Invoke
 
 where applicable:
 
