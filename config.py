@@ -5,7 +5,7 @@ import collections
 
 HERE = os.path.dirname(__file__)
 INIT, NGINX, APACHE = '/etc/init.d', '/etc/nginx', '/etc/apache2'
-PHP = '/etc/php7'
+PHP = '/etc/php'
 AVL, NBL = 'sites-available', 'sites-enabled'
 AVAIL = os.path.join(NGINX, AVL)
 ENABL = os.path.join(NGINX, NBL)
