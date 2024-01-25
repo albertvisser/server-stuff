@@ -1,16 +1,24 @@
+"""unittests for ./tasks_apache.py
+"""
 from invoke import MockContext
 import tasks_apache
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args)
 
 
 def mock_call(*args, **kwargs):
+    """generic stub for helper functions imported from shared.py
+    """
     print('call shared function with args', *args, kwargs)
 
 
 def test_start(monkeypatch, capsys):
+    """unittest for tasks_apache.start
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_apache.start(c)
@@ -19,6 +27,8 @@ def test_start(monkeypatch, capsys):
 
 
 def test_stop(monkeypatch, capsys):
+    """unittest for tasks_apache.stop
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_apache.stop(c)
@@ -27,6 +37,8 @@ def test_stop(monkeypatch, capsys):
 
 
 def test_restart(monkeypatch, capsys):
+    """unittest for tasks_apache.restart
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_apache.restart(c)
@@ -34,19 +46,9 @@ def test_restart(monkeypatch, capsys):
     # assert capsys.readouterr().out == 'sudo systemctl restart apache.service\n'
 
 
-# def test_diffconf_subroutine(monkeypatch, capsys):
-#     monkeypatch.setattr(MockContext, 'run', mock_run)
-#     c = MockContext()
-#     tasks_apache.extconf = {'test': ('to', True, '@file')}
-#     tasks_apache.AVAIL = 'avail'
-#     tasks_apache.FROM = 'from'
-#     tasks_apache._diffconf(c, 'test')
-#     assert capsys.readouterr().out == 'diff -s to/testfile from/testfile\n'
-#     tasks_apache._diffconf(c, 'other', gui=True)
-#     assert capsys.readouterr().out == 'meld avail/other from/other\n'
-
-
 def test_addconf(monkeypatch, capsys):
+    """unittest for tasks_apache.addconf
+    """
     monkeypatch.setattr(tasks_apache.shared, 'add_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
@@ -60,6 +62,8 @@ def test_addconf(monkeypatch, capsys):
 
 
 def test_editconf(monkeypatch, capsys):
+    """unittest for tasks_apache.editconf
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_apache.EDITORCMD = 'xedit {}'
@@ -69,6 +73,8 @@ def test_editconf(monkeypatch, capsys):
 
 
 def test_modconf(monkeypatch, capsys):
+    """unittest for tasks_apache.modconf
+    """
     monkeypatch.setattr(tasks_apache.shared, 'mod_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
@@ -82,6 +88,8 @@ def test_modconf(monkeypatch, capsys):
 
 
 def test_modconfb(monkeypatch, capsys):
+    """unittest for tasks_apache.modconfb
+    """
     monkeypatch.setattr(tasks_apache.shared, 'mod_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
@@ -97,6 +105,8 @@ def test_modconfb(monkeypatch, capsys):
 
 
 def test_modconfa(monkeypatch, capsys):
+    """unittest for tasks_apache.modconfa
+    """
     monkeypatch.setattr(tasks_apache.shared, 'mod_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
@@ -112,6 +122,8 @@ def test_modconfa(monkeypatch, capsys):
 
 
 def test_rmconf(monkeypatch, capsys):
+    """unittest for tasks_apache.rmconf
+    """
     monkeypatch.setattr(tasks_apache.shared, 'remove_conf', mock_call)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'Mock')
     c = MockContext()
@@ -180,6 +192,8 @@ def test_rmconf(monkeypatch, capsys):
 
 
 def test_compare(monkeypatch, capsys):
+    """unittest for tasks_apache.compare
+    """
     tasks_apache.A_AVAIL = 'avail'
     tasks_apache.FROM = 'from'
     monkeypatch.setattr(MockContext, 'run', mock_run)
@@ -189,6 +203,8 @@ def test_compare(monkeypatch, capsys):
 
 
 def test_compareg(monkeypatch, capsys):
+    """unittest for tasks_apache.compareg
+    """
     tasks_apache.A_AVAIL = 'avail'
     tasks_apache.FROM = 'from'
     monkeypatch.setattr(MockContext, 'run', mock_run)

@@ -1,3 +1,5 @@
+"""unittests for ./tasks_shared.py
+"""
 import types
 import pathlib
 from invoke import MockContext
@@ -5,10 +7,14 @@ import tasks_shared
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args)
 
 
 def test_add_conf(monkeypatch, capsys):
+    """unittest for tasks_shared.add_conf
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_shared.add_conf(c, 'config', 'avail_loc', 'enabl_loc')
@@ -16,6 +22,8 @@ def test_add_conf(monkeypatch, capsys):
 
 
 def test_remove_conf(monkeypatch, capsys):
+    """unittest for tasks_shared.remove_conf
+    """
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     tasks_shared.remove_conf(c, 'config', 'enabl_loc')
@@ -23,12 +31,24 @@ def test_remove_conf(monkeypatch, capsys):
 
 
 def test_mod_conf(monkeypatch, capsys):
+    """unittest for tasks_shared.mod_conf
+    """
     class MockDatetime:
-        def today(*args):
+        """stub
+        """
+        @classmethod
+        def today(cls):
+            """stub
+            """
             return MockDatetime()
-        def strftime(*args):
+        @classmethod
+        def strftime(cls, datestring):
+            """stub
+            """
             return 'today'
     def mock_run(self, *args):
+        """stub
+        """
         print(f'execute in {self.cwd}')
         print(*args)
     monkeypatch.setattr(MockContext, 'run', mock_run)
@@ -52,12 +72,16 @@ def test_mod_conf(monkeypatch, capsys):
                                        'execute in from\nmv -f file~~ file\n')
 
 
-def test_compare(monkeypatch, capsys):
+def test_compare(capsys):
+    """unittest for tasks_shared.compare
+    """
     tasks_shared.do_compare('local', 'remote')
     assert capsys.readouterr().out == 'comparing local with remote\n'
 
 
 def test_report_result():
+    """unittest for tasks_shared.report_result
+    """
     # eigenlijk moet ik het resultaat van umask ook nog checken
     result = types.SimpleNamespace(stdout='stdout', stderr='stderr')
     tasks_shared.report_result('testproj', result)
@@ -71,6 +95,8 @@ def test_report_result():
 
 
 def test_remove_result(monkeypatch, capsys):
+    """unittest for tasks_shared.remove_result
+    """
     path1 = pathlib.Path('/tmp/server-testproj-ok')
     path2 = pathlib.Path('/tmp/server-testproj-err')
     monkeypatch.setattr(MockContext, 'run', mock_run)

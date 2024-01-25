@@ -1,19 +1,30 @@
+"""unittests for ./tasks_cherrypy.py
+"""
 import os
+import pytest
 from invoke import MockContext
 import tasks_cherrypy
 mock_allproj = ('all', 'proj')
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args)
 
 
 def mock_get_parms(*args):
+    """stub for tasks_cherrypy._get_cherry_parms
+    """
     return 'conf', 'pad', 'prog', 'pid', 'sock'
 
 
 def test_start(monkeypatch, capsys):
+    """unittest for tasks_cherrypy.start
+    """
     def mock_report(*args):
+        """stub
+        """
         print('called report_result')
     monkeypatch.setattr(tasks_cherrypy, 'allproj', mock_allproj)
     monkeypatch.setattr(tasks_cherrypy, '_get_cherry_parms', mock_get_parms)
@@ -31,7 +42,11 @@ def test_start(monkeypatch, capsys):
 
 
 def test_stop(monkeypatch, capsys):
+    """unittest for tasks_cherrypy.stop
+    """
     def mock_remove(*args):
+        """stub
+        """
         print('called remove_result')
     monkeypatch.setattr(tasks_cherrypy, 'allproj', mock_allproj)
     monkeypatch.setattr(tasks_cherrypy, '_get_cherry_parms', mock_get_parms)
@@ -56,9 +71,15 @@ def test_stop(monkeypatch, capsys):
 
 
 def test_restart(monkeypatch, capsys):
+    """unittest for tasks_cherrypy.restart
+    """
     def mock_stop(*args):
+        """stub
+        """
         print('called cherrypy.stop')
     def mock_start(*args):
+        """stub
+        """
         print('called cherrypy.start')
     monkeypatch.setattr(tasks_cherrypy, 'allproj', mock_allproj)
     monkeypatch.setattr(tasks_cherrypy, '_get_cherry_parms', mock_get_parms)
@@ -74,6 +95,8 @@ def test_restart(monkeypatch, capsys):
 
 
 def test_list_servers(monkeypatch, capsys):
+    """unittest for tasks_cherrypy.list_servers
+    """
     monkeypatch.setattr(tasks_cherrypy, 'allproj', mock_allproj)
     monkeypatch.setattr(tasks_cherrypy, '_get_cherry_parms', mock_get_parms)
     c = MockContext()
@@ -81,7 +104,9 @@ def test_list_servers(monkeypatch, capsys):
     assert capsys.readouterr().out == 'Available CherryPy projects: all, proj\n'
 
 
-def test_get_parms(monkeypatch, capsys):
+def test_get_parms(monkeypatch):
+    """unittest for tasks_cherrypy.get_parms
+    """
     with pytest.raises(TypeError):
         tasks_cherrypy._get_cherry_parms()
     monkeypatch.setattr(tasks_cherrypy, 'allproj', ['name_test', 'other', 'project-2'])
@@ -102,12 +127,15 @@ def test_get_parms(monkeypatch, capsys):
                                                              '/var/run/projectc.sock')
 
 
-
 def test_get_projectnames(monkeypatch):
+    """unittest for tasks_cherrypy.get_projectnames
+    """
     monkeypatch.setattr(tasks_cherrypy, 'allproj', mock_allproj)
     assert tasks_cherrypy.get_projectnames() == ('all', 'proj')
 
 
 def test_get_pid(monkeypatch):
+    """unittest for tasks_cherrypy.get_pid
+    """
     monkeypatch.setattr(tasks_cherrypy, '_get_cherry_parms', mock_get_parms)
     assert tasks_cherrypy.get_pid('name') == 'pid'

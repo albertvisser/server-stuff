@@ -1,3 +1,5 @@
+"""unittests for ./tasks_sites.py
+"""
 import os
 import contextlib
 import types
@@ -6,25 +8,35 @@ import tasks_sites as testee
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args)
 
 
 def mock_check(*args, **kwargs):
+    """stub for tasks_sites.check_sites"
+    """
     print('called check_sites with args', *args, kwargs)
 
 
 def mock_names(names):
+    """stub for tasks_sites.names2sites"
+    """
     print(f"called names2sites with arg '{names}'")
     return names.split(',')
 
 
 def test_list_domains(monkeypatch, capsys):
+    """unittest for tasks_sites.list_domains
+    """
     monkeypatch.setattr(testee, 'get_sitenames', lambda: ('name', 'another_name'))
     testee.list_domains(MockContext())
     assert capsys.readouterr().out == 'defined domains:\nname\nanother_name\n'
 
 
 def test_check_up(monkeypatch, capsys):
+    """unittest for tasks_sites.check_up
+    """
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_up(MockContext())
     assert capsys.readouterr().out == ("called check_sites with args"
@@ -32,12 +44,16 @@ def test_check_up(monkeypatch, capsys):
 
 
 def test_check_all(monkeypatch, capsys):
+    """unittest for tasks_sites.check_all
+    """
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_all(MockContext())
     assert capsys.readouterr().out == "called check_sites with args {}\n"
 
 
 def test_check_pages(monkeypatch, capsys):
+    """unittest for tasks_sites.check_pages
+    """
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_pages(MockContext(), 'this,that')
     assert capsys.readouterr().out == ("called check_sites with args "
@@ -45,12 +61,16 @@ def test_check_pages(monkeypatch, capsys):
 
 
 def test_check_all_pages(monkeypatch, capsys):
+    """unittest for tasks_sites.check_all_pages
+    """
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_all_pages(MockContext())
     assert capsys.readouterr().out == ("called check_sites with args {'quick': False}\n")
 
 
 def test_check_project_up(monkeypatch, capsys):
+    """unittest for tasks_sites.check_project_up
+    """
     monkeypatch.setattr(testee, 'names2sites', mock_names)
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_project_up(MockContext(), 'sitenames')
@@ -60,6 +80,8 @@ def test_check_project_up(monkeypatch, capsys):
 
 
 def test_check_project(monkeypatch, capsys):
+    """unittest for tasks_sites.check_project
+    """
     monkeypatch.setattr(testee, 'names2sites', mock_names)
     monkeypatch.setattr(testee, 'check_sites', mock_check)
     testee.check_project(MockContext(), 'hello,world')
@@ -69,6 +91,8 @@ def test_check_project(monkeypatch, capsys):
 
 
 def test_names2sites():
+    """unittest for tasks_sites.names2sites
+    """
     assert testee.names2sites('') == []
     assert testee.names2sites('this, that') == ['this.lemoncurry.nl', ' that.lemoncurry.nl']
     assert testee.names2sites('this,magiokis-test') == ['this.lemoncurry.nl', 'test.magiokis.nl']
@@ -81,6 +105,8 @@ def test_names2sites():
 
 
 def test_check_sites(monkeypatch, capsys):
+    """unittest for tasks_sites.check_sites
+    """
     monkeypatch.setattr(testee, 'get_sitenames', lambda: ('name', 'another_name'))
     monkeypatch.setattr(testee, 'check_frontpage', lambda x: 201)
     testee.check_sites()
@@ -128,21 +154,31 @@ def test_check_sites(monkeypatch, capsys):
                                        '    checking name/testurl... ok\n')
 
 
-def test_check_page(monkeypatch, capsys):
+def test_check_page(monkeypatch):
+    """unittest for tasks_sites.check_page
+    """
     def mock_get(*args, **kwargs):
+        """stub
+        """
         return args[0]
     monkeypatch.setattr(testee.requests, 'get', mock_get)
     assert testee.check_page('somesite') == 'http://somesite'
 
 
-def test_check_frontpage(monkeypatch, capsys):
+def test_check_frontpage(monkeypatch):
+    """unittest for tasks_sites.check_frontpage
+    """
     def mock_check(*args):
+        """stub
+        """
         return types.SimpleNamespace(status_code=testee.HTTP_OK)
     monkeypatch.setattr(testee, 'check_page', mock_check)
     assert testee.check_frontpage('somesite') == testee.HTTP_OK
 
 
-def test_get_sitenames(monkeypatch, capsys, tmp_path):
+def test_get_sitenames(tmp_path):
+    """unittest for tasks_sites.get_sitenames
+    """
     filedata = ('xxx  lennoncurry\nxxx  lemoncurry.nl\nxx test.magiokis.nl\n'
                 '# deze regel niet laten zien\nxxx  jansen')
     testfile = tmp_path / 'hoststest'

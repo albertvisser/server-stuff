@@ -1,3 +1,5 @@
+"""unittests for ./tasks.py
+"""
 import os
 import pytest
 import types
@@ -6,11 +8,15 @@ import tasks as testee
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args)
     # print('called run with args', args)
 
 
 def test_addstartup(monkeypatch, capsys):
+    """unittest for tasks.addstartup
+    """
     monkeypatch.setattr(testee, 'INIT', 'init_loc')
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
@@ -19,6 +25,8 @@ def test_addstartup(monkeypatch, capsys):
 
 
 def test_editconf(monkeypatch, capsys):
+    """unittest for tasks.editconf
+    """
     monkeypatch.setattr(testee, 'EDITORCMD', 'edit {}')
     monkeypatch.setattr(testee, 'get_parms', lambda x: ('pathname', ''))
     monkeypatch.setattr(MockContext, 'run', mock_run)
@@ -28,6 +36,8 @@ def test_editconf(monkeypatch, capsys):
 
 
 def test_listconf(monkeypatch, capsys):
+    """unittest for tasks.listconf
+    """
     monkeypatch.setattr(testee, 'extconf', {'name2': ('path2', True, 'conf'),
                                            'name1': ('path1', False, '@')})
     monkeypatch.setattr(MockContext, 'run', mock_run)
@@ -38,7 +48,11 @@ def test_listconf(monkeypatch, capsys):
 
 
 def test_modconf(monkeypatch, capsys):
+    """unittest for tasks.modconf
+    """
     def mock_modconf(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, 'get_parms', lambda x: ('from', 'to', True))
     monkeypatch.setattr(testee.shared, 'mod_conf', mock_modconf)
@@ -50,7 +64,11 @@ def test_modconf(monkeypatch, capsys):
 
 
 def test_modconfb(monkeypatch, capsys):
+    """unittest for tasks.modconfb
+    """
     def mock_modconf(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, 'get_parms', lambda x: ('from', 'to', True))
     monkeypatch.setattr(testee.shared, 'mod_conf', mock_modconf)
@@ -62,7 +80,11 @@ def test_modconfb(monkeypatch, capsys):
 
 
 def test_modconfa(monkeypatch, capsys):
+    """unittest for tasks.modconfa
+    """
     def mock_modconf(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, 'get_parms', lambda x: ('from', 'to', True))
     monkeypatch.setattr(testee.shared, 'mod_conf', mock_modconf)
@@ -73,7 +95,9 @@ def test_modconfa(monkeypatch, capsys):
     assert capsys.readouterr().out == "MockContext from to {'needs_sudo': True, 'append': True}\n"
 
 
-def test_get_parms(monkeypatch, capsys):
+def test_get_parms(monkeypatch):
+    """unittest for tasks.get_parms
+    """
     monkeypatch.setattr(testee, 'extconf', {'name': ('to', True, 'fname')})
     monkeypatch.setattr(testee, 'HERE', 'here')
     assert testee.get_parms('name') == ('here/misc/fname', 'to', True)
@@ -82,7 +106,11 @@ def test_get_parms(monkeypatch, capsys):
 
 
 def test_compare(monkeypatch, capsys):
+    """unittest for tasks.compare
+    """
     def mock_diffconf(*args, **kwargs):
+        """stub
+        """
         print('called _diffconf with args', args, kwargs)
     monkeypatch.setattr(testee, 'extconf', {'x': 'y', 'a': 'b', 'p': 'q'})
     monkeypatch.setattr(testee, '_diffconf', mock_diffconf)
@@ -92,7 +120,11 @@ def test_compare(monkeypatch, capsys):
 
 
 def test_compareg(monkeypatch, capsys):
+    """unittest for tasks.compareg
+    """
     def mock_diffconf(*args, **kwargs):
+        """stub
+        """
         print('called _diffconf with args', args, kwargs)
     monkeypatch.setattr(testee, 'extconf', {'x': 'y', 'a': 'b', 'p': 'q'})
     monkeypatch.setattr(testee, '_diffconf', mock_diffconf)
@@ -103,10 +135,16 @@ def test_compareg(monkeypatch, capsys):
 
 
 def test_diffconf(monkeypatch, capsys, tmp_path):
+    """unittest for tasks.diffconf
+    """
     def mock_run_2(self, *args, **kwargs):
+        """stub
+        """
         print(*args)
         return types.SimpleNamespace(exited=True, stdout='xxx\n')
     def mock_run_3(self, *args, **kwargs):
+        """stub
+        """
         print(*args)
         parts = args[0].split(' ')
         return types.SimpleNamespace(exited=False, stdout=f'{parts[2]} {parts[3]}\n')
@@ -135,31 +173,37 @@ def test_diffconf(monkeypatch, capsys, tmp_path):
     (miscpath / 'name').write_text('')
     (miscpath / 'nam2').write_text('')
     testee._diffconf(c, 'name1,nam2', gui=True)
-    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
-                                       f'meld {miscpath}/nam2 {tempdir}/nam2\n'
-                                       f'meld {miscpath}/name {destpath}/name\n')
+    assert capsys.readouterr().out == (f'meld {miscpath}/name {destpath}/name\n'
+                                       f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+                                       f'meld {miscpath}/nam2 {tempdir}/nam2\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_2)
     c = MockContext()
     testee._diffconf(c, 'name1,nam2')
-    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
+                                       'differences for name, see /tmp/diff-name\n'
+                                       f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
                                        f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
-                                       'differences for nam2, see /tmp/diff-nam2\n'
-                                       f'diff -s {miscpath}/name {destpath}/name\n'
-                                       'differences for name, see /tmp/diff-name\n')
+                                       'differences for nam2, see /tmp/diff-nam2\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_3)
     c = MockContext()
     testee._diffconf(c, 'name1,nam2')
-    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
+                                       f'{miscpath}/name {destpath}/name\n'
+                                       f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
                                        f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
-                                       f'{miscpath}/nam2 {destpath}/nam2\n'
-                                       f'diff -s {miscpath}/name {destpath}/name\n'
-                                       f'{miscpath}/name {destpath}/name\n')
+                                       f'{miscpath}/nam2 {destpath}/nam2\n')
 
 
 def test_check_all(monkeypatch, capsys):
+    """unittest for tasks.check_all
+    """
     def mock_get_pid(arg):
+        """stub
+        """
         return f'{arg}_pid'
     def mock_exists(*args):
+        """stub
+        """
         return True
     monkeypatch.setattr(testee.tasks_django, 'get_pid', mock_get_pid)
     monkeypatch.setattr(testee, 'all_django', ['django'])
@@ -183,7 +227,11 @@ def test_check_all(monkeypatch, capsys):
 
 
 def test_start(monkeypatch, capsys):
+    """unittest for tasks.start
+    """
     def mock_serve(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, '_serve', mock_serve)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -195,7 +243,11 @@ def test_start(monkeypatch, capsys):
 
 
 def test_stop(monkeypatch, capsys):
+    """unittest for tasks.stop
+    """
     def mock_serve(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, '_serve', mock_serve)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -207,7 +259,11 @@ def test_stop(monkeypatch, capsys):
 
 
 def test_restart(monkeypatch, capsys):
+    """unittest for tasks.restart
+    """
     def mock_serve(*args, **kwargs):
+        """stub
+        """
         print(*args, kwargs)
     monkeypatch.setattr(testee, '_serve', mock_serve)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -219,10 +275,16 @@ def test_restart(monkeypatch, capsys):
 
 
 def test_serve(monkeypatch, capsys):
+    """unittest for tasks.serve
+    """
     def mock_determine(name):
+        """stub
+        """
         print(f'called determine_servertype for `{name}`')
         return name + '_type', False
     def mock_start_stop(c, *args, **kwargs):
+        """stub
+        """
         print('called start_stop with args', args, kwargs)
     monkeypatch.setattr(testee, 'start_stop', mock_start_stop)
     monkeypatch.setattr(testee, 'determine_servertype', mock_determine)
@@ -257,6 +319,8 @@ def test_serve(monkeypatch, capsys):
 
 
 def test_determine_servertype(monkeypatch):
+    """unittest for tasks.determine_servertype
+    """
     mock_servertypes = {'group': {'names': ['1', '2'],
                                   'handler': 'handler_module'}}
     monkeypatch.setattr(testee, 'servertypes', mock_servertypes)
@@ -266,10 +330,18 @@ def test_determine_servertype(monkeypatch):
 
 
 def test_start_stop(monkeypatch, capsys):
+    """unittest for tasks.start_stop
+    """
     class MockModule:
+        """stub
+        """
         def start(self, *args):
+            """stub
+            """
             print('called start with args', args)
         def stop(self, *args):
+            """stub
+            """
             print('called stop with args', args)
     monkeypatch.setattr(testee, 'servertypes', {'type': {'names': ['name'], 'handler': MockModule}})
     monkeypatch.setattr(testee, 'all_names', {'type': MockModule})

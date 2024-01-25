@@ -1,16 +1,24 @@
+"""unittests for ./tasks_plone.py
+"""
 from invoke import MockContext
 import tasks_plone
 
 
 def mock_run(self, *args):
+    """stub for invoke.Context.run
+    """
     print(*args, 'in', self.cwd)
 
 
 def mock_plone(*args):
+    """stub stub for tasks_plone._plone
+    """
     print('called _plone with args', *args)
 
 
 def test_start(monkeypatch, capsys):
+    """unittest for tasks_plone.start
+    """
     monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -24,7 +32,10 @@ def test_start(monkeypatch, capsys):
             " -e RAZZLE_INTERNAL_API_PATH=http://backend:8085/Plone"
             " -d -p 8090:8090 plone/plone-frontend:latest in \n")
 
+
 def test_stop(monkeypatch, capsys):
+    """unittest for tasks_plone.stop
+    """
     monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -36,9 +47,15 @@ def test_stop(monkeypatch, capsys):
 
 
 def test_restart(monkeypatch, capsys):
+    """unittest for tasks_plone.restart
+    """
     def mock_start(*args):
+        """stub
+        """
         print('called start()')
     def mock_stop(*args):
+        """stub
+        """
         print('called stop()')
     monkeypatch.setattr(tasks_plone, 'start', mock_start)
     monkeypatch.setattr(tasks_plone, 'stop', mock_stop)
@@ -49,6 +66,8 @@ def test_restart(monkeypatch, capsys):
 
 
 def test_buildout(monkeypatch, capsys):
+    """unittest for tasks_plone.buildout
+    """
     monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
@@ -58,9 +77,15 @@ def test_buildout(monkeypatch, capsys):
 
 
 def test_plone(monkeypatch, capsys):
+    """unittest for tasks_plone.plone
+    """
     def mock_report(*args):
+        """stub
+        """
         print('called report_result()')
     def mock_remove(*args):
+        """stub
+        """
         print('called remove_result()')
     tasks_plone.HOME = 'home'
     tasks_plone.PLONES = ['site', 'name']
