@@ -47,7 +47,12 @@ This way with `fabsrv --list`  or `fabsrv --help <command>` you can get help inf
   (a CMS built in Python)
   
 **tasks_shared.py**
+  A collection of utility functions shared between various commands in different files
+
 **tasks_sites.py**
+  This file contains a series of commands intended to check the availabilty of (parts of) my local
+  sites. Looking back it seems a lot of overkill for something I apparently never use.
+  "It seemed like a good idea at the time"
 
 Other scripts
 .............
@@ -128,16 +133,15 @@ Requirements
 
 - a Linux/Unix-based system
 - Nginx (or Apache for the Apache stuff)
-- Python, ~~Fabric~~ Invoke
+- Python, Invoke
 
 where applicable:
 
+- FastCGI
 - PHP
 - Django
 - CherryPy
 - Mercurial
 - Trac
-- Joomla
-- Drupal
 - Plone
 - Gunicorn
