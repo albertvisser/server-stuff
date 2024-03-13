@@ -201,10 +201,6 @@ def test_check_all(monkeypatch, capsys):
         """stub
         """
         return f'{arg}_pid'
-    def mock_exists(*args):
-        """stub
-        """
-        return True
     monkeypatch.setattr(testee.tasks_django, 'get_pid', mock_get_pid)
     monkeypatch.setattr(testee, 'all_django', ['django'])
     monkeypatch.setattr(testee, 'all_cherry', ['cherry'])
