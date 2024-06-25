@@ -4,7 +4,7 @@ import os
 # import shutil
 from invoke import task
 from config import HOME, runpath
-from tasks_shared import report_result, remove_result
+from tasks_shared import report_result, check_result, remove_result
 # django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 django_sites = ['actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_sites}
@@ -32,6 +32,10 @@ def start(c, names=None):
     """
     names = names.split(',') if names else django_project_path.keys()
     for proj in names:
+        result = check_result(proj)
+        if result:
+            print(f'{proj} {result}')
+            continue
         pid, sock, path = _get_django_args(proj)
         with c.cd(path):
             result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{sock} -p {pid} '

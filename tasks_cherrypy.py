@@ -3,7 +3,7 @@
 import os.path
 from invoke import task
 from config import HOME, runpath
-from tasks_shared import report_result, remove_result
+from tasks_shared import report_result, check_result, remove_result
 
 allproj = ('rst2html_fs', 'logviewer', 'magiokis-cherry', 'rst2html_mongo', 'rst2html_postgres')
 
@@ -25,6 +25,10 @@ def start(c, names=None):
     "start indicated cherrypy server(s) (through cherryd)"
     names = names.split(',') if names else allproj  # _get_cherry_parms()
     for proj in names:
+        result = check_result(proj)
+        if result:
+            print(f'{proj} {result}')
+            continue
         conf, pad, prog, pid, _ = _get_cherry_parms(proj)
         with c.cd(pad):
             # result = c.run('sudo /usr/bin/cherryd3 '

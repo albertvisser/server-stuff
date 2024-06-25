@@ -3,7 +3,7 @@
 import os.path
 from invoke import task
 from config import TRAC, runpath
-from tasks_shared import report_result, remove_result
+from tasks_shared import report_result, check_result, remove_result
 
 project = os.path.basename(TRAC)
 trac_pid = os.path.join(runpath, f'{project}.pid')
@@ -21,6 +21,10 @@ def stop(c):
 @task
 def start(c):
     "start local trac server"
+    result = check_result('trac')
+    if result:
+        print('trac ' + result)
+        return
     with c.cd(TRAC):
         # result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{trac_sock} -p {trac_pid} '
         #                'tracwsgi:application')

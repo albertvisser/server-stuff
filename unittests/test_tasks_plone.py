@@ -1,7 +1,7 @@
-"""unittests for ./tasks_plone.py
+"""unittests for ./testee.py
 """
 from invoke import MockContext
-import tasks_plone
+import tasks_plone as testee
 
 
 def mock_run(self, *args):
@@ -11,20 +11,35 @@ def mock_run(self, *args):
 
 
 def mock_plone(*args):
-    """stub stub for tasks_plone._plone
+    """stub stub for testee._plone
     """
     print('called _plone with args', *args)
 
 
 def test_start(monkeypatch, capsys):
-    """unittest for tasks_plone.start
+    """unittest for testee.start
     """
-    monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
+    def mock_check(*args):
+        """stub
+        """
+        print('called check_result')
+        return 'xxx'
+    def mock_check_2(*args):
+        """stub
+        """
+        print('called check_result')
+        return ''
+    monkeypatch.setattr(testee, '_plone', mock_plone)
+    monkeypatch.setattr(testee, 'check_result', mock_check)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
-    tasks_plone.start(c, 'plone')
+    testee.start(c, 'plone')
+    assert capsys.readouterr().out == 'called check_result\nplone xxx\n'
+    monkeypatch.setattr(testee, 'check_result', mock_check_2)
+    testee.start(c, 'plone')
     assert capsys.readouterr().out == (
+            "called check_result\n"
             "sudo docker run --name plone6-backend -e SITE=Plone -e CORS_ALLOW_ORIGIN='*'"
             " -d -p 8085:8085 plone/plone-backend:6.0 in \n"
             "sudo docker run --name plone6-frontend --link plone6-backend:backend"
@@ -34,20 +49,20 @@ def test_start(monkeypatch, capsys):
 
 
 def test_stop(monkeypatch, capsys):
-    """unittest for tasks_plone.stop
+    """unittest for testee.stop
     """
-    monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
+    monkeypatch.setattr(testee, '_plone', mock_plone)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
-    tasks_plone.stop(c, 'plone')
+    testee.stop(c, 'plone')
     assert capsys.readouterr().out == (
             'sudo docker stop plone6-frontend && sudo docker rm plone6-frontend in \n'
             'sudo docker stop plone6-backend && sudo docker rm plone6-backend in \n')
 
 
 def test_restart(monkeypatch, capsys):
-    """unittest for tasks_plone.restart
+    """unittest for testee.restart
     """
     def mock_start(*args):
         """stub
@@ -57,27 +72,27 @@ def test_restart(monkeypatch, capsys):
         """stub
         """
         print('called stop()')
-    monkeypatch.setattr(tasks_plone, 'start', mock_start)
-    monkeypatch.setattr(tasks_plone, 'stop', mock_stop)
+    monkeypatch.setattr(testee, 'start', mock_start)
+    monkeypatch.setattr(testee, 'stop', mock_stop)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
-    tasks_plone.restart(c, 'plone')
+    testee.restart(c, 'plone')
     assert capsys.readouterr().out == ('called stop()\ncalled start()\n')
 
 
 def test_buildout(monkeypatch, capsys):
-    """unittest for tasks_plone.buildout
+    """unittest for testee.buildout
     """
-    monkeypatch.setattr(tasks_plone, '_plone', mock_plone)
+    monkeypatch.setattr(testee, '_plone', mock_plone)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
-    tasks_plone.buildout(c, 'plone')
+    testee.buildout(c, 'plone')
     assert capsys.readouterr().out == 'called _plone with args MockContext buildout plone\n'
 
 
 def test_plone(monkeypatch, capsys):
-    """unittest for tasks_plone.plone
+    """unittest for testee.plone
     """
     def mock_report(*args):
         """stub
@@ -87,21 +102,21 @@ def test_plone(monkeypatch, capsys):
         """stub
         """
         print('called remove_result()')
-    tasks_plone.HOME = 'home'
-    tasks_plone.PLONES = ['site', 'name']
-    monkeypatch.setattr(tasks_plone, 'report_result', mock_report)
-    monkeypatch.setattr(tasks_plone, 'remove_result', mock_remove)
+    testee.HOME = 'home'
+    testee.PLONES = ['site', 'name']
+    monkeypatch.setattr(testee, 'report_result', mock_report)
+    monkeypatch.setattr(testee, 'remove_result', mock_remove)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     monkeypatch.setattr(MockContext, '__str__', lambda x: 'MockContext')
     c = MockContext()
-    tasks_plone._plone(c, 'start', '')
+    testee._plone(c, 'start', '')
     assert capsys.readouterr().out == ('bin/plonectl start in home/Site/zinstance\n'
                                        'called report_result()\n'
                                        'bin/plonectl start in home/Name/zinstance\n'
                                        'called report_result()\n')
-    tasks_plone._plone(c, 'stop', 'site')
+    testee._plone(c, 'stop', 'site')
     assert capsys.readouterr().out == ('bin/plonectl stop in home/Site/zinstance\n'
                                        'called remove_result()\n')
-    tasks_plone._plone(c, 'buildout', 'one,two')
+    testee._plone(c, 'buildout', 'one,two')
     assert capsys.readouterr().out == ('bin/buildout in home/One/zinstance\n'
                                        'bin/buildout in home/Two/zinstance\n')

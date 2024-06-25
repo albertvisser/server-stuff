@@ -4,7 +4,7 @@ Plone 6 heeft een front- en een backend
 """
 from invoke import task
 from config import HOME, PLONES
-from tasks_shared import report_result, remove_result
+from tasks_shared import report_result, check_result, remove_result
 import os.path
 
 
@@ -26,6 +26,10 @@ def _plone(c, action, sitenames):
 @task(help={'names': 'comma-separated list of server names'})
 def start(c, names=''):
     "start Plone default instance"
+    result = check_result('plone')
+    if result:
+        print('plone ' + result)
+        return
     # _plone(c, 'start', names)
     c.run("sudo docker run --name plone6-backend -e SITE=Plone -e CORS_ALLOW_ORIGIN='*' -d"
           " -p 8085:8085 plone/plone-backend:6.0")

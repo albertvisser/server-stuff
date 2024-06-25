@@ -21,23 +21,48 @@ def mock_get_parms(*args):
 def test_start(monkeypatch, capsys):
     """unittest for tasks_django.start
     """
+    def mock_check(*args):
+        """stub
+        """
+        print('called check_result')
+        return 'xxx'
+    def mock_check_2(*args):
+        """stub
+        """
+        print('called check_result')
+        return ''
     def mock_report(*args):
         """stub
         """
         print('called report_result')
     monkeypatch.setattr(testee, 'django_project_path', {'site': {}, 'stuff': {}})
     monkeypatch.setattr(testee, '_get_django_args', mock_get_parms)
+    monkeypatch.setattr(testee, 'check_result', mock_check)
     monkeypatch.setattr(testee, 'report_result', mock_report)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
     testee.start(c)
-    assert capsys.readouterr().out == ('sudo /usr/bin/gunicorn -D -b unix:sock -p pid'
-                                       ' site.wsgi:application {}\ncalled report_result\n'
+    assert capsys.readouterr().out == ('called check_result\nsite xxx\n'
+                                       'called check_result\nstuff xxx\n')
+    monkeypatch.setattr(testee, 'check_result', mock_check_2)
+    testee.start(c)
+    assert capsys.readouterr().out == ('called check_result\n'
                                        'sudo /usr/bin/gunicorn -D -b unix:sock -p pid'
-                                       ' stuff.wsgi:application {}\ncalled report_result\n')
+                                       ' site.wsgi:application {}\n'
+                                       'called report_result\n'
+                                       'called check_result\n'
+                                       'sudo /usr/bin/gunicorn -D -b unix:sock -p pid'
+                                       ' stuff.wsgi:application {}\n'
+                                       'called report_result\n')
+    monkeypatch.setattr(testee, 'check_result', mock_check)
     testee.start(c, 'name')
-    assert capsys.readouterr().out == ('sudo /usr/bin/gunicorn -D -b unix:sock -p pid'
-                                       ' name.wsgi:application {}\ncalled report_result\n')
+    assert capsys.readouterr().out == 'called check_result\nname xxx\n'
+    monkeypatch.setattr(testee, 'check_result', mock_check_2)
+    testee.start(c, 'name')
+    assert capsys.readouterr().out == ('called check_result\n'
+                                       'sudo /usr/bin/gunicorn -D -b unix:sock -p pid'
+                                       ' name.wsgi:application {}\n'
+                                       'called report_result\n')
 
 
 def test_stop(monkeypatch, capsys):

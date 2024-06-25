@@ -66,6 +66,14 @@ def report_result(proj, result):
     os.umask(test)
 
 
+def check_result(proj):
+    """check to see if server has already been started (or tried to start)
+    """
+    if os.path.exists(f'/tmp/server-{proj}-ok'):
+        return 'server already started'
+    return ''
+
+
 def remove_result(c, proj):
     "remove earlier created check files"
     c.run(f'sudo rm -f /tmp/server-{proj}-ok')

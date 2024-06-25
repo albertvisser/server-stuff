@@ -3,7 +3,7 @@
 import os.path
 from invoke import task
 from config import HGWEB, runpath
-from tasks_shared import report_result, remove_result
+from tasks_shared import report_result, check_result, remove_result
 
 hgweb_pid = os.path.join(runpath, 'hgwebdir.pid')
 hgweb_sock = os.path.join(runpath, 'hgwebdir.sock')
@@ -20,6 +20,10 @@ def stop(c):
 @task
 def start(c):
     "start local Mercurial web server using hgweb.fcgi"
+    result = check_result('hgweb')
+    if result:
+        print('hgweb ' + result)
+        return
     startdir = os.path.join(HGWEB, 'hgweb.fcgi')
     result = c.run(f'sudo spawn-fcgi -f {startdir} -s {hgweb_sock} -P {hgweb_pid} -u {"www-data"}')
     report_result('hgweb', result)
