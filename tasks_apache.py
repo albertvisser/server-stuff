@@ -2,7 +2,7 @@
 """
 import os.path
 from invoke import task
-from config import INIT, HERE, A_AVAIL, A_ENABL, EDITORCMD
+from config import INIT, HERE, A_AVAIL, A_ENABL, EDITORCMD, extconf
 import tasks_shared as shared
 FROM = os.path.join(HERE, 'apache')
 
@@ -26,13 +26,10 @@ def restart(c):
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def addconf(c, names=None):
+def addconf(c, names):
     """enable Apache configuration for one or more (file) names
     provided as a comma separated string"""
-    if names is None:
-        return
-    names = names.split(',')
-    for conf in names:
+    for conf in names.split(','):
         shared.add_conf(c, conf, A_AVAIL, A_ENABL)
 
 
@@ -44,52 +41,61 @@ def editconf(c, name):
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconf(c, names=None):
+def modconf(c, names):
     "deploy modifications for Apache configuration file(s), replace version"
-    if names is None:
-        return
-    names = names.split(',')
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf), A_AVAIL)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconfb(c, names=None):
+def modconfb(c, names):
     "modconf with backup"
-    if names is None:
-        return
-    names = names.split(',')
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf), A_AVAIL, backup=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconfa(c, names=None):
+def modconfa(c, names):
     "modconf with append (and backup)"
-    if names is None:
-        return
-    names = names.split(',')
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf), A_AVAIL, append=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def rmconf(c, names=None):
+def rmconf(c, names):
     "disable Apache configuration for one or more file names"
-    if names is None:
-        return
-    names = names.split(',')
-    for conf in names:
+    for conf in names.split(','):
         shared.remove_conf(c, conf, A_ENABL)
 
 
-@task
-def compare(c):
-    "compare all Apache configurations that can be changed from here"
-    c.run(f'diff -s {FROM} {A_AVAIL}')
+@task(help={'names': 'comma-separated list of filenames'})
+def diffconf(c, names=None):
+    "compare named configuration files"
+    if not names:
+        c.run(f'diff -s {FROM} {A_AVAIL}')
+        return
+    for conf in names.split(','):
+        _diffconf(c, conf.strip())
 
 
-@task
-def compareg(c):
-    "compare all Apache configurations that can be changed from here, in gui"
-    c.run(f'meld {FROM} {A_AVAIL}')
+@task(help={'names': 'comma-separated list of filenames'})
+def diffconfg(c, names=None):
+    "compare named configuration files + show results in gui"
+    if not names:
+        c.run(f'meld {FROM} {A_AVAIL}')
+        return
+    for conf in names.split(','):
+        _diffconf(c, conf.strip(), gui=True)
+
+
+def _diffconf(c, name, gui=False):
+    "compare a configuration file"
+    if name in extconf:
+        dest, _, fname = extconf[name]
+        if fname.startswith('@'):
+            fname = name + fname[1:]
+    else:
+        dest, fname = A_AVAIL, name
+    old, new = os.path.join(dest, fname), os.path.join(FROM, fname)
+    cmd = 'meld' if gui else 'diff -s'
+    c.run(f'{cmd} {old} {new}')

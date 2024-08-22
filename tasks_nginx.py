@@ -22,52 +22,46 @@ def _diffconf(c, name, gui=False):
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def addconf(c, names=None):
+def addconf(c, names):
     """enable Nginx configuration for one or more (file) names
     provided as a comma separated string"""
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.add_conf(c, conf.strip(), AVAIL, ENABL)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def rmconf(c, names=None):
+def rmconf(c, names):
     "disable Nginx configuration for one or more file names"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.remove_conf(c, conf.strip(), ENABL)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconf(c, names=None):
+def modconf(c, names):
     "deploy modifications for Nginx configuration file(s); replace version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf.strip()), AVAIL)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconfb(c, names=None):
+def modconfb(c, names):
     "modconf: backup & replace version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf.strip()), AVAIL, backup=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def modconfa(c, names=None):
+def modconfa(c, names):
     "modconf: backup & append version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf.strip()), AVAIL, append=True)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def newconf(c, names=None):
+def newconf(c, names):
     """shortcut to define and enable a new Nginx config in one go
     """
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         shared.mod_conf(c, os.path.join(FROM, conf.strip()), AVAIL)
         shared.add_conf(c, conf.strip(), AVAIL, ENABL)
 
@@ -75,16 +69,20 @@ def newconf(c, names=None):
 @task(help={'names': 'comma-separated list of filenames'})
 def diffconf(c, names=None):
     "compare named configuration files"
-    names = names.split(',') if names else []
-    for conf in names:
+    if not names:
+        c.run(f'diff -s {FROM} {AVAIL}')
+        return
+    for conf in names.split(','):
         _diffconf(c, conf.strip())
 
 
 @task(help={'names': 'comma-separated list of filenames'})
 def diffconfg(c, names=None):
     "compare named configuration files + show results in gui"
-    names = names.split(',') if names else []
-    for conf in names:
+    if not names:
+        c.run(f'meld {FROM} {AVAIL}')
+        return
+    for conf in names.split(','):
         _diffconf(c, conf.strip(), gui=True)
 
 
@@ -137,15 +135,3 @@ def restart(c):
     "restart nginx"
     # c.run('sudo killall -HUP nginx')
     c.run('sudo systemctl restart nginx.service')
-
-
-@task
-def compare(c):
-    "compare all nginx configurations that can be changed from here"
-    c.run(f'diff -s {FROM} {AVAIL}')
-
-
-@task
-def compareg(c):
-    "compare all nginx configurations that can be changed from here, in gui"
-    c.run(f'meld {FROM} {AVAIL}')

@@ -48,8 +48,7 @@ def addstartup(c, name):
 @task(help={'names': 'comma-separated list of filenames'})
 def editconf(c, names):
     "edit a file related to a configuration"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         path = get_parms(conf)[0]
         # c.run("SciTE {} &".format(path))
         c.run(EDITORCMD.format(path))
@@ -67,8 +66,7 @@ def listconf(c):
 @task(help={'names': 'comma-separated list of filenames'})
 def modconf(c, names=None):
     "deploy modifications for configuration file(s); replace version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo)
 
@@ -76,8 +74,7 @@ def modconf(c, names=None):
 @task(help={'names': 'comma-separated list of filenames'})
 def modconfb(c, names=None):
     "modconf: backup & replace version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo, backup=True)
 
@@ -85,8 +82,7 @@ def modconfb(c, names=None):
 @task(help={'names': 'comma-separated list of filenames'})
 def modconfa(c, names=None):
     "modconf: backup & append version"
-    names = names.split(',') if names else []
-    for conf in names:
+    for conf in names.split(','):
         path, dest, sudo = get_parms(conf)
         shared.mod_conf(c, path, dest, needs_sudo=sudo, append=True)
 
@@ -103,14 +99,14 @@ def get_parms(name):
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def compare(c, names=None):
+def diffconf(c, names=None):
     "compare all configuration files that can be changed from here"
     names = names.split(',') if names else list(extconf)
     _diffconf(c, names)
 
 
 @task(help={'names': 'comma-separated list of filenames'})
-def compareg(c, names=None):
+def diffconfg(c, names=None):
     "compare all configuration files that can be changed from here, in gui"
     names = names.split(',') if names else list(extconf)
     _diffconf(c, names, gui=True)
@@ -161,7 +157,7 @@ def _diffconf(c, names, gui=False):
 
 @task(help={'names': 'comma-separated list of server names'})
 def check_all(c, names=''):
-    "assuming server is started when there is a pid file"
+    "check for server(s) being up assuming server is started when there is a pid file"
     other_pid = dict(zip(all_other, [tasks_trac.trac_pid, tasks_hgweb.hgweb_pid]))  # , plone_pid]
     names = names.split(',') if names else all_django + all_cherry + all_other
     all_clear = True
@@ -265,8 +261,8 @@ ns.add_task(editconf)
 ns.add_task(modconf)
 ns.add_task(modconfa)
 ns.add_task(modconfb)
-ns.add_task(compare)
-ns.add_task(compareg)
+ns.add_task(diffconf)
+ns.add_task(diffconfg)
 server = Collection('server')
 server.add_task(check_all)
 server.add_task(stop)

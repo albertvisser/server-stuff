@@ -105,8 +105,8 @@ def test_get_parms(monkeypatch):
         assert testee.get_parms('noname')
 
 
-def test_compare(monkeypatch, capsys):
-    """unittest for tasks.compare
+def test_diffconf(monkeypatch, capsys):
+    """unittest for tasks.diffconf
     """
     def mock_diffconf(*args, **kwargs):
         """stub
@@ -115,12 +115,12 @@ def test_compare(monkeypatch, capsys):
     monkeypatch.setattr(testee, 'extconf', {'x': 'y', 'a': 'b', 'p': 'q'})
     monkeypatch.setattr(testee, '_diffconf', mock_diffconf)
     c = MockContext()
-    testee.compare(c)
+    testee.diffconf(c)
     assert capsys.readouterr().out == f"called _diffconf with args ({c}, ['x', 'a', 'p']) {{}}\n"
 
 
-def test_compareg(monkeypatch, capsys):
-    """unittest for tasks.compareg
+def test_diffconfg(monkeypatch, capsys):
+    """unittest for tasks.diffconfg
     """
     def mock_diffconf(*args, **kwargs):
         """stub
@@ -129,12 +129,12 @@ def test_compareg(monkeypatch, capsys):
     monkeypatch.setattr(testee, 'extconf', {'x': 'y', 'a': 'b', 'p': 'q'})
     monkeypatch.setattr(testee, '_diffconf', mock_diffconf)
     c = MockContext()
-    testee.compareg(c)
+    testee.diffconfg(c)
     assert capsys.readouterr().out == (f"called _diffconf with args ({c}, ['x', 'a', 'p'])"
                                        " {'gui': True}\n")
 
 
-def test_diffconf(monkeypatch, capsys, tmp_path):
+def test_diffconf_subroutine(monkeypatch, capsys, tmp_path):
     """unittest for tasks.diffconf
     """
     def mock_run_2(self, *args, **kwargs):

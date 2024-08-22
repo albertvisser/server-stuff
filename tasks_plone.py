@@ -47,7 +47,6 @@ def stop(c, names=''):
     c.run("sudo docker stop plone6-backend && sudo docker rm plone6-backend")
 
 
-
 @task(help={'names': 'comma-separated list of server names'})
 def restart(c, names=''):
     "restart Plone default instance"
