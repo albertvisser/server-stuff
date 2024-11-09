@@ -26,6 +26,9 @@ def test_diffconf_subroutine(monkeypatch, capsys):
     testee.FROM = 'from'
     testee._diffconf(c, 'test')
     assert capsys.readouterr().out == 'diff -s to/testfile from/testfile\n'
+    testee.extconf = {'test': ('to', True, 'file')}
+    testee._diffconf(c, 'test')
+    assert capsys.readouterr().out == 'diff -s to/file from/file\n'
     testee._diffconf(c, 'other', gui=True)
     assert capsys.readouterr().out == 'meld avail/other from/other\n'
 

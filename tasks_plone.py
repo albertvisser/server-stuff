@@ -21,6 +21,8 @@ def _plone(c, action, sitenames):
                 remove_result(c, "plone")
             elif action == 'buildout':
                 c.run('bin/buildout')
+            else:
+                print('unknown action')
 
 
 @task(help={'names': 'comma-separated list of server names'})

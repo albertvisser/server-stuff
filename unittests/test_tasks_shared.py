@@ -70,6 +70,10 @@ def test_mod_conf(monkeypatch, capsys):
                                        'execute in from\nmv -f file~~~ file\n'
                                        'execute in from\nsudo cp file to\n'
                                        'execute in from\nmv -f file~~ file\n')
+    monkeypatch.setattr(testee.os.path, 'exists', lambda x: True)
+    testee.mod_conf(c, 'from/file', 'to', backup=True)
+    assert capsys.readouterr().out == ('execute in from\ncp to/file backup/file-today\n'
+                                       'execute in from\nsudo cp file to\n')
 
 
 def test_compare(capsys):

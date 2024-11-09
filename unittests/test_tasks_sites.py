@@ -125,6 +125,11 @@ def test_check_sites(monkeypatch, capsys):
     monkeypatch.setattr(testee, 'check_page', lambda x: types.SimpleNamespace(status_code=201))
     testee.check_sites(sites=['name'], quick=True)
     assert capsys.readouterr().out == ('checking name... ok\n    error 201 on namepage\n')
+    monkeypatch.setattr(testee, 'check_page',
+                        lambda x: types.SimpleNamespace(status_code=testee.HTTP_OK))
+    testee.check_sites(sites=['name'], quick=True)
+    assert capsys.readouterr().out == ('checking name... ok\n')
+    monkeypatch.setattr(testee, 'check_page', lambda x: types.SimpleNamespace(status_code=201))
     testee.check_address = {'full': {}}
     testee.check_sites(sites=['name'], quick=False)
     assert capsys.readouterr().out == ('checking name... frontpage ok\n'

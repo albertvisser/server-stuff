@@ -157,6 +157,7 @@ def test_diffconf(monkeypatch, capsys):
                                        'call shared function with args Mock that {}\n')
 
 
+
 def test_diffconfg(monkeypatch, capsys):
     """unittest for tasks_apache.diffconfg
     """
@@ -205,5 +206,8 @@ def test_diffconf_subroutine(monkeypatch, capsys):
     testee.FROM = 'from'
     testee._diffconf(c, 'test')
     assert capsys.readouterr().out == 'diff -s to/testfile from/testfile\n'
+    testee.extconf = {'test': ('to', True, 'file')}
+    testee._diffconf(c, 'test')
+    assert capsys.readouterr().out == 'diff -s to/file from/file\n'
     testee._diffconf(c, 'other', gui=True)
     assert capsys.readouterr().out == 'meld avail/other from/other\n'

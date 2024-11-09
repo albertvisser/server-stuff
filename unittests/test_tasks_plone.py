@@ -120,3 +120,5 @@ def test_plone(monkeypatch, capsys):
     testee._plone(c, 'buildout', 'one,two')
     assert capsys.readouterr().out == ('bin/buildout in home/One/zinstance\n'
                                        'bin/buildout in home/Two/zinstance\n')
+    testee._plone(c, 'other', 'site')
+    assert capsys.readouterr().out == "unknown action\n"
