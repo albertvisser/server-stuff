@@ -102,28 +102,30 @@ def check_admin_links(c):
         staticdir = os.path.join(path, 'static')
         admin_link = os.path.join(staticdir, 'admin')
         print(f'  looking for {admin_link}')
-        if os.path.exists(admin_link):
-            if os.path.islink(admin_link):
+        if os.path.islink(admin_link):
+            if os.path.exists(admin_link):
                 admin_path = os.readlink(admin_link)
-                # weet niet of dit nodig is
-                # if not admin_path.startswith('/'):
-                #     admin_path = os.path.join(project, 'static', admin_path)
-                print(f'  symlink found pointing to {admin_path}', end=' - ')
-                if admin_path != admin_loc:
-                    print('not the right location, removing')
-                    os.remove(admin_link)
-                    recreate = True
-                else:
-                    print('ok')
+                print(f'  symlink found pointing to {admin_path}', end='')
+                ok = admin_path == admin_loc
             else:
-                print('  admin found, but not a symlink, renaming')
-                os.rename(admin_link, admin_link + '.old')
+                print('  symlink found pointing to invalid location', end='')
+                ok = False
+            if ok:
+                print(', all is well.')
+            else:
+                print(', removing and', end= '')
+                os.remove(admin_link)
                 recreate = True
         else:
-            print('  no admin found')
-            recreate = True
+            if os.path.exists(admin_link):
+                print('  admin found but not a symlink, renaming and', end='')
+                os.rename(admin_link, admin_link + '.old')
+                recreate = True
+            else:
+                print('  no admin found,', end='')
+                recreate = True
         if recreate:
-            print('  creating new symlink')
+            print(' creating new symlink')
             with c.cd(staticdir):
                 c.run(f'ln -s {admin_loc}')
 

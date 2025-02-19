@@ -192,33 +192,41 @@ def test_check_admin_links(monkeypatch, capsys, tmp_path):
     (projdir / 'static' / 'admin').symlink_to(projdir / 'test')
     monkeypatch.setattr(testee, 'get_django_admin_loc', lambda x: str(projdir / 'test'))
     testee.check_admin_links(c)
-    assert capsys.readouterr().out == ('For project site:\n'
-                                       f"  looking for {projdir / 'static' / 'admin'}\n"
-                                       f"  symlink found pointing to {projdir / 'test'} - ok\n")
+    assert capsys.readouterr().out == (
+            'For project site:\n'
+            f"  looking for {projdir / 'static' / 'admin'}\n"
+            f"  symlink found pointing to {projdir / 'test'}, all is well.\n")
     monkeypatch.setattr(testee, 'get_django_admin_loc', lambda x: 'start')
     testee.check_admin_links(c)
-    assert capsys.readouterr().out == ('For project site:\n'
-                                       f"  looking for {projdir / 'static' / 'admin'}\n"
-                                       f"  symlink found pointing to {projdir / 'test'}"
-                                       ' - not the right location, removing\n'
-                                       '  creating new symlink\n'
-                                       'ln -s start {}\n')
+    assert capsys.readouterr().out == (
+            'For project site:\n'
+            f"  looking for {projdir / 'static' / 'admin'}\n"
+            f"  symlink found pointing to {projdir / 'test'}, removing and creating new symlink\n"
+            'ln -s start {}\n')
+    (projdir / 'static' / 'admin').symlink_to('xyzoyyughju')
+    testee.check_admin_links(c)
+    assert capsys.readouterr().out == (
+            'For project site:\n'
+            f"  looking for {projdir / 'static' / 'admin'}\n"
+            f"  symlink found pointing to invalid location, removing and creating new symlink\n"
+            'ln -s start {}\n')
+
     (projdir / 'static' / 'admin').touch()
     # monkeypatch.setattr(testee.os.path, 'islink', lambda *x: False)
     testee.check_admin_links(c)
-    assert capsys.readouterr().out == ('For project site:\n'
-                                       f"  looking for {projdir / 'static' / 'admin'}\n"
-                                       "  admin found, but not a symlink, renaming\n"
-                                       '  creating new symlink\n'
-                                       'ln -s start {}\n')
+    assert capsys.readouterr().out == (
+            'For project site:\n'
+            f"  looking for {projdir / 'static' / 'admin'}\n"
+            "  admin found but not a symlink, renaming and creating new symlink\n"
+            'ln -s start {}\n')
     # (projdir / 'static' / 'admin').unlink()
     # monkeypatch.setattr(testee.os.path, 'islink', lambda *x: False)
     testee.check_admin_links(c)
-    assert capsys.readouterr().out == ('For project site:\n'
-                                       f"  looking for {projdir / 'static' / 'admin'}\n"
-                                       '  no admin found\n'
-                                       '  creating new symlink\n'
-                                       'ln -s start {}\n')
+    assert capsys.readouterr().out == (
+            'For project site:\n'
+            f"  looking for {projdir / 'static' / 'admin'}\n"
+            '  no admin found, creating new symlink\n'
+            'ln -s start {}\n')
 
 
 def test_get_django_args(monkeypatch):
