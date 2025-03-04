@@ -41,7 +41,8 @@ def test_start(monkeypatch, capsys):
     #                                    'tracwsgi:application\ncalled report_result\n')
     assert capsys.readouterr().out == (
             'called check_result\n'
-            'sudo tracd -d --pidfile=pid -p 9000'
+            # 'sudo tracd -d --pidfile=pid -p 9000'
+            'sudo /home/albert/.tracvenv/bin/tracd -d --pidfile=pid -p 9000'
             ' --basic-auth="*,/home/albert/lemontrac/trac_users, lemontrac"'
             ' --protocol=http -s /home/albert/lemontrac\n'
             'called report_result\n')

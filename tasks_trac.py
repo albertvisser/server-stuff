@@ -28,7 +28,9 @@ def start(c):
     with c.cd(TRAC):
         # result = c.run(f'sudo /usr/bin/gunicorn -D -b unix:{trac_sock} -p {trac_pid} '
         #                'tracwsgi:application')
-        result = c.run(f'sudo tracd -d --pidfile={trac_pid} -p 9000'
+        # result = c.run(f'sudo tracd -d --pidfile={trac_pid} -p 9000'
+        #                f' --basic-auth="*,{TRAC}/trac_users, lemontrac" --protocol=http -s {TRAC}')
+        result = c.run(f'sudo /home/albert/.tracvenv/bin/tracd -d --pidfile={trac_pid} -p 9000'
                        f' --basic-auth="*,{TRAC}/trac_users, lemontrac" --protocol=http -s {TRAC}')
         report_result('trac', result)
 
