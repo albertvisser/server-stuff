@@ -38,9 +38,11 @@ def test_start(monkeypatch, capsys):
     assert capsys.readouterr().out == 'called check_result\nhgweb xxx\n'
     monkeypatch.setattr(testee, 'check_result', mock_check_2)
     testee.start(c)
-    assert capsys.readouterr().out == ('called check_result\n'
-                                       'sudo spawn-fcgi -f here/hgweb.fcgi -s socket -P pid'
-                                       ' -u www-data\ncalled report_result()\n')
+    assert capsys.readouterr().out == (
+            'called check_result\n'
+            # 'sudo spawn-fcgi -f here/hgweb.fcgi -s socket -P pid -u www-data\n'
+            'sudo /usr/bin/gunicorn -b unix:socket -p pid hgwebwsgi:application\n'
+            'called report_result()\n')
 
 
 def test_stop(monkeypatch, capsys):
