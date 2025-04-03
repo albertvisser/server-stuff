@@ -15,7 +15,7 @@ import tasks_hgweb
 import tasks_django
 import tasks_cherrypy
 import tasks_plone
-import tasks_sites
+# import tasks_sites
 import tasks_shared as shared
 
 all_django = sorted(tasks_django.get_projectnames())
@@ -254,7 +254,7 @@ ns.add_collection(tasks_hgweb, name='hgweb')
 ns.add_collection(tasks_django, name='django')
 ns.add_collection(tasks_cherrypy, name='cherrypy')
 ns.add_collection(tasks_plone, name='plone')
-ns.add_collection(tasks_sites, name='sites')
+# ns.add_collection(tasks_sites, name='sites')
 ns.add_task(addstartup)
 ns.add_task(listconf)
 ns.add_task(editconf)
