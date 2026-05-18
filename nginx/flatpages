@@ -82,3 +82,225 @@ server {
     error_log /var/log/nginx/magiokis-old.lemoncurry-error.log error;
     access_log /var/log/nginx/magiokis-old.lemoncurry-access.log ;
     }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
+server {
+    server_name testsite.lemoncurry.nl;
+    root /home/albert/projects/rst2html/rst2html-data/testsite;
+    error_log /var/log/nginx/testsite.lemoncurry-error.log error;
+    access_log /var/log/nginx/testsite.lemoncurry-access.log ;
+    }
