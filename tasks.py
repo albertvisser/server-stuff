@@ -128,7 +128,8 @@ def _diffconf(c, names, gui=False):
     path = os.path.join(HERE, 'misc')
     if sudo_needed:
         tempdir = tempfile.mkdtemp()
-    for fname in os.listdir(path):
+    for fname in os.listdir(path):   # sorteren is vooral t.b.v. unittest
+    # for fname in sorted(os.listdir(path)):   # sorteren is vooral t.b.v. unittest
         if fname in locs:
             old, new = os.path.join(path, fname), os.path.join(locs[fname], fname)
             orig = new

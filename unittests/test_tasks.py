@@ -135,7 +135,7 @@ def test_diffconfg(monkeypatch, capsys):
 
 
 def test_diffconf_subroutine(monkeypatch, capsys, tmp_path):
-    """unittest for tasks.diffconf
+    """unittest for tasks._diffconf
     """
     def mock_run_2(self, *args, **kwargs):
         """stub
@@ -157,7 +157,8 @@ def test_diffconf_subroutine(monkeypatch, capsys, tmp_path):
     miscpath.mkdir()
     monkeypatch.setattr(testee, 'extconf', {'name': (f'{destpath}', False, '@'),
                                             'nam2': (f'{destpath}', True, '@')})
-    tempdir = '/temp_path'
+    # tempdir = '/temp_path'
+    tempdir = str(tmp_path / 'temp_path')
     monkeypatch.setattr(testee.tempfile, 'mkdtemp', lambda *x: tempdir)
     monkeypatch.setattr(MockContext, 'run', mock_run)
     c = MockContext()
@@ -179,19 +180,19 @@ def test_diffconf_subroutine(monkeypatch, capsys, tmp_path):
     monkeypatch.setattr(MockContext, 'run', mock_run_2)
     c = MockContext()
     testee._diffconf(c, ['name', 'nam2'])
-    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
-                                       'differences for name, see /tmp/diff-name\n'
-                                       f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
                                        f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
-                                       'differences for nam2, see /tmp/diff-nam2\n')
+                                       'differences for nam2, see /tmp/diff-nam2\n'
+                                       f'diff -s {miscpath}/name {destpath}/name\n'
+                                       'differences for name, see /tmp/diff-name\n')
     monkeypatch.setattr(MockContext, 'run', mock_run_3)
     c = MockContext()
     testee._diffconf(c, ['name', 'nam2'])
-    assert capsys.readouterr().out == (f'diff -s {miscpath}/name {destpath}/name\n'
-                                       f'{miscpath}/name {destpath}/name\n'
-                                       f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
+    assert capsys.readouterr().out == (f'sudo cp --no-preserve=mode {destpath}/nam2 {tempdir}/nam2\n'
                                        f'diff -s {miscpath}/nam2 {tempdir}/nam2\n'
-                                       f'{miscpath}/nam2 {destpath}/nam2\n')
+                                       f'{miscpath}/nam2 {destpath}/nam2\n'
+                                       f'diff -s {miscpath}/name {destpath}/name\n'
+                                       f'{miscpath}/name {destpath}/name\n')
 
 
 def test_check_all(monkeypatch, capsys):
