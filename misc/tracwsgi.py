@@ -20,6 +20,8 @@ import trac.web.standalone
 import trac.web.main
 
 def application(environ, start_application):
+    """entry point (wordt geïmporteerd door gunicorn)
+    """
     environ['REMOTE_USER'] = environ.get('HTTP_REMOTE_USER')
     return trac.web.main.dispatch_request(environ, start_application)
     ## auth = {"lemontrac" : trac.web.main.BasicAuthentication(
