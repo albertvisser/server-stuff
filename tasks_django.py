@@ -5,12 +5,12 @@ import os
 from invoke import task
 from config import HOME, runpath
 from tasks_shared import report_result, check_result, remove_result
-# django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
-django_sites = ['actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
+django_sites = ['magiokis', 'actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
+# django_sites = ['actiereg', 'myprojects', 'mydomains', 'myapps', 'albums']
 django_project_path = {x: os.path.join(HOME, 'projects', x) for x in django_sites}
-# django_project_path['magiokis'] = django_project_path['magiokis'].replace('projects',
-#                                                                           'projects/.frozen')
-# django_project_path['magiokis'] += '-django'
+django_project_path['magiokis'] = django_project_path['magiokis'].replace('projects',
+                                                                          'projects/.frozen')
+django_project_path['magiokis'] += '-django'
 
 
 @task(help={'names': 'comma-separated list of server names'})
